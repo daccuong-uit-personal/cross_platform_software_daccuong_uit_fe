@@ -1,1 +1,39 @@
-/* You can add global styles to this file, and also import other style files */
+@import '../../../libs/tokens/src/lib/design-tokens.css';
+
+/* Global Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-family-sans);
+  font-size: var(--font-size-md);
+  line-height: var(--line-height-normal);
+  color: var(--color-text-primary);
+  background-color: var(--color-bg-base);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--color-text-brand);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+}
+
+a {
+  color: var(--color-primary-500);
+  text-decoration: none;
+  transition: var(--transition-fast);
+}
+
+a:hover {
+  color: var(--color-primary-600);
+}
+
+button {
+  cursor: pointer;
+  font-family: inherit;
+}
