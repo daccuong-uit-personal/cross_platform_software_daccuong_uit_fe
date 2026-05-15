@@ -3,9 +3,9 @@
 Frontend platform for social commerce creator platform.
 
 ## Infrastructure
-- **Framework**: Nx (Planned)
-- **CI/CD**: GitHub Actions (Planned)
-- **Containerization**: Docker (Planned)
+- **Framework**: Nx (Initialized)
+- **CI/CD**: GitHub Actions (Configured)
+- **Containerization**: Docker (Configured)
 
 ## Project Structure
 - `agents/`: AI agents configuration and data.
