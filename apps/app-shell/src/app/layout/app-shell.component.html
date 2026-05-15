@@ -1,0 +1,16 @@
+<header class="app-shell__header">
+  <div class="brand">
+    <a routerLink="/" class="brand__logo">Social Commerce</a>
+    <span class="brand__tag">Creator platform</span>
+  </div>
+
+  <nav class="app-shell__nav">
+    <a routerLink="/login" routerLinkActive="active" class="nav-link">Login</a>
+    <a routerLink="/register" routerLinkActive="active" class="nav-link">Register</a>
+    <a *ngIf="authService.isAuthenticated()" routerLink="/dashboard" routerLinkActive="active" class="nav-link">Dashboard</a>
+  </nav>
+</header>
+
+<main class="app-shell__main">
+  <router-outlet></router-outlet>
+</main>

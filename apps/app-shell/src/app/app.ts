@@ -1,13 +1,17 @@
-import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
-import { NxWelcome } from './nx-welcome';
+import { Component, inject } from '@angular/core';
+import { AppShellComponent } from './layout';
+import { AuthService } from 'core';
 
 @Component({
-  imports: [NxWelcome, RouterModule],
+  standalone: true,
+  imports: [AppShellComponent],
   selector: 'app-root',
-  templateUrl: './app.html',
-  styleUrl: './app.css',
+  template: '<app-shell></app-shell>',
 })
 export class App {
-  protected title = 'app-shell';
+  private authService = inject(AuthService);
+
+  constructor() {
+    this.authService.checkAuth();
+  }
 }

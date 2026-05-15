@@ -1,6 +1,7 @@
 import { Injectable, signal, computed, inject } from '@angular/core';
 import { ApiService } from './api.service';
 import { tap, catchError, of } from 'rxjs';
+import { urlConfig } from '../url-config';
 
 export interface User {
   id: string;
@@ -26,13 +27,13 @@ export class AuthService {
   isAuthenticated = computed(() => !!this._user());
 
   login(credentials: any) {
-    return this.api.post<AuthResponse>('/auth/login', credentials).pipe(
+    return this.api.post<AuthResponse>(urlConfig.auth.login, credentials).pipe(
       tap(res => this.handleAuthSuccess(res))
     );
   }
 
   register(data: any) {
-    return this.api.post<AuthResponse>('/auth/register', data).pipe(
+    return this.api.post<AuthResponse>(urlConfig.auth.register, data).pipe(
       tap(res => this.handleAuthSuccess(res))
     );
   }
@@ -47,7 +48,7 @@ export class AuthService {
     const refreshToken = localStorage.getItem('refreshToken');
     if (!refreshToken) return of(null);
 
-    return this.api.post<AuthResponse>('/auth/refresh', { refreshToken }).pipe(
+    return this.api.post<AuthResponse>(urlConfig.auth.refresh, { refreshToken }).pipe(
       tap(res => this.handleAuthSuccess(res)),
       catchError(() => {
         this.logout();
