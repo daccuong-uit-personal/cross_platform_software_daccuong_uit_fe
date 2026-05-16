@@ -9,16 +9,28 @@
   --color-primary-600: oklch(0.48 0.2 260);
   --color-primary-700: oklch(0.42 0.18 260);
 
-  /* Semantic Tokens */
-  --color-brand-primary: oklch(0.48 0.2 260);
-  --color-brand-primary-hover: oklch(0.55 0.22 260);
+  /* Semantic Colors */
+  --color-success: oklch(0.65 0.2 145);
+  --color-warning: oklch(0.75 0.18 85);
+  --color-danger: oklch(0.55 0.22 25);
+  --color-info: oklch(0.6 0.18 210);
 
+  /* Brand Tokens */
+  --color-brand-primary: var(--color-primary-600);
+  --color-brand-primary-hover: var(--color-primary-500);
+
+  /* Surface & Glass */
   --color-surface-base: oklch(0.99 0.005 260);
   --color-surface-subtle: oklch(0.97 0.01 260);
+  --color-surface-card: rgb(255 255 255 / 0.78);
+  --color-border-glass: rgb(255 255 255 / 0.35);
 
+  /* Text Tokens */
   --color-text-base: oklch(0.2 0.04 260);
   --color-text-muted: oklch(0.45 0.02 260);
+  --color-text-inverse: oklch(1 0 0);
 
+  /* Effects */
   --shadow-glow: 0 0 20px 0 oklch(0.55 0.22 260 / 0.2);
   --shadow-premium: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
 }
@@ -37,9 +49,31 @@ body {
 }
 
 .glass-effect {
-  background: rgb(255 255 255 / 0.75);
+  background: var(--color-surface-card);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgb(255 255 255 / 0.3);
+  border: 1px solid var(--color-border-glass);
   box-shadow: var(--shadow-premium);
 }
+
+/* Typography Utilities */
+.text-h1 { font-size: 2.5rem; font-weight: 700; line-height: 1.2; letter-spacing: -0.02em; }
+.text-h2 { font-size: 2rem; font-weight: 700; line-height: 1.25; letter-spacing: -0.01em; }
+.text-h3 { font-size: 1.5rem; font-weight: 600; line-height: 1.3; }
+.text-body { font-size: 1rem; font-weight: 400; line-height: 1.5; }
+.text-muted { color: var(--color-text-muted); }
+
+/* Layout Utilities */
+.page-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.premium-gradient-text {
+  background: linear-gradient(135deg, var(--color-primary-500) 0%, var(--color-primary-700) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+

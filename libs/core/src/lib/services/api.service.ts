@@ -1,29 +1,59 @@
-import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { appConfig } from '../app-config';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { Observable, map } from 'rxjs';
+import { appConfig } from '../config/app-config';
+
+export interface ApiOptions {
+  headers?: HttpHeaders | { [header: string]: string | string[] };
+  params?: HttpParams | { [param: string]: string | number | boolean | ReadonlyArray<string | number | boolean> };
+  observe?: 'body';
+  reportProgress?: boolean;
+  responseType?: 'json';
+  withCredentials?: boolean;
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class ApiService {
+  private readonly http = inject(HttpClient);
   private readonly apiBase = appConfig.apiUrl;
 
-  constructor(private http: HttpClient) {}
-
-  get<T>(path: string, params: HttpParams = new HttpParams()): Observable<T> {
-    return this.http.get<T>(`${this.apiBase}${path}`, { params });
+  private unwrap<T>(source: Observable<unknown>): Observable<T> {
+    return source.pipe(
+      map(res => {
+        const response = res as Record<string, unknown>;
+        // Handle double wrapping: { data: { data: { ... } } }
+        if (response && response['data'] && (response['data'] as Record<string, unknown>)['data'] !== undefined) {
+          return (response['data'] as Record<string, unknown>)['data'] as T;
+        }
+        // Handle single wrapping: { data: { ... } }
+        if (response && response['data'] !== undefined) {
+          return response['data'] as T;
+        }
+        return res as T;
+      })
+    );
   }
 
-  post<T>(path: string, body: object = {}): Observable<T> {
-    return this.http.post<T>(`${this.apiBase}${path}`, body);
+  get<T>(path: string, options?: ApiOptions): Observable<T> {
+    return this.unwrap<T>(this.http.get(`${this.apiBase}${path}`, options));
   }
 
-  put<T>(path: string, body: object = {}): Observable<T> {
-    return this.http.put<T>(`${this.apiBase}${path}`, body);
+  post<T>(path: string, body: unknown = {}, options?: ApiOptions): Observable<T> {
+    return this.unwrap<T>(this.http.post(`${this.apiBase}${path}`, body, options));
   }
 
-  delete<T>(path: string): Observable<T> {
-    return this.http.delete<T>(`${this.apiBase}${path}`);
+  put<T>(path: string, body: unknown = {}, options?: ApiOptions): Observable<T> {
+    return this.unwrap<T>(this.http.put(`${this.apiBase}${path}`, body, options));
+  }
+
+  patch<T>(path: string, body: unknown = {}, options?: ApiOptions): Observable<T> {
+    return this.unwrap<T>(this.http.patch(`${this.apiBase}${path}`, body, options));
+  }
+
+  delete<T>(path: string, options?: ApiOptions): Observable<T> {
+    return this.unwrap<T>(this.http.delete(`${this.apiBase}${path}`, options));
   }
 }
+

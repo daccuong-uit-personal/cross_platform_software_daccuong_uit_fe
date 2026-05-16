@@ -1,4 +1,5 @@
 import { Route } from '@angular/router';
+import { authGuard } from '@fe/core';
 
 export const appRoutes: Route[] = [
   { path: '', pathMatch: 'full', redirectTo: 'auth/login' },
@@ -8,6 +9,7 @@ export const appRoutes: Route[] = [
   },
   {
     path: 'dashboard',
+    canActivate: [authGuard],
     loadChildren: () =>
       import('@fe/features/dashboard').then((m) => m.dashboardRoutes),
   },

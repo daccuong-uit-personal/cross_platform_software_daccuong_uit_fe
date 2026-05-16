@@ -1,16 +1,23 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
+  // We can read directly from localStorage or inject AuthService (be careful of circular DI, though HttpInterceptorFn avoids it better)
   const token = localStorage.getItem('token');
   
-  if (token) {
-    const cloned = req.clone({
-      setHeaders: {
-        Authorization: `Bearer ${token}`
-      }
-    });
-    return next(cloned);
+  // Trace Propagation for Observability (Frontend AI Playbook Requirement)
+  const correlationId = crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 15);
+
+  const setHeaders: Record<string, string> = {
+    'X-Correlation-ID': correlationId
+  };
+
+  // Only attach token if it exists and request is not specifically bypassing it
+  // (In real app, you might want to exclude certain URLs like /login, /register, etc.)
+  if (token && !req.url.includes('/auth/login') && !req.url.includes('/auth/register')) {
+    setHeaders['Authorization'] = `Bearer ${token}`;
   }
-  
-  return next(req);
+
+  const cloned = req.clone({ setHeaders });
+
+  return next(cloned);
 };

@@ -1,7 +1,7 @@
 import { Injectable, signal, computed, inject } from '@angular/core';
 import { ApiService } from './api.service';
-import { tap, catchError, of } from 'rxjs';
-import { urlConfig } from '../url-config';
+import { tap, catchError, of, switchMap } from 'rxjs';
+import { urlConfig } from '../config/url-config';
 
 export interface User {
   id: string;
@@ -26,15 +26,17 @@ export class AuthService {
   user = this._user.asReadonly();
   isAuthenticated = computed(() => !!this._user());
 
-  login(credentials: any) {
+  login(credentials: Record<string, unknown>) {
     return this.api.post<AuthResponse>(urlConfig.auth.login, credentials).pipe(
-      tap(res => this.handleAuthSuccess(res))
+      tap(res => this.storeTokens(res)),
+      switchMap(() => this.fetchProfile())
     );
   }
 
-  register(data: any) {
+  register(data: Record<string, unknown>) {
     return this.api.post<AuthResponse>(urlConfig.auth.register, data).pipe(
-      tap(res => this.handleAuthSuccess(res))
+      tap(res => this.storeTokens(res)),
+      switchMap(() => this.fetchProfile())
     );
   }
 
@@ -49,7 +51,7 @@ export class AuthService {
     if (!refreshToken) return of(null);
 
     return this.api.post<AuthResponse>(urlConfig.auth.refresh, { refreshToken }).pipe(
-      tap(res => this.handleAuthSuccess(res)),
+      tap(res => this.storeTokens(res)),
       catchError(() => {
         this.logout();
         return of(null);
@@ -60,17 +62,28 @@ export class AuthService {
   checkAuth() {
     const token = localStorage.getItem('token');
     if (token) {
-      // In a real app, we might want to verify the token or fetch user profile from /profiles/me
-      // For now, we'll trust the token existence as a starting point
-      this._user.set({ id: 'current', email: 'user@example.com', username: 'current_user' });
+      // Optimistically set a dummy user to unblock guards immediately
+      this._user.set({ id: 'loading', email: '' });
+      
+      this.fetchProfile().subscribe({
+        error: (err) => {
+          console.error('[AuthService] checkAuth failed:', err);
+          // Only clear state. error.interceptor handles actual 401 logouts.
+          this._user.set(null); 
+        }
+      });
     }
   }
 
-  private handleAuthSuccess(res: AuthResponse) {
+  private storeTokens(res: AuthResponse) {
     localStorage.setItem('token', res.accessToken);
     localStorage.setItem('refreshToken', res.refreshToken);
-    // Ideally fetch profile here or decode JWT
-    this._user.set({ id: res.accountId, email: '', username: '' });
+  }
+
+  private fetchProfile() {
+    return this.api.get<User>(urlConfig.profile.me).pipe(
+      tap(user => this._user.set(user))
+    );
   }
 }
 

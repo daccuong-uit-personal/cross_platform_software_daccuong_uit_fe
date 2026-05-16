@@ -33,8 +33,10 @@
 ├── libs/
 │   ├── core/                   # tag: type:core
 │   │   └── src/lib/
+│   │       ├── config/         # app-config.ts, url-config.ts (Centralized configuration)
 │   │       ├── services/       # AuthService, ApiService, ThemeService
-│   │       └── interceptors/   # HTTP auth + error interceptors
+│   │       ├── interceptors/   # HTTP auth + error interceptors
+│   │       └── guards/         # AuthGuard, GuestGuard
 │   │
 │   ├── ui/                     # tag: type:ui
 │   │   └── src/lib/
@@ -46,8 +48,8 @@
 │       └── dashboard/          # scope:dashboard — Dashboard (lazy loaded at /dashboard)
 │
 ├── docs/
-│   ├── ai/                     # Playbook, agent roles, raw roadmap
-│   └── architecture/           # Design tokens spec, i18n guidelines
+│   ├── ai/                     # Playbook, agent roles (Strategic documentation)
+│   └── architecture/           # Design tokens, i18n, monorepo-structure (Technical specs)
 │
 └── nx.json, tsconfig.base.json, eslint.config.mjs
 ```
@@ -104,20 +106,20 @@ npx nx run-many -t test
 
 ## Phase 0 — What was built
 
-- **Design Token System**: Semantic OKLCH color tokens defined in `styles.css` via Tailwind v4 `@theme`. Variables: `--color-brand-primary`, `--color-surface-base`, `--color-text-base`, etc.
-- **Global CSS Architecture**: Resolved Tailwind v4 + Angular 21 esbuild integration (no PostCSS config files needed — native integration only).
-- **Feature Modularization**: Pages moved out of `apps/` into `libs/features/*` as lazy-loaded Nx libraries. Zero business logic in app-shell.
-- **Lazy Loading**: All routes use `loadChildren` — initial bundle ~42KB, features load on demand.
+- **Design Token System**: Semantic OKLCH color tokens defined in `styles.css` via Tailwind v4 `@theme`.
+- **Global CSS Architecture**: Native Tailwind v4 + Angular 21 esbuild integration.
+- **Feature Modularization**: Pages moved out of `apps/` into `libs/features/*` as lazy-loaded libraries.
+- **Lazy Loading**: Initial bundle ~42KB, features load on demand.
 - **i18n**: Transloco configured with `en` and `vi` locales. Assets served from `public/assets/i18n/`.
-- **Core Services**: `AuthService`, `ApiService`, `ThemeService`, HTTP interceptors in `@fe/core`.
+- **Core Services**: Organized into dedicated folders (config, services, interceptors, guards) in `@fe/core`.
 - **Shared UI**: `UiButton`, `UiCard` in `@fe/ui` with inline styles (library build compatible).
-- **ESLint Module Boundaries**: All 4 dependency rules enforced. Feature libs tagged `type:feature + scope:*`.
-- **Runtime Config**: `window.__APP_CONFIG__` in `index.html` for environment-independent API URL.
+- **ESLint Module Boundaries**: Dependency rules strictly enforced.
 
 ## Architecture Decisions
 
 See [`docs/architecture/`](./docs/architecture/) for:
 - Design Tokens specification
 - i18n guidelines
+- Monorepo structure and module boundaries
 
 See [`docs/ai/frontend-ai-playbook.md`](./docs/ai/frontend-ai-playbook.md) for the full roadmap and FE philosophy.

@@ -1,156 +1,147 @@
 # Frontend AI Playbook
 
 ## Purpose
-Tài liệu này tập trung các nguyên tắc FE và AI agent cho dự án frontend social commerce creator platform.
+Tài liệu **duy nhất** tổng hợp toàn bộ triết lý, nguyên tắc, và roadmap vision cho dự án frontend Social Commerce Creator Platform.
 
-## Why this playbook exists
-- Giúp FE giữ đúng phạm vi: rendering, interaction, state, UX, và contract integration.
-- Tránh quá tải agent bằng cách chỉ định rõ trách nhiệm cho từng agent.
-- Giữ CI/CD và operational readiness trong FE giống như backend nhưng phù hợp với frontend.
-- Tổ chức docs gọn gàng, dễ tham khảo cho team FE.
+> Xem thêm agent responsibilities: [`agent-roles.md`](./agent-roles.md)
 
-## Structure
-- `docs/ai/frontend-ai-playbook.md`: tổng hợp hướng dẫn FE và roadmap vision.
-- `docs/ai/agent-roles.md`: định nghĩa các agent FE và trách nhiệm của từng agent.
-- `docs/ai/raw-roadmap.md`: nguyên bản roadmap để tham chiếu.
+---
 
 ## Core FE Philosophy
-- FE là nền tảng trình diễn và tương tác, không phải engine xử lý nghiệp vụ.
-- FE phải tin tưởng backend contract và chỉ dùng backend làm nguồn dữ liệu nghiệp vụ.
+
+- FE là nền tảng **trình diễn và tương tác**, không phải engine xử lý nghiệp vụ.
+- FE phải **tin tưởng backend contract** và chỉ dùng backend làm nguồn dữ liệu nghiệp vụ.
 - FE chịu trách nhiệm về hiệu năng, trải nghiệm, khả năng phản hồi và khả năng vận hành.
 - FE cần sớm có CI/CD, release governance, và observability.
 
+---
+
 ## FE Guardrails
-### FE must
+
+### Must DO ✅
 - Render nhanh, responsive, accessible.
 - Dùng `OnPush`, `trackBy`, lazy loading, route splitting và virtual rendering.
-- Thiết kế state bằng Signals cho UI và RxJS cho stream, API, websocket.
-- Xử lý lỗi mạng mềm dẻo và tránh memory leak.
-- Sử dụng SDK được sinh từ OpenAPI/Swagger.
+- Thiết kế state bằng **Signals** cho UI, **RxJS** cho streams, API, websocket.
+- Xử lý lỗi mạng mềm dẻo, tránh memory leak.
+- Sử dụng TypeScript strict mode — tránh `any`.
+- Retry với exponential backoff; mutex cho token refresh để tránh race conditions.
+- Propagate trace IDs từ backend; log errors với Sentry (không log PII).
 
-### FE must NOT
+### Must NOT ❌
 - Tính toán ranking, pricing, inventory, permission, transaction truth.
-- Duplicated backend business logic.
+- Duplicate backend business logic.
 - Orchestrate backend workflow trong critical path.
 - Treat WebSocket as source of truth.
-- Create hidden cross-domain imports or coupling.
+- Create hidden cross-domain imports hoặc coupling.
+- Import feature lib trực tiếp — chỉ qua lazy-loaded router.
 
-## CI/CD and Monorepo
-- Dùng Nx và thiết lập workspace constraint rõ ràng.
-- Kích hoạt build caching và affected builds.
-- Pipeline FE phải có gating, rollback, release flow.
-- Bổ sung bundle analysis, performance regression, telemetry checks.
-- Document release flow, environment promotion, feature flag usage.
+---
 
-## Phase Vision Summary
-### Phase 0 — Cross Project Foundation Platform
-Goal: Xây nền tảng chung.
-- Design token system, theme platform, shared utils, runtime config, i18n.
-- Output: Figma token, FE architecture docs, coding standards, ESLint/Prettier, Nx rules.
+## State Architecture
 
-### Phase 1 — Frontend Foundation Platform
-Goal: Xây kiến trúc FE production-ready.
-- Nx workspace, core services, API client, HTTP interceptors.
-- Output: app shell, API contract layer, trace propagation.
+| State Type | Tool | Use Case |
+|---|---|---|
+| UI/component state | Angular Signals | modal, filter, toggle, selection |
+| Async streams | RxJS | API calls, WebSocket, debounce, retry |
+| Avoid | NgRx / global god store | over-abstraction |
 
-### Phase 2 — Design System Platform
-Goal: Xây hệ thống UI reusable.
-- Shared components, atomic tokens, responsive behavior.
-- Output: component library, design-to-code mapping.
+---
 
-### Phase 3 — Auth + Identity Platform
-Goal: Xây auth và identity flow.
-- Login, onboarding, session, profile.
-- Output: auth UX patterns, token refresh, guards.
+## Monorepo Rules (Nx)
 
-### Phase 4 — Media Platform
-Goal: Xây trải nghiệm media.
-- Video/image rendering, upload UX, caching, preview.
-- Output: media player, upload pipelines.
+```
+apps/
+└── app-shell/       # Entry point, zero business logic
 
-### Phase 5 — Social Platform
-Goal: Xây social feed và tương tác.
-- Content cards, social actions, notification hints.
-- Output: scalable feed components.
+libs/
+├── core/            # API, auth, config, interceptors, guards — type:core
+├── ui/              # Shared components, design tokens — type:ui
+└── features/
+    ├── auth/        # Login, Register — type:feature, scope:auth
+    └── dashboard/   # Dashboard — type:feature, scope:dashboard
+```
 
-### Phase 6 — Realtime Platform
-Goal: Thêm realtime interaction.
-- Notifications, presence, invalidation.
-- Output: realtime event patterns.
+**Dependency boundary** (enforced by ESLint `@nx/enforce-module-boundaries`):
+```
+type:app     → core, ui, feature
+type:feature → core, ui
+type:ui      → core
+type:core    → core only
+```
 
-### Phase 7 — Search Platform
-Goal: Xây discovery UX.
-- Autocomplete, pagination, filters.
-- Output: search experience và query strategy.
+---
 
-### Phase 8 — Creator Studio Platform
-Goal: Hỗ trợ creator workflows.
-- Dashboard, campaign management, analytics.
-- Output: creator tools và modular studio pages.
+## CI/CD & Build
 
-### Phase 9 — Chat Platform
-Goal: Thêm workflow hội thoại.
-- Chat UI, streaming updates, attachments.
-- Output: messaging components.
+- Dùng Nx affected builds (`npx nx affected -t build`) — chỉ rebuild những gì thay đổi.
+- Pipeline FE phải có: build → lint → test → bundle-size check → deploy.
+- Không có `postcss.config.js` hay `tailwind.config.js` — Angular 21 native Tailwind v4 qua esbuild.
+- Feature flags cho gradual rollout; dev / staging / prod environments tách biệt.
 
-### Phase 10 — Commerce Platform
-Goal: Bán hàng và checkout.
-- Catalog, cart, payment, order.
-- Output: commerce experience dựa trên backend API.
+---
 
-### Phase 11 — Live Platform
-Goal: Hỗ trợ livestream.
-- Live viewer, chat overlay, low-latency UX.
-- Output: live event UI.
+## Phase Roadmap
 
-### Phase 12 — Recommendation Platform
-Goal: Hiển thị gợi ý cá nhân.
-- Recommendation cards, fallback content.
-- Output: personalization widgets.
+| Phase | Name | Status |
+|---|---|---|
+| **0** | Cross Project Foundation Platform | ✅ Done |
+| **1** | Frontend Foundation Platform | ✅ Done |
+| **2** | Design System Platform | ✅ Done |
+| **3** | Auth + Identity Platform | 🔜 Next |
+| **4** | Media Platform | ⏳ Planned |
+| **5** | Social Platform | ⏳ Planned |
+| **6** | Realtime Platform | ⏳ Planned |
+| **7** | Search Platform | ⏳ Planned |
+| **8** | Creator Studio Platform | ⏳ Planned |
+| **9** | Chat Platform | ⏳ Planned |
+| **10** | Commerce Platform | ⏳ Planned |
+| **11** | Live Platform | ⏳ Planned |
+| **12** | Recommendation Platform | ⏳ Planned |
+| **13** | Performance Platform | ⏳ Planned |
+| **14** | Platform Engineering | ⏳ Planned |
+| **15** | Social Intelligence Platform | ⏳ Planned |
+| **16** | Social UX Replication (TikTok/IG/FB/X) | ⏳ Planned |
 
-### Phase 13 — Performance Platform
-Goal: Tối ưu hiệu năng FE.
-- Bundle budgets, runtime diagnostics, memory checks.
-- Output: CI regression checks và observability.
+### Phase 0 — What was built
+- Design Token System: Semantic OKLCH color tokens trong `styles.css` via Tailwind v4 `@theme`.
+- Lazy loading: tất cả routes dùng `loadChildren` — initial bundle ~42KB.
+- i18n: Transloco với `en` / `vi`, assets tại `public/assets/i18n/`.
+- Core services: `AuthService`, `ApiService`, `ThemeService`, HTTP interceptors.
+- Shared UI: `UiButton`, `UiCard` với inline styles (ng-packagr compatible).
+- ESLint Module Boundaries: 4 dependency rules enforced.
+- Runtime Config: `window.__APP_CONFIG__` trong `index.html`.
 
-### Phase 14 — Platform Engineering
-Goal: Vận hành FE delivery.
-- Feature flags, canary rollout, CI/CD, environment management.
-- Output: release docs, CI pipeline docs, governance.
+### Phase 1 — What was built
+- Strict TypeScript Mode: Đã fix các lỗi `any`, unused variables và type warnings.
+- Http Interceptors: Hoàn thiện logic Trace Propagation `X-Correlation-ID`, 401 Unauthorized token refresh.
+- API & Auth Services: Strict type cho Observable streams.
+- CI/CD Checks: Đảm bảo build, lint, test cho toàn bộ nx workspace đều pass 100%.
 
-### Phase 15 — Social Intelligence Platform
-Goal: Aggregate, monitor, và surface trending content.
-- Content aggregation, trending discovery, monitoring dashboard.
-- RxJS streams, Web Workers, Service Workers cho persistent checks.
-- Output: trending feed UI, monitoring dashboard, alert system.
+### Phase 2 — What was built
+- Global Design Tokens: Hệ thống màu semantic (Success, Danger, Warning), typography scales, và premium effects (glassmorphism) trong `styles.css`.
+- Core UI Components: Refactor `UiButton` và `UiCard` sử dụng tokens. Thêm `UiInput` hỗ trợ `ControlValueAccessor` và @if control flow.
+- Utility Classes: Cung cấp bộ typography (`text-h1` đến `text-body`) và layout (`page-container`) chuẩn.
+- Infrastructure Stability: Toàn bộ UI library được lint-checked và build-ready để tái sử dụng cho các phase sau.
 
-### Phase 16 — Social Platform UX Replication
-Goal: Sao chép giao diện và chức năng từ TikTok, Instagram, Facebook, X.
-- TikTok feed layout, vertical video swipe, comment overlay, duet/stitch inspiration.
-- Instagram Reels player, Stories carousel, IGTV-style streaming, Explore grid.
-- Facebook feed algorithm simulation, group dynamics, live video player.
-- X/Twitter timeline, thread view, retweet patterns, trending display.
-- Output: multi-feed UI variants, video player UX, social interaction patterns.
+### Phase 15 — Social Intelligence
+- Aggregate từ backend aggregation service, không gọi direct external API.
+- RxJS streams + Web Workers cho heavy computation.
+- IndexedDB cho offline browsing; Service Workers cho background monitoring.
 
-## Roadmap Scorecard
-- Clarity: 8/10
-- Completeness: 7/10
-- Feasibility: 7/10
-- Alignment: 9/10
-- Risk awareness: 8/10
+### Phase 16 — Social UX Replication
+- TikTok: vertical swipe feed, video player, duet inspiration.
+- Instagram: Reels, Stories carousel, Explore grid.
+- Facebook: feed, group dynamics, live video.
+- X/Twitter: timeline, thread view, trending display.
+- Custom gesture handling (swipe, double-tap, long-press) — NO external platform SDK.
+- Virtual scrolling + intersection observer cho 60fps mobile.
 
-### Key gaps
-- Thêm acceptance criteria và success metrics.
+---
+
+## Key Gaps to Address (Backlog)
+
+- Thêm acceptance criteria và success metrics mỗi phase.
 - Xác định contract FE/BE cho auth, media, commerce, live.
 - Làm rõ MVP path Phase 0–5.
-- Bổ sung maintenance/operational readiness cho mỗi phase.
-
-## Output artifacts to build
-- Performance checklist
-- Bundle governance docs
-- Memory profiling guide
-- Telemetry architecture spec
-- Release flow documentation
-- CI pipeline documentation
-- Monorepo governance
-- Module boundary rules
+- Performance checklist, bundle governance docs, memory profiling guide.
+- Release flow và CI pipeline documentation.

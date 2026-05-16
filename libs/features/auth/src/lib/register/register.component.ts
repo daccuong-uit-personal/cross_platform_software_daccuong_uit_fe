@@ -5,6 +5,7 @@ import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '@fe/core';
 import { UiButton, UiCard } from '@fe/ui';
 import { TranslocoModule } from '@jsverse/transloco';
+import { toast } from 'ngx-sonner';
 
 @Component({
   standalone: true,
@@ -21,48 +22,63 @@ import { TranslocoModule } from '@jsverse/transloco';
           <p class="mt-2 text-text-muted">Join our creator community today</p>
         </div>
 
-        @if (errorMessage) {
-          <div class="mb-6 rounded-xl bg-red-50 p-4 text-sm text-red-600 border border-red-100 animate-in fade-in slide-in-from-top-2">
-            {{ errorMessage }}
-          </div>
-        }
-
         <form (ngSubmit)="onSubmit()" class="grid gap-6">
           <div class="space-y-2">
-            <label for="username" class="text-sm font-semibold text-text-base">Username</label>
+            <label for="username" class="text-sm font-semibold text-text-base" [class.text-red-500]="fieldErrors['username']">Username</label>
             <input
               id="username"
               name="username"
               type="text"
               [(ngModel)]="credentials.username"
+              (ngModelChange)="fieldErrors['username'] = false"
               placeholder="creator123"
-              class="h-12 w-full rounded-xl border border-surface-subtle bg-white/50 px-4 text-text-base outline-none transition-all focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/10"
+              class="h-12 w-full rounded-xl border bg-white/50 px-4 text-text-base outline-none transition-all focus:ring-4"
+              [ngClass]="fieldErrors['username'] ? 'border-red-500 focus:border-red-500 focus:ring-red-500/10' : 'border-surface-subtle focus:border-brand-primary focus:ring-brand-primary/10'"
               required
             />
           </div>
 
           <div class="space-y-2">
-            <label for="email" class="text-sm font-semibold text-text-base">Email</label>
+            <label for="displayName" class="text-sm font-semibold text-text-base" [class.text-red-500]="fieldErrors['displayName']">Display Name</label>
+            <input
+              id="displayName"
+              name="displayName"
+              type="text"
+              [(ngModel)]="credentials.displayName"
+              (ngModelChange)="fieldErrors['displayName'] = false"
+              placeholder="Your Name"
+              class="h-12 w-full rounded-xl border bg-white/50 px-4 text-text-base outline-none transition-all focus:ring-4"
+              [ngClass]="fieldErrors['displayName'] ? 'border-red-500 focus:border-red-500 focus:ring-red-500/10' : 'border-surface-subtle focus:border-brand-primary focus:ring-brand-primary/10'"
+              required
+            />
+          </div>
+
+          <div class="space-y-2">
+            <label for="email" class="text-sm font-semibold text-text-base" [class.text-red-500]="fieldErrors['email']">Email</label>
             <input
               id="email"
               name="email"
               type="email"
               [(ngModel)]="credentials.email"
+              (ngModelChange)="fieldErrors['email'] = false"
               placeholder="name@example.com"
-              class="h-12 w-full rounded-xl border border-surface-subtle bg-white/50 px-4 text-text-base outline-none transition-all focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/10"
+              class="h-12 w-full rounded-xl border bg-white/50 px-4 text-text-base outline-none transition-all focus:ring-4"
+              [ngClass]="fieldErrors['email'] ? 'border-red-500 focus:border-red-500 focus:ring-red-500/10' : 'border-surface-subtle focus:border-brand-primary focus:ring-brand-primary/10'"
               required
             />
           </div>
 
           <div class="space-y-2">
-            <label for="password" class="text-sm font-semibold text-text-base">Password</label>
+            <label for="password" class="text-sm font-semibold text-text-base" [class.text-red-500]="fieldErrors['password']">Password</label>
             <input
               id="password"
               name="password"
               type="password"
               [(ngModel)]="credentials.password"
+              (ngModelChange)="fieldErrors['password'] = false"
               placeholder="••••••••"
-              class="h-12 w-full rounded-xl border border-surface-subtle bg-white/50 px-4 text-text-base outline-none transition-all focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/10"
+              class="h-12 w-full rounded-xl border bg-white/50 px-4 text-text-base outline-none transition-all focus:ring-4"
+              [ngClass]="fieldErrors['password'] ? 'border-red-500 focus:border-red-500 focus:ring-red-500/10' : 'border-surface-subtle focus:border-brand-primary focus:ring-brand-primary/10'"
               required
             />
           </div>
@@ -88,31 +104,57 @@ export class RegisterComponent {
 
   credentials = {
     username: '',
+    displayName: '',
     email: '',
     password: ''
   };
 
-  errorMessage = '';
   isLoading = false;
+  fieldErrors: Record<string, boolean> = {};
 
   onSubmit() {
-    if (!this.credentials.username || !this.credentials.email || !this.credentials.password) {
-      this.errorMessage = 'Please complete all fields to continue.';
+    this.fieldErrors = {}; // Reset errors
+    let isValid = true;
+    const emailRegex = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;
+
+    if (!this.credentials.username || this.credentials.username.length < 3) {
+      this.fieldErrors['username'] = true;
+      isValid = false;
+    }
+
+    if (!this.credentials.displayName || this.credentials.displayName.trim().length === 0) {
+      this.fieldErrors['displayName'] = true;
+      isValid = false;
+    }
+
+    if (!this.credentials.email || !emailRegex.test(this.credentials.email)) {
+      this.fieldErrors['email'] = true;
+      isValid = false;
+    }
+
+    if (!this.credentials.password || this.credentials.password.length < 8) {
+      this.fieldErrors['password'] = true;
+      isValid = false;
+    }
+
+    if (!isValid) {
+      toast.error('Please check the highlighted fields.');
       return;
     }
 
-    this.errorMessage = '';
     this.isLoading = true;
 
     this.authService.register(this.credentials).subscribe({
       next: () => {
         this.isLoading = false;
+        toast.success('Account created successfully!');
         this.router.navigate(['/dashboard']);
       },
-      error: (error) => {
+      error: () => {
         this.isLoading = false;
-        this.errorMessage = error?.message || 'Unable to register. Please try again.';
+        // Global error interceptor handles the API error toast
       }
     });
   }
 }
+
