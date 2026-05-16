@@ -1,10 +1,18 @@
 import { Route } from '@angular/router';
-import { DashboardPage, LoginPage, RegisterPage } from './pages';
 
 export const appRoutes: Route[] = [
-  { path: '', pathMatch: 'full', redirectTo: 'login' },
-  { path: 'login', component: LoginPage },
-  { path: 'register', component: RegisterPage },
-  { path: 'dashboard', component: DashboardPage },
-  { path: '**', redirectTo: 'login' },
+  { path: '', pathMatch: 'full', redirectTo: 'auth/login' },
+  {
+    path: 'auth',
+    loadChildren: () => import('@fe/features/auth').then((m) => m.authRoutes),
+  },
+  {
+    path: 'dashboard',
+    loadChildren: () =>
+      import('@fe/features/dashboard').then((m) => m.dashboardRoutes),
+  },
+  { path: 'login', redirectTo: 'auth/login' },
+  { path: 'register', redirectTo: 'auth/register' },
+  { path: '**', redirectTo: 'auth/login' },
 ];
+

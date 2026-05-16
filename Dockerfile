@@ -3,9 +3,9 @@ FROM node:22-alpine AS build
 
 WORKDIR /app
 
-# Install dependencies
+# Install dependencies - using cache efficiently
 COPY package*.json ./
-RUN npm install
+RUN npm ci
 
 # Copy source
 COPY . .
@@ -15,7 +15,17 @@ RUN npx nx build app-shell --configuration=production
 
 # Production image
 FROM nginx:alpine
-# In modern Angular, the build output is usually in dist/apps/app-shell/browser
+
+# Copy custom nginx config
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Copy build output
 COPY --from=build /app/dist/apps/app-shell/browser /usr/share/nginx/html
+
 EXPOSE 80
+
+HEALTHCHECK --interval=30s --timeout=3s \
+  CMD wget -qO- http://localhost/ || exit 1
+
 CMD ["nginx", "-g", "daemon off;"]
+

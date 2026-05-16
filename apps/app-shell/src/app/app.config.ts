@@ -1,19 +1,33 @@
 import {
   ApplicationConfig,
-  provideZoneChangeDetection,
+  provideZonelessChangeDetection,
 } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { isDevMode } from '@angular/core';
+import { provideTransloco } from '@jsverse/transloco';
 import { appRoutes } from './routes';
-import { authInterceptor, errorInterceptor } from 'core';
+import { authInterceptor, errorInterceptor } from '@fe/core';
+import { TranslocoHttpLoader } from './transloco-loader';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideZoneChangeDetection({ eventCoalescing: true }),
+    provideZonelessChangeDetection(),
     provideRouter(appRoutes),
     provideHttpClient(
       withInterceptors([authInterceptor, errorInterceptor])
     ),
+    provideTransloco({
+      config: {
+        availableLangs: ['en', 'vi'],
+        defaultLang: 'vi',
+        // Remove this option if your application doesn't support changing language in runtime.
+        reRenderOnLangChange: true,
+        prodMode: !isDevMode(),
+      },
+      loader: TranslocoHttpLoader,
+    }),
   ],
 };
+
 

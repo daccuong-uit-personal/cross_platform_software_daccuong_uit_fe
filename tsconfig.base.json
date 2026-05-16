@@ -14,9 +14,10 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "paths": {
-      "ui": ["./libs/ui/src/index.ts"],
-      "tokens": ["./libs/tokens/src/index.ts"],
-      "core": ["./libs/core/src/index.ts"]
+      "@fe/ui": ["./libs/ui/src/index.ts"],
+      "@fe/core": ["./libs/core/src/index.ts"],
+      "@fe/features/auth": ["./libs/features/auth/src/index.ts"],
+      "@fe/features/dashboard": ["./libs/features/dashboard/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

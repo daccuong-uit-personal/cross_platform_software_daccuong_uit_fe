@@ -1,39 +1,45 @@
-@import '../../../libs/tokens/src/lib/design-tokens.css';
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss";
+@source "./**/*.{html,ts}";
+@source "../../../libs/**/*.{html,ts}";
 
-/* Global Styles */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+@theme {
+  /* Premium Palette - Indigo & Violet */
+  --color-primary-500: oklch(0.55 0.22 260);
+  --color-primary-600: oklch(0.48 0.2 260);
+  --color-primary-700: oklch(0.42 0.18 260);
+
+  /* Semantic Tokens */
+  --color-brand-primary: oklch(0.48 0.2 260);
+  --color-brand-primary-hover: oklch(0.55 0.22 260);
+
+  --color-surface-base: oklch(0.99 0.005 260);
+  --color-surface-subtle: oklch(0.97 0.01 260);
+
+  --color-text-base: oklch(0.2 0.04 260);
+  --color-text-muted: oklch(0.45 0.02 260);
+
+  --shadow-glow: 0 0 20px 0 oklch(0.55 0.22 260 / 0.2);
+  --shadow-premium: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
 }
 
 body {
-  font-family: var(--font-family-sans);
-  font-size: var(--font-size-md);
-  line-height: var(--line-height-normal);
-  color: var(--color-text-primary);
-  background-color: var(--color-bg-base);
+  font-family: 'Outfit', sans-serif;
+  background-color: var(--color-surface-base);
+  color: var(--color-text-base);
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  background-image:
+    radial-gradient(at 0% 0%, oklch(0.96 0.04 260 / 0.35) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, oklch(0.96 0.04 300 / 0.2) 0px, transparent 50%),
+    radial-gradient(at 50% 100%, oklch(0.96 0.04 240 / 0.15) 0px, transparent 60%);
+  background-attachment: fixed;
+  min-height: 100vh;
 }
 
-h1, h2, h3, h4, h5, h6 {
-  color: var(--color-text-brand);
-  font-weight: var(--font-weight-bold);
-  line-height: var(--line-height-tight);
-}
-
-a {
-  color: var(--color-primary-500);
-  text-decoration: none;
-  transition: var(--transition-fast);
-}
-
-a:hover {
-  color: var(--color-primary-600);
-}
-
-button {
-  cursor: pointer;
-  font-family: inherit;
+.glass-effect {
+  background: rgb(255 255 255 / 0.75);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgb(255 255 255 / 0.3);
+  box-shadow: var(--shadow-premium);
 }
