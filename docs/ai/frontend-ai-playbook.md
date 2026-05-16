@@ -87,8 +87,8 @@ type:core    → core only
 | **0** | Cross Project Foundation Platform | ✅ Done |
 | **1** | Frontend Foundation Platform | ✅ Done |
 | **2** | Design System Platform | ✅ Done |
-| **3** | Auth + Identity Platform | 🔜 Next |
-| **4** | Media Platform | ⏳ Planned |
+| **3** | Auth + Identity Platform | ✅ Done |
+| **4** | Media Platform | 🔜 Next |
 | **5** | Social Platform | ⏳ Planned |
 | **6** | Realtime Platform | ⏳ Planned |
 | **7** | Search Platform | ⏳ Planned |
@@ -122,6 +122,12 @@ type:core    → core only
 - Core UI Components: Refactor `UiButton` và `UiCard` sử dụng tokens. Thêm `UiInput` hỗ trợ `ControlValueAccessor` và @if control flow.
 - Utility Classes: Cung cấp bộ typography (`text-h1` đến `text-body`) và layout (`page-container`) chuẩn.
 - Infrastructure Stability: Toàn bộ UI library được lint-checked và build-ready để tái sử dụng cho các phase sau.
+
+### Phase 3 — Auth + Identity Platform
+- Auth Feature Refactor: Cập nhật `LoginComponent` và `RegisterComponent` sử dụng `UiInput` và `UiButton` từ Design System.
+- Session Management: Tích hợp `AuthService.checkAuth()` tại `AppComponent` để khôi phục phiên đăng nhập khi reload.
+- Route Protection: Cấu hình `authGuard` bảo vệ Dashboard và `guestGuard` bảo vệ các trang Login/Register.
+- Validation & UX: Xử lý validation form chi tiết, thông báo lỗi qua `toast` và trạng thái `isLoading` mượt mà.
 
 ### Phase 15 — Social Intelligence
 - Aggregate từ backend aggregation service, không gọi direct external API.

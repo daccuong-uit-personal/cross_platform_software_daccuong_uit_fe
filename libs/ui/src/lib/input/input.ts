@@ -69,8 +69,8 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormsModule } from '@angular/f
         [type]="type"
         [placeholder]="placeholder"
         [disabled]="disabled"
-        [(ngModel)]="value"
-        (input)="onInputChange()"
+        [ngModel]="value"
+        (ngModelChange)="onModelChange($event)"
         (blur)="onTouched()"
       />
       @if (error) {
@@ -108,7 +108,8 @@ export class UiInput implements ControlValueAccessor {
     this.disabled = isDisabled;
   }
 
-  onInputChange(): void {
-    this.onChange(this.value);
+  onModelChange(val: unknown): void {
+    this.value = val;
+    this.onChange(val);
   }
 }
