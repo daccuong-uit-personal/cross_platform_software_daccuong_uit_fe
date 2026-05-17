@@ -9,7 +9,6 @@ import { AuthService } from '@fe/core';
   imports: [CommonModule, RouterModule],
   templateUrl: './app-shell.component.html',
 })
-
 export class AppShellComponent {
   authService = inject(AuthService);
 }

@@ -5,6 +5,8 @@ export const urlConfig = {
     login: '/auth/login',
     register: '/auth/register',
     refresh: '/auth/refresh',
+    sendOtp: '/auth/send-otp',
+    verifyOtp: '/auth/verify-otp',
   },
   profile: {
     me: '/profiles/me',

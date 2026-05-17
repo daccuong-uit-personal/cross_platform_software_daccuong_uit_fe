@@ -53,7 +53,8 @@
           "buildTarget": "app-shell:build:production"
         },
         "development": {
-          "buildTarget": "app-shell:build:development"
+          "buildTarget": "app-shell:build:development",
+          "hmr": true
         }
       },
       "defaultConfiguration": "development"

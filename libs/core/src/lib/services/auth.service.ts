@@ -40,6 +40,10 @@ export class AuthService {
     );
   }
 
+  sendOtp(phoneNumber: string) {
+    return this.api.post<{ message: string }>(urlConfig.auth.sendOtp, { phoneNumber });
+  }
+
   logout() {
     this._user.set(null);
     localStorage.removeItem('token');

@@ -1,144 +1,165 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
-import { AuthService } from '@fe/core';
-import { UiButton, UiCard, UiInput } from '@fe/ui';
+import { Router } from '@angular/router';
+import { AuthService, ThemeService } from '@fe/core';
 import { TranslocoModule } from '@jsverse/transloco';
 import { toast } from 'ngx-sonner';
+
+import { RegisterHeader } from './components/register-header.component';
+import { RegisterLanguageSelector } from './components/register-language-selector.component';
+import { RegisterSelection } from './components/register-selection.component';
+import { RegisterFormEmail } from './components/register-form-email.component';
+
+type RegisterView = 'selection' | 'email-register';
 
 @Component({
   standalone: true,
   selector: 'feat-auth-register',
-  imports: [CommonModule, FormsModule, RouterModule, UiCard, UiButton, UiInput, TranslocoModule],
+  imports: [
+    CommonModule,
+    TranslocoModule,
+    RegisterHeader,
+    RegisterLanguageSelector,
+    RegisterSelection,
+    RegisterFormEmail
+  ],
   template: `
-    <div class="flex min-h-screen w-full items-center justify-center p-6" *transloco="let t">
-      <lib-card class="w-full max-w-md">
-        <div class="mb-10 text-center">
-          <div class="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-brand-primary text-3xl font-bold text-white shadow-glow">
-            SC
-          </div>
-          <h1 class="text-h1 text-text-base mb-2">Create account</h1>
-          <p class="text-muted">Join our creator community today</p>
+    <div
+      class="flex flex-col min-h-screen w-full bg-surface-base transition-colors duration-300"
+      [class.dark]="isDark()"
+      *transloco="let t"
+    >
+      <!-- Header -->
+      <auth-register-header (logoClicked)="currentView.set('selection')" />
+
+      <!-- Main content — centered, with padding-bottom to clear fixed 2-row footer -->
+      <div
+        class="flex-1 flex flex-col items-center justify-center px-4"
+        style="padding-top: 32px; padding-bottom: 130px;"
+      >
+        <div class="w-full" style="max-width: 480px; display: flex; flex-direction: column; align-items: center;">
+          @if (currentView() === 'selection') {
+            <auth-register-selection (methodSelected)="onMethodSelected($event)" />
+          } @else if (currentView() === 'email-register') {
+            <auth-register-form-email
+              [isLoading]="isLoading"
+              [fieldErrors]="fieldErrors"
+              (back)="currentView.set('selection')"
+              (sendOtpRequested)="onSendOtp($event)"
+              (register)="onRegister($event)"
+            />
+          }
         </div>
+      </div>
 
-        <form (ngSubmit)="onSubmit()" class="grid gap-6">
-          <lib-input
-            label="Username"
-            placeholder="creator123"
-            type="text"
-            name="username"
-            [(ngModel)]="credentials.username"
-            (ngModelChange)="fieldErrors['username'] = false"
-            [error]="fieldErrors['username'] ? 'Username must be at least 3 characters' : ''"
-            required
-          />
-
-          <lib-input
-            label="Display Name"
-            placeholder="Your Name"
-            type="text"
-            name="displayName"
-            [(ngModel)]="credentials.displayName"
-            (ngModelChange)="fieldErrors['displayName'] = false"
-            [error]="fieldErrors['displayName'] ? 'Display name is required' : ''"
-            required
-          />
-
-          <lib-input
-            label="Email"
-            placeholder="name@example.com"
-            type="email"
-            name="email"
-            [(ngModel)]="credentials.email"
-            (ngModelChange)="fieldErrors['email'] = false"
-            [error]="fieldErrors['email'] ? 'Please enter a valid email address' : ''"
-            required
-          />
-
-          <lib-input
-            label="Password"
-            placeholder="••••••••"
-            type="password"
-            name="password"
-            [(ngModel)]="credentials.password"
-            (ngModelChange)="fieldErrors['password'] = false"
-            [error]="fieldErrors['password'] ? 'Password must be at least 6 characters' : ''"
-            required
-          />
-
-          <lib-button type="submit" [disabled]="isLoading" class="mt-4">
-            {{ isLoading ? 'Creating account...' : 'Create account' }}
-          </lib-button>
-        </form>
-
-        <div class="mt-8 text-center text-sm">
-          <span class="text-muted">Already have an account?</span>
-          <a routerLink="/auth/login" class="ml-1 font-bold text-brand-primary transition-colors hover:text-brand-primary-hover">
-            Sign in
-          </a>
-        </div>
-      </lib-card>
+      <!-- Fixed footer -->
+      <auth-register-language-selector
+        [isDark]="isDark()"
+        (themeToggled)="toggleTheme()"
+      />
     </div>
   `,
 })
 export class RegisterComponent {
   private authService = inject(AuthService);
+  private themeService = inject(ThemeService);
   private router = inject(Router);
 
-  credentials = {
-    username: '',
-    displayName: '',
-    email: '',
-    password: ''
-  };
+  currentView = signal<RegisterView>('selection');
+  isDark = computed(() => this.themeService.theme() === 'dark');
 
   isLoading = false;
   fieldErrors: Record<string, boolean> = {};
 
-  onSubmit() {
-    this.fieldErrors = {}; // Reset errors
-    let isValid = true;
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  toggleTheme() {
+    this.themeService.toggleTheme();
+  }
 
-    if (!this.credentials.username || this.credentials.username.length < 3) {
-      this.fieldErrors['username'] = true;
-      isValid = false;
+  onMethodSelected(method: string) {
+    if (method === 'email') {
+      this.currentView.set('email-register');
+    } else {
+      toast.info(`Phương thức ${method} sẽ sớm được hỗ trợ!`);
     }
+  }
 
-    if (!this.credentials.displayName || this.credentials.displayName.trim().length === 0) {
+  onSendOtp(phoneNumber: string) {
+    this.authService.sendOtp(phoneNumber).subscribe({
+      next: () => {
+        toast.success(`Mã OTP đã được gửi đến số điện thoại ${phoneNumber}!`);
+      },
+      error: (err) => {
+        toast.error('Gửi mã OTP thất bại. Vui lòng thử lại!');
+      }
+    });
+  }
+
+  onRegister(data: any) {
+    this.fieldErrors = {};
+    let isValid = true;
+
+    if (!data.displayName || data.displayName.trim().length === 0) {
       this.fieldErrors['displayName'] = true;
       isValid = false;
     }
 
-    if (!this.credentials.email || !emailRegex.test(this.credentials.email)) {
-      this.fieldErrors['email'] = true;
+    if (!data.username || data.username.length < 3) {
+      this.fieldErrors['username'] = true;
       isValid = false;
     }
 
-    if (!this.credentials.password || this.credentials.password.length < 8) {
+    if (data.tab === 'email') {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!data.email || !emailRegex.test(data.email)) {
+        this.fieldErrors['email'] = true;
+        isValid = false;
+      }
+    } else {
+      if (!data.phone) {
+        this.fieldErrors['phone'] = true;
+        isValid = false;
+      }
+      if (!data.otp) {
+        this.fieldErrors['otp'] = true;
+        isValid = false;
+      }
+    }
+
+    if (!data.password || data.password.length < 8) {
       this.fieldErrors['password'] = true;
       isValid = false;
     }
 
     if (!isValid) {
-      toast.error('Please check the highlighted fields.');
+      toast.error('Vui lòng kiểm tra các trường thông tin.');
       return;
     }
 
     this.isLoading = true;
 
-    this.authService.register(this.credentials).subscribe({
+    // Construct payload for AuthService matching standard phone/email register structure
+    const payload = data.tab === 'email' ? {
+      username: data.username,
+      displayName: data.displayName,
+      email: data.email,
+      password: data.password
+    } : {
+      username: data.username,
+      displayName: data.displayName,
+      phoneNumber: data.countryCode + data.phone,
+      otp: data.otp,
+      password: data.password
+    };
+
+    this.authService.register(payload).subscribe({
       next: () => {
         this.isLoading = false;
-        toast.success('Account created successfully!');
+        toast.success('Tạo tài khoản thành công!');
         this.router.navigate(['/dashboard']);
       },
       error: () => {
         this.isLoading = false;
-        // Global error interceptor handles the API error toast
       }
     });
   }
 }
-
