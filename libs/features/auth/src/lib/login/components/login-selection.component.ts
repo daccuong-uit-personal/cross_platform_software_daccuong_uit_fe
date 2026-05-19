@@ -4,12 +4,12 @@ import { UiActionButton } from '@fe/ui';
 
 @Component({
   standalone: true,
-  selector: 'auth-login-selection',
+  selector: 'feat-auth-login-selection',
   imports: [CommonModule, UiActionButton],
   template: `
     <div class="w-full max-w-[480px] fade-in">
       <div class="text-center mb-10">
-        <h1 class="text-h1 mb-3 text-text-base font-bold" style="font-size:2rem;">Đăng nhập vào Reels</h1>
+        <h1 class="text-h1 mb-3 text-text-base font-bold" style="font-size:2rem;">Đăng nhập vào Reals</h1>
         <p class="text-muted text-sm leading-relaxed">Quản lý tài khoản, kiểm tra thông báo, bình luận<br>trên các video, v.v.</p>
       </div>
 
@@ -23,7 +23,7 @@ import { UiActionButton } from '@fe/ui';
         <!-- Phone / Email / Username -->
         <lib-action-button (clicked)="methodSelected.emit('email')">
           <svg icon width="20" height="20" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M24 24C29.5228 24 34 19.5228 34 14C34 8.47715 29.5228 4 24 4C18.4772 4 14 8.47715 14 14C14 19.5228 18.4772 24 24 24Z" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/><path d="M42 44C42 34.0589 33.9411 26 24 26C14.0589 26 6 34.0589 6 44" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          Sử dụng số điện thoại/email/tên người dùng
+          Số điện thoại/email/tên người dùng
         </lib-action-button>
 
         <!-- Facebook -->

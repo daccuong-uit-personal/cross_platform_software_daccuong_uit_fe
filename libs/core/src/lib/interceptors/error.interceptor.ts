@@ -2,64 +2,80 @@ import { HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
 import { catchError, throwError, switchMap } from 'rxjs';
 import { inject } from '@angular/core';
 import { AuthService } from '../services/auth.service';
-import { toast } from 'ngx-sonner';
+import { ErrorService } from '../services/error.service';
+import { AppError, ErrorType } from '../models/error.model';
 
 /**
  * Global Error Interceptor
  * Standardizes error handling and manages authentication failures (401/403).
+ * Delegates to ErrorService for centralized error handling.
  */
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
+  const errorService = inject(ErrorService);
+
+  // Extract trace ID from response headers or generate one
+  const traceId = req.headers.get('X-Correlation-ID') || undefined;
 
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
-      let errorMessage = 'An unknown error occurred!';
+      // Handle 401 Unauthorized - Token Expired or Invalid
+      if (
+        error.status === 401 &&
+        !req.url.includes('/auth/login') &&
+        !req.url.includes('/auth/register') &&
+        !req.url.includes('/auth/refresh')
+      ) {
+        console.warn('[API] 401 Unauthorized, attempting to refresh token...');
 
-      // Extract error message from Backend response if available
-      if (error.error && error.error.message) {
-        errorMessage = error.error.message;
-      } else if (error.error instanceof ErrorEvent) {
-        // Client-side error
-        errorMessage = `Client Error: ${error.error.message}`;
-      } else {
-        // Fallback Server-side error
-        errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
-      }
-
-      // 401 Unauthorized - Token Expired
-      if (error.status === 401 && !req.url.includes('/auth/login') && !req.url.includes('/auth/refresh')) {
-        console.warn('[API Error] 401 Unauthorized, attempting to refresh token...');
-        
         // Attempt token refresh
         return authService.refresh().pipe(
           switchMap((res) => {
             if (res) {
               // Retry original request with new token
               const cloned = req.clone({
-                setHeaders: { Authorization: `Bearer ${res.accessToken}` }
+                setHeaders: { Authorization: `Bearer ${res.accessToken}` },
               });
               return next(cloned);
             } else {
-              // Refresh failed, logout
-              authService.logout();
-              toast.error('Session expired, please login again.');
-              return throwError(() => new Error('Session expired, please login again.'));
+              // Refresh failed, treat as session expired
+              const appError = new AppError({
+                type: ErrorType.SESSION_EXPIRED,
+                message: 'Token refresh failed',
+                status: 401,
+              });
+              errorService.handle(appError, 'TOKEN_REFRESH_FAILED');
+              return throwError(() => appError);
             }
           }),
           catchError((err) => {
-            authService.logout();
+            // Token refresh errored (network issue, server error, etc.)
+            if (err instanceof AppError) {
+              errorService.handle(err, 'TOKEN_REFRESH_ERROR');
+            } else {
+              const appError = AppError.fromClientError(err, traceId);
+              errorService.handle(appError, 'TOKEN_REFRESH_ERROR');
+            }
             return throwError(() => err);
           })
         );
       }
 
-      // Globally toast errors (except 401s which are either refreshed above or ignored)
-      if (error.status !== 401) {
-        toast.error(errorMessage);
+      // Convert to AppError for all other HTTP errors
+      const appError = AppError.fromHttpError(error.status, error.error, traceId);
+
+      // Handle specific error types
+      if (error.status === 403) {
+        errorService.handleAuthError('You do not have permission to perform this action.');
+      } else if (error.status === 401) {
+        // 401 on auth endpoints or others not handled above
+        errorService.handleAuthError('Authentication required.');
+      } else {
+        // All other errors
+        errorService.handle(appError, `HTTP_${error.status}`);
       }
 
-      console.error('[API Error]', errorMessage);
-      return throwError(() => new Error(errorMessage));
+      return throwError(() => appError);
     })
   );
 };

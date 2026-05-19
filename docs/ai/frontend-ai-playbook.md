@@ -99,8 +99,6 @@ type:core    → core only
 | **12** | Recommendation Platform | ⏳ Planned |
 | **13** | Performance Platform | ⏳ Planned |
 | **14** | Platform Engineering | ⏳ Planned |
-| **15** | Social Intelligence Platform | ⏳ Planned |
-| **16** | Social UX Replication (TikTok/IG/FB/X) | ⏳ Planned |
 
 ### Phase 0 — What was built
 - Design Token System: Semantic OKLCH color tokens trong `styles.css` via Tailwind v4 `@theme`.
@@ -128,19 +126,6 @@ type:core    → core only
 - Session Management: Tích hợp `AuthService.checkAuth()` tại `AppComponent` để khôi phục phiên đăng nhập khi reload.
 - Route Protection: Cấu hình `authGuard` bảo vệ Dashboard và `guestGuard` bảo vệ các trang Login/Register.
 - Validation & UX: Xử lý validation form chi tiết, thông báo lỗi qua `toast` và trạng thái `isLoading` mượt mà.
-
-### Phase 15 — Social Intelligence
-- Aggregate từ backend aggregation service, không gọi direct external API.
-- RxJS streams + Web Workers cho heavy computation.
-- IndexedDB cho offline browsing; Service Workers cho background monitoring.
-
-### Phase 16 — Social UX Replication
-- TikTok: vertical swipe feed, video player, duet inspiration.
-- Instagram: Reels, Stories carousel, Explore grid.
-- Facebook: feed, group dynamics, live video.
-- X/Twitter: timeline, thread view, trending display.
-- Custom gesture handling (swipe, double-tap, long-press) — NO external platform SDK.
-- Virtual scrolling + intersection observer cho 60fps mobile.
 
 ---
 

@@ -1,5 +1,5 @@
 @import 'tailwindcss';
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Syne:wght@800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Syne:wght@800&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
 
 /* 
   NOTE: Manual CSS variables as fallback for Tailwind v4 
@@ -11,6 +11,9 @@
   --color-warning: oklch(0.75 0.18 85);
   --color-danger: oklch(0.55 0.22 25);
   --color-info: oklch(0.6 0.18 210);
+  
+  /* Dynamic Typography */
+  --font-family: 'Outfit', sans-serif;
 }
 
 /* Base Reset & Core Styles */
@@ -22,12 +25,17 @@
 
 body {
   margin: 0;
-  font-family: 'Outfit', sans-serif;
+  font-family: var(--font-family), sans-serif;
   background-color: var(--color-surface-base);
   color: var(--color-text-base);
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition: background-color 0.3s ease, color 0.3s ease, font-family 0.3s ease;
+}
+
+/* Global Font Override for custom font switching */
+body, button, input, select, textarea, .tiktok-btn {
+  font-family: var(--font-family), sans-serif !important;
 }
 
 /* Light Theme */
@@ -54,6 +62,32 @@ body {
   --color-btn-hover: #3a3a3a;
   --color-btn-border: rgba(255, 255, 255, 0.12);
   --color-btn-border-hover: rgba(255, 255, 255, 0.2);
+}
+
+/* Ocean Theme */
+.ocean {
+  --color-surface-base: #0f1c30;
+  --color-surface-subtle: #182a45;
+  --color-border-subtle: #253e61;
+  --color-text-base: #e0f2fe;
+  --color-text-muted: #93c5fd;
+  --color-btn-bg: #182a45;
+  --color-btn-hover: #253e61;
+  --color-btn-border: rgba(147, 197, 253, 0.2);
+  --color-btn-border-hover: rgba(147, 197, 253, 0.4);
+}
+
+/* Forest Theme */
+.forest {
+  --color-surface-base: #0e1d15;
+  --color-surface-subtle: #172d21;
+  --color-border-subtle: #234432;
+  --color-text-base: #e8f5e9;
+  --color-text-muted: #a5d6a7;
+  --color-btn-bg: #172d21;
+  --color-btn-hover: #234432;
+  --color-btn-border: rgba(165, 214, 167, 0.2);
+  --color-btn-border-hover: rgba(165, 214, 167, 0.4);
 }
 
 /* TikTok Brand */

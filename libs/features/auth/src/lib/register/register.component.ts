@@ -26,11 +26,14 @@ type RegisterView = 'selection' | 'email-register';
   template: `
     <div
       class="flex flex-col min-h-screen w-full bg-surface-base transition-colors duration-300"
-      [class.dark]="isDark()"
+      [class.light]="theme() === 'light'"
+      [class.dark]="theme() === 'dark'"
+      [class.ocean]="theme() === 'ocean'"
+      [class.forest]="theme() === 'forest'"
       *transloco="let t"
     >
       <!-- Header -->
-      <auth-register-header (logoClicked)="currentView.set('selection')" />
+      <feat-auth-register-header (logoClicked)="currentView.set('selection')" />
 
       <!-- Main content — centered, with padding-bottom to clear fixed 2-row footer -->
       <div
@@ -39,9 +42,9 @@ type RegisterView = 'selection' | 'email-register';
       >
         <div class="w-full" style="max-width: 480px; display: flex; flex-direction: column; align-items: center;">
           @if (currentView() === 'selection') {
-            <auth-register-selection (methodSelected)="onMethodSelected($event)" />
+            <feat-auth-register-selection (methodSelected)="onMethodSelected($event)" />
           } @else if (currentView() === 'email-register') {
-            <auth-register-form-email
+            <feat-auth-register-form-email
               [isLoading]="isLoading"
               [fieldErrors]="fieldErrors"
               (back)="currentView.set('selection')"
@@ -53,10 +56,7 @@ type RegisterView = 'selection' | 'email-register';
       </div>
 
       <!-- Fixed footer -->
-      <auth-register-language-selector
-        [isDark]="isDark()"
-        (themeToggled)="toggleTheme()"
-      />
+      <feat-auth-register-language-selector />
     </div>
   `,
 })
@@ -66,7 +66,7 @@ export class RegisterComponent {
   private router = inject(Router);
 
   currentView = signal<RegisterView>('selection');
-  isDark = computed(() => this.themeService.theme() === 'dark');
+  theme = this.themeService.theme;
 
   isLoading = false;
   fieldErrors: Record<string, boolean> = {};

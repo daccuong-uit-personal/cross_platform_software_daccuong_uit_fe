@@ -1,7 +1,9 @@
+import { HttpContext } from '@angular/common/http';
 import { Injectable, signal, computed, inject } from '@angular/core';
 import { ApiService } from './api.service';
 import { tap, catchError, of, switchMap } from 'rxjs';
 import { urlConfig } from '../config/url-config';
+import { showGlobalLoading } from '../interceptors/loading.interceptor';
 
 export interface User {
   id: string;
@@ -27,16 +29,20 @@ export class AuthService {
   isAuthenticated = computed(() => !!this._user());
 
   login(credentials: Record<string, unknown>) {
-    return this.api.post<AuthResponse>(urlConfig.auth.login, credentials).pipe(
+    const context = new HttpContext().set(showGlobalLoading, true);
+
+    return this.api.post<AuthResponse>(urlConfig.auth.login, credentials, { context }).pipe(
       tap(res => this.storeTokens(res)),
-      switchMap(() => this.fetchProfile())
+      switchMap(() => this.fetchProfile(true))
     );
   }
 
   register(data: Record<string, unknown>) {
-    return this.api.post<AuthResponse>(urlConfig.auth.register, data).pipe(
+    const context = new HttpContext().set(showGlobalLoading, true);
+
+    return this.api.post<AuthResponse>(urlConfig.auth.register, data, { context }).pipe(
       tap(res => this.storeTokens(res)),
-      switchMap(() => this.fetchProfile())
+      switchMap(() => this.fetchProfile(true))
     );
   }
 
@@ -84,8 +90,12 @@ export class AuthService {
     localStorage.setItem('refreshToken', res.refreshToken);
   }
 
-  private fetchProfile() {
-    return this.api.get<User>(urlConfig.profile.me).pipe(
+  private fetchProfile(useGlobalLoading = false) {
+    const options = useGlobalLoading
+      ? { context: new HttpContext().set(showGlobalLoading, true) }
+      : undefined;
+
+    return this.api.get<User>(urlConfig.profile.me, options).pipe(
       tap(user => this._user.set(user))
     );
   }

@@ -7,7 +7,7 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { isDevMode } from '@angular/core';
 import { provideTransloco } from '@jsverse/transloco';
 import { appRoutes } from './routes';
-import { authInterceptor, errorInterceptor } from '@fe/core';
+import { authInterceptor, errorInterceptor, loadingInterceptor } from '@fe/core';
 import { TranslocoHttpLoader } from './transloco-loader';
 
 export const appConfig: ApplicationConfig = {
@@ -15,7 +15,7 @@ export const appConfig: ApplicationConfig = {
     provideZonelessChangeDetection(),
     provideRouter(appRoutes),
     provideHttpClient(
-      withInterceptors([authInterceptor, errorInterceptor])
+      withInterceptors([authInterceptor, loadingInterceptor, errorInterceptor])
     ),
     provideTransloco({
       config: {

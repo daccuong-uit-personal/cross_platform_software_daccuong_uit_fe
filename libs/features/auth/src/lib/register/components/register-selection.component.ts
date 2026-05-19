@@ -4,7 +4,7 @@ import { UiActionButton } from '@fe/ui';
 
 @Component({
   standalone: true,
-  selector: 'auth-register-selection',
+  selector: 'feat-auth-register-selection',
   imports: [CommonModule, UiActionButton],
   template: `
     <div class="w-full max-w-[480px] fade-in">

@@ -1,11 +1,12 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { UiInlineLoaderComponent } from '@fe/ui';
 
 @Component({
   standalone: true,
-  selector: 'auth-login-form-email',
-  imports: [CommonModule, FormsModule],
+  selector: 'feat-auth-login-form-email',
+  imports: [CommonModule, FormsModule, UiInlineLoaderComponent],
   styles: [`
     .form-wrap {
       width: 100%;
@@ -171,6 +172,16 @@ import { FormsModule } from '@angular/forms';
     }
     .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
+    .form-wrap {
+      position: relative;
+    }
+
+    .form-content.loading-active {
+      opacity: 0.75;
+      filter: blur(0.8px);
+    }
+
+
     /* ── Back link ── */
     .back-link {
       display: flex;
@@ -198,10 +209,11 @@ import { FormsModule } from '@angular/forms';
   `],
   template: `
     <div class="form-wrap fade-in">
-      <!-- Title -->
-      <h1 style="font-size:1.75rem; font-weight:700; text-align:center; margin-bottom:20px; color: var(--color-text-base);">
-        Đăng nhập
-      </h1>
+      <div class="form-content" [class.loading-active]="isLoading">
+        <!-- Title -->
+        <h1 style="font-size:1.75rem; font-weight:700; text-align:center; margin-bottom:20px; color: var(--color-text-base);">
+          Đăng nhập
+        </h1>
 
       <!-- Tab bar -->
       <div class="tab-bar">
@@ -315,6 +327,10 @@ import { FormsModule } from '@angular/forms';
         </div>
       }
 
+      <ng-container *ngIf="isLoading">
+        <lib-inline-loader></lib-inline-loader>
+      </ng-container>
+
       <!-- Submit -->
       <button
         type="button"
@@ -333,6 +349,8 @@ import { FormsModule } from '@angular/forms';
         </svg>
         Quay lại
       </button>
+      </div>
+
     </div>
   `,
 })

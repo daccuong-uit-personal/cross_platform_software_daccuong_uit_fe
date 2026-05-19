@@ -1,24 +1,15 @@
 import { Component, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { LogoComponent } from '@fe/ui';
 
 @Component({
   standalone: true,
-  selector: 'auth-register-header',
-  imports: [CommonModule],
+  selector: 'feat-auth-register-header',
+  imports: [CommonModule, LogoComponent],
   template: `
     <div class="flex items-center justify-between px-6 py-4 md:px-10 md:py-5 bg-surface-base">
       <!-- Logo -->
-      <div class="flex items-center gap-2 cursor-pointer" (click)="logoClicked.emit()">
-        <span style="
-          font-family: 'Syne', sans-serif;
-          font-weight: 800;
-          font-size: 26px;
-          letter-spacing: 2px;
-          color: var(--color-text-base);
-          line-height: 1;
-          user-select: none;
-        ">REELS</span>
-      </div>
+      <ui-logo (clicked)="logoClicked.emit()"></ui-logo>
 
       <!-- Feedback link -->
       <div class="flex items-center gap-4">

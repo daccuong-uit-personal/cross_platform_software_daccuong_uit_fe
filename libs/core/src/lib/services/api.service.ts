@@ -1,7 +1,8 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { Observable, map } from 'rxjs';
+import { HttpClient, HttpHeaders, HttpParams, HttpContext } from '@angular/common/http';
+import { Observable, map, of } from 'rxjs';
 import { appConfig } from '../config/app-config';
+import { CacheService } from './cache.service';
 
 export interface ApiOptions {
   headers?: HttpHeaders | { [header: string]: string | string[] };
@@ -10,6 +11,8 @@ export interface ApiOptions {
   reportProgress?: boolean;
   responseType?: 'json';
   withCredentials?: boolean;
+  context?: HttpContext;
+  cache?: boolean | number; // Enable cache or specify TTL in ms
 }
 
 @Injectable({
@@ -17,6 +20,7 @@ export interface ApiOptions {
 })
 export class ApiService {
   private readonly http = inject(HttpClient);
+  private readonly cache = inject(CacheService);
   private readonly apiBase = appConfig.apiUrl;
 
   private unwrap<T>(source: Observable<unknown>): Observable<T> {
@@ -36,24 +40,74 @@ export class ApiService {
     );
   }
 
+  /**
+   * Remove cache option from ApiOptions to avoid passing to HttpClient
+   */
+  private sanitizeOptions(options?: ApiOptions): Omit<ApiOptions, 'cache'> {
+    if (!options) return {};
+    const { cache, ...sanitized } = options;
+    return sanitized;
+  }
+
+  /**
+   * Generate cache key from path and params
+   */
+  private getCacheKey(path: string, params?: HttpParams | Record<string, unknown>): string {
+    let key = path;
+    if (params) {
+      if (params instanceof HttpParams) {
+        key += `?${params.toString()}`;
+      } else {
+        key += `?${JSON.stringify(params)}`;
+      }
+    }
+    return key;
+  }
+
   get<T>(path: string, options?: ApiOptions): Observable<T> {
-    return this.unwrap<T>(this.http.get(`${this.apiBase}${path}`, options));
+    const cacheKey = this.getCacheKey(path, options?.params);
+    const cacheConfig = options?.cache;
+
+    // Check cache first
+    if (cacheConfig) {
+      const cached = this.cache.get<T>(cacheKey);
+      if (cached) {
+        return of(cached);
+      }
+    }
+
+    // Fetch from API
+    const sanitized = this.sanitizeOptions(options);
+    return this.unwrap<T>(this.http.get(`${this.apiBase}${path}`, sanitized)).pipe(
+      map(data => {
+        // Store in cache if enabled
+        if (cacheConfig) {
+          const ttl = typeof cacheConfig === 'number' ? cacheConfig : undefined;
+          this.cache.set(cacheKey, data, ttl);
+        }
+        return data;
+      })
+    );
   }
 
   post<T>(path: string, body: unknown = {}, options?: ApiOptions): Observable<T> {
-    return this.unwrap<T>(this.http.post(`${this.apiBase}${path}`, body, options));
+    const sanitized = this.sanitizeOptions(options);
+    return this.unwrap<T>(this.http.post(`${this.apiBase}${path}`, body, sanitized));
   }
 
   put<T>(path: string, body: unknown = {}, options?: ApiOptions): Observable<T> {
-    return this.unwrap<T>(this.http.put(`${this.apiBase}${path}`, body, options));
+    const sanitized = this.sanitizeOptions(options);
+    return this.unwrap<T>(this.http.put(`${this.apiBase}${path}`, body, sanitized));
   }
 
   patch<T>(path: string, body: unknown = {}, options?: ApiOptions): Observable<T> {
-    return this.unwrap<T>(this.http.patch(`${this.apiBase}${path}`, body, options));
+    const sanitized = this.sanitizeOptions(options);
+    return this.unwrap<T>(this.http.patch(`${this.apiBase}${path}`, body, sanitized));
   }
 
   delete<T>(path: string, options?: ApiOptions): Observable<T> {
-    return this.unwrap<T>(this.http.delete(`${this.apiBase}${path}`, options));
+    const sanitized = this.sanitizeOptions(options);
+    return this.unwrap<T>(this.http.delete(`${this.apiBase}${path}`, sanitized));
   }
 }
 

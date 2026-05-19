@@ -17,6 +17,10 @@
           {
             "glob": "**/*",
             "input": "apps/app-shell/public"
+          },
+          {
+            "glob": "**/*",
+            "input": "public"
           }
         ],
         "styles": ["apps/app-shell/src/styles.css"]

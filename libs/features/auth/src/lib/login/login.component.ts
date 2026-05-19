@@ -1,7 +1,8 @@
-import { Component, inject, signal, computed } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { AuthService, ThemeService } from '@fe/core';
+import { ThemeService } from '@fe/core';
+import { AuthFacade } from '../data-access/auth.facade';
 import { TranslocoModule } from '@jsverse/transloco';
 import { toast } from 'ngx-sonner';
 
@@ -26,11 +27,14 @@ type LoginView = 'selection' | 'email-login';
   template: `
     <div
       class="flex flex-col min-h-screen w-full bg-surface-base transition-colors duration-300"
-      [class.dark]="isDark()"
+      [class.light]="theme() === 'light'"
+      [class.dark]="theme() === 'dark'"
+      [class.ocean]="theme() === 'ocean'"
+      [class.forest]="theme() === 'forest'"
       *transloco="let t"
     >
       <!-- Header -->
-      <auth-login-header (logoClicked)="currentView.set('selection')" />
+      <feat-auth-login-header (logoClicked)="currentView.set('selection')" />
 
       <!-- Main content — centered, with padding-bottom to clear fixed 2-row footer -->
       <div
@@ -39,10 +43,10 @@ type LoginView = 'selection' | 'email-login';
       >
         <div class="w-full" style="max-width: 480px; display: flex; flex-direction: column; align-items: center;">
           @if (currentView() === 'selection') {
-            <auth-login-selection (methodSelected)="onMethodSelected($event)" />
+            <feat-auth-login-selection (methodSelected)="onMethodSelected($event)" />
           } @else if (currentView() === 'email-login') {
-            <auth-login-form-email
-              [isLoading]="isLoading"
+            <feat-auth-login-form-email
+              [isLoading]="authFacade.isSubmitting$()"
               [fieldErrors]="fieldErrors"
               (back)="currentView.set('selection')"
               (sendOtpRequested)="onSendOtp($event)"
@@ -53,22 +57,18 @@ type LoginView = 'selection' | 'email-login';
       </div>
 
       <!-- Fixed footer -->
-      <auth-login-language-selector
-        [isDark]="isDark()"
-        (themeToggled)="toggleTheme()"
-      />
+      <feat-auth-login-language-selector />
     </div>
   `,
 })
 export class LoginComponent {
-  private authService = inject(AuthService);
   private themeService = inject(ThemeService);
   private router = inject(Router);
+  protected authFacade = inject(AuthFacade);
 
   currentView = signal<LoginView>('selection');
-  isDark = computed(() => this.themeService.theme() === 'dark');
+  theme = this.themeService.theme;
 
-  isLoading = false;
   fieldErrors: Record<string, boolean> = {};
 
   toggleTheme() {
@@ -84,12 +84,12 @@ export class LoginComponent {
   }
 
   onSendOtp(phoneNumber: string) {
-    this.authService.sendOtp(phoneNumber).subscribe({
+    this.authFacade.sendOtp(phoneNumber).subscribe({
       next: () => {
         toast.success(`Mã OTP đã được gửi đến số điện thoại ${phoneNumber}!`);
       },
-      error: (err) => {
-        toast.error('Gửi mã OTP thất bại. Vui lòng thử lại!');
+      error: () => {
+        // Toast already shown by the global error interceptor — no duplicate needed.
       }
     });
   }
@@ -144,16 +144,13 @@ export class LoginComponent {
       return;
     }
 
-    this.isLoading = true;
-
-    this.authService.login(payload).subscribe({
+    this.authFacade.login(payload).subscribe({
       next: () => {
-        this.isLoading = false;
         toast.success('Đăng nhập thành công!');
         this.router.navigate(['/dashboard']);
       },
       error: () => {
-        this.isLoading = false;
+        // Toast already shown by the global error interceptor — no duplicate needed.
       }
     });
   }
