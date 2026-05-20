@@ -5,9 +5,8 @@ import { ThemeService } from '@fe/core';
 import { AuthFacade } from '../data-access/auth.facade';
 import { TranslocoModule } from '@jsverse/transloco';
 import { toast } from 'ngx-sonner';
+import { UiAppHeader, UiAuthFooter } from '@fe/ui';
 
-import { LoginHeader } from './components/login-header.component';
-import { LoginLanguageSelector } from './components/login-language-selector.component';
 import { LoginSelection } from './components/login-selection.component';
 import { LoginFormEmail } from './components/login-form-email.component';
 
@@ -19,8 +18,8 @@ type LoginView = 'selection' | 'email-login';
   imports: [
     CommonModule,
     TranslocoModule,
-    LoginHeader,
-    LoginLanguageSelector,
+    UiAppHeader,
+    UiAuthFooter,
     LoginSelection,
     LoginFormEmail
   ],
@@ -34,7 +33,7 @@ type LoginView = 'selection' | 'email-login';
       *transloco="let t"
     >
       <!-- Header -->
-      <feat-auth-login-header (logoClicked)="currentView.set('selection')" />
+      <lib-ui-app-header context="login" (logoClicked)="currentView.set('selection')" />
 
       <!-- Main content — centered, with padding-bottom to clear fixed 2-row footer -->
       <div
@@ -57,7 +56,7 @@ type LoginView = 'selection' | 'email-login';
       </div>
 
       <!-- Fixed footer -->
-      <feat-auth-login-language-selector />
+      <lib-ui-auth-footer context="login" />
     </div>
   `,
 })

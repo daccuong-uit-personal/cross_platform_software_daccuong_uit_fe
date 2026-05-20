@@ -7,4 +7,7 @@ export * from './lib/logo/logo.component';
 export * from './lib/loader';
 export * from './lib/skeleton';
 export * from './lib/directives';
+export * from './lib/header/app-header.component';
+export * from './lib/footer/auth-footer.component';
+export * from './lib/footer/app-footer.component';
 

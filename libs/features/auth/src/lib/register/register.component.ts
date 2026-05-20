@@ -4,9 +4,8 @@ import { Router } from '@angular/router';
 import { AuthService, ThemeService } from '@fe/core';
 import { TranslocoModule } from '@jsverse/transloco';
 import { toast } from 'ngx-sonner';
+import { UiAppHeader, UiAuthFooter } from '@fe/ui';
 
-import { RegisterHeader } from './components/register-header.component';
-import { RegisterLanguageSelector } from './components/register-language-selector.component';
 import { RegisterSelection } from './components/register-selection.component';
 import { RegisterFormEmail } from './components/register-form-email.component';
 
@@ -18,8 +17,8 @@ type RegisterView = 'selection' | 'email-register';
   imports: [
     CommonModule,
     TranslocoModule,
-    RegisterHeader,
-    RegisterLanguageSelector,
+    UiAppHeader,
+    UiAuthFooter,
     RegisterSelection,
     RegisterFormEmail
   ],
@@ -33,7 +32,7 @@ type RegisterView = 'selection' | 'email-register';
       *transloco="let t"
     >
       <!-- Header -->
-      <feat-auth-register-header (logoClicked)="currentView.set('selection')" />
+      <lib-ui-app-header context="register" (logoClicked)="currentView.set('selection')" />
 
       <!-- Main content — centered, with padding-bottom to clear fixed 2-row footer -->
       <div
@@ -56,7 +55,7 @@ type RegisterView = 'selection' | 'email-register';
       </div>
 
       <!-- Fixed footer -->
-      <feat-auth-register-language-selector />
+      <lib-ui-auth-footer context="register" />
     </div>
   `,
 })
