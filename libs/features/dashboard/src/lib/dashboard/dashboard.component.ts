@@ -46,11 +46,13 @@ import { UiButton, UiCard } from '@fe/ui';
           </div>
           
           <div class="space-y-4">
-            <h3 class="text-lg font-bold text-text-base">Quick Start</h3>
+            <h3 class="text-lg font-bold text-text-base">Dashboard Status</h3>
             <p class="text-sm text-text-muted leading-relaxed">
-              Use the Social Commerce platform to build your shop, manage products, and grow your audience.
+              Admin and creator dashboard for managing platform content.
             </p>
-            <lib-button>Explore Studio</lib-button>
+            <button (click)="goHome()" class="inline-flex items-center justify-center rounded-xl border border-border-subtle bg-surface-base px-5 py-3 text-sm font-semibold text-text-base transition hover:bg-surface-subtle">
+              Back to home
+            </button>
           </div>
         </div>
       </lib-card>
@@ -69,5 +71,9 @@ export class DashboardComponent {
   logout() {
     this.authService.logout();
     this.router.navigate(['/auth/login']);
+  }
+
+  goHome() {
+    this.router.navigate(['/']);
   }
 }

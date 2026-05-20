@@ -3,7 +3,6 @@
   "compilerOptions": {
     "rootDir": ".",
     "baseUrl": ".",
-    "ignoreDeprecations": "6.0",
     "sourceMap": true,
     "declaration": false,
     "moduleResolution": "node",
@@ -19,7 +18,12 @@
       "@fe/ui": ["./libs/ui/src/index.ts"],
       "@fe/core": ["./libs/core/src/index.ts"],
       "@fe/features/auth": ["./libs/features/auth/src/index.ts"],
-      "@fe/features/dashboard": ["./libs/features/dashboard/src/index.ts"]
+      "@fe/features/dashboard": ["./libs/features/dashboard/src/index.ts"],
+      "@fe/features/home": ["./libs/features/home/src/index.ts"],
+      "@fe/features/profile": ["./libs/features/profile/src/index.ts"],
+      "@fe/features/media": ["./libs/features/media/src/index.ts"],
+      "@fe/domain/profile": ["./libs/domain/profile/src/index.ts"],
+      "@fe/domain/media": ["./libs/domain/media/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

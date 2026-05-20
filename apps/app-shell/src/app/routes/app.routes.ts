@@ -2,10 +2,22 @@ import { Route } from '@angular/router';
 import { authGuard } from '@fe/core';
 
 export const appRoutes: Route[] = [
-  { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
+  { path: '', pathMatch: 'full', redirectTo: 'home' },
   {
     path: 'auth',
     loadChildren: () => import('@fe/features/auth').then((m) => m.authRoutes),
+  },
+  {
+    path: 'home',
+    canActivate: [authGuard],
+    loadChildren: () =>
+      import('@fe/features/home').then((m) => m.homeRoutes),
+  },
+  {
+    path: 'profile',
+    canActivate: [authGuard],
+    loadChildren: () =>
+      import('@fe/features/profile').then((m) => m.profileRoutes),
   },
   {
     path: 'dashboard',
@@ -15,6 +27,6 @@ export const appRoutes: Route[] = [
   },
   { path: 'login', redirectTo: 'auth/login' },
   { path: 'register', redirectTo: 'auth/register' },
-  { path: '**', redirectTo: 'dashboard' },
+  { path: '**', redirectTo: 'home' },
 ];
 

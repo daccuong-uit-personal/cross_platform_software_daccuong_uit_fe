@@ -55,9 +55,14 @@ apps/
 
 libs/
 ├── core/            # API, auth, config, interceptors, guards — type:core
+├── domain/          # Shared business/domain logic — type:domain
+│   ├── profile/     # Profile domain model + API contract
+│   └── media/       # Media domain model + API contract
 ├── ui/              # Shared components, design tokens — type:ui
 └── features/
     ├── auth/        # Login, Register — type:feature, scope:auth
+    ├── profile/     # Profile page and UI flow — type:feature, scope:profile
+    ├── media/       # Media Studio page and UI flow — type:feature, scope:media
     └── dashboard/   # Dashboard — type:feature, scope:dashboard
 ```
 

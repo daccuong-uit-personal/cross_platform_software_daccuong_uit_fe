@@ -23,6 +23,7 @@ export interface AuthResponse {
 })
 export class AuthService {
   private api = inject(ApiService);
+  private readonly USER_KEY = 'user';
   private _user = signal<User | null>(null);
   
   user = this._user.asReadonly();
@@ -54,6 +55,7 @@ export class AuthService {
     this._user.set(null);
     localStorage.removeItem('token');
     localStorage.removeItem('refreshToken');
+    localStorage.removeItem(this.USER_KEY);
   }
 
   refresh() {
@@ -72,14 +74,18 @@ export class AuthService {
   checkAuth() {
     const token = localStorage.getItem('token');
     if (token) {
-      // Optimistically set a dummy user to unblock guards immediately
-      this._user.set({ id: 'loading', email: '' });
-      
+      const storedUser = this.restoreStoredUser();
+      if (storedUser) {
+        this._user.set(storedUser);
+      } else {
+        this._user.set({ id: 'loading', email: '' });
+      }
+
       this.fetchProfile().subscribe({
         error: (err) => {
           console.error('[AuthService] checkAuth failed:', err);
           // Only clear state. error.interceptor handles actual 401 logouts.
-          this._user.set(null); 
+          this._user.set(null);
         }
       });
     }
@@ -96,8 +102,29 @@ export class AuthService {
       : undefined;
 
     return this.api.get<User>(urlConfig.profile.me, options).pipe(
-      tap(user => this._user.set(user))
+      tap(user => {
+        this._user.set(user);
+        this.storeUser(user);
+      })
     );
+  }
+
+  private storeUser(user: User) {
+    try {
+      localStorage.setItem(this.USER_KEY, JSON.stringify(user));
+    } catch {
+      // Ignore storage failures.
+    }
+  }
+
+  private restoreStoredUser(): User | null {
+    try {
+      const saved = localStorage.getItem(this.USER_KEY);
+      if (!saved) return null;
+      return JSON.parse(saved) as User;
+    } catch {
+      return null;
+    }
   }
 }
 

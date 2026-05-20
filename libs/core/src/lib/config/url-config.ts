@@ -11,4 +11,9 @@ export const urlConfig = {
   profile: {
     me: '/profiles/me',
   },
+  media: {
+    upload: '/media/upload',
+    uploadBase64: '/media/upload-base64',
+    list: '/media',
+  },
 };
