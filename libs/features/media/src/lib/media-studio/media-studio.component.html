@@ -1,0 +1,18 @@
+<div class="media-studio">
+  <h2>Media Studio</h2>
+
+  <div class="controls">
+    <input placeholder="Filter by name" (input)="onFilterChange({ ...filters, name: $any($event.target).value })" />
+  </div>
+
+  <ui-shared-table
+    [columns]="columns"
+    [data]="items"
+    [total]="total"
+    [pageIndex]="page"
+    [pageSize]="pageSize"
+    (pageChange)="onPageChange($event)"
+    (sortChange)="onSortChange($event)"
+    (rowDelete)="onDelete($event)">
+  </ui-shared-table>
+</div>

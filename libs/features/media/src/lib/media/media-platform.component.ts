@@ -23,7 +23,7 @@ export interface MediaItem {
         <lib-card class="space-y-6 p-6">
           <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h1 class="text-3xl font-bold tracking-tight text-text-base">Media Studio</h1>
+              <h1 class="text-3xl font-bold tracking-tight text-text-base">Media Platform</h1>
               <p class="text-sm text-text-muted">Upload, preview and manage your creator media assets.</p>
             </div>
             <div class="flex flex-wrap gap-3">
@@ -47,13 +47,8 @@ export interface MediaItem {
                 <p class="text-sm text-text-muted">Choose a file using the button above.</p>
               </div>
 
-              @if (message) {
-                <div class="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-800">{{ message }}</div>
-              }
-
-              @if (error) {
-                <div class="rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-800">{{ error }}</div>
-              }
+              <div *ngIf="message" class="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-800">{{ message }}</div>
+              <div *ngIf="error" class="rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-800">{{ error }}</div>
             </section>
 
             <section class="space-y-4 rounded-3xl border border-border-subtle bg-surface-muted p-6">
@@ -68,9 +63,10 @@ export interface MediaItem {
             <p class="text-sm text-text-muted">The list refreshes after successful uploads.</p>
 
             <div class="mt-6 space-y-4">
-              @if (mediaItems.length === 0) {
-                <div class="rounded-2xl border border-border-subtle bg-surface-muted p-6 text-sm text-text-muted">No media assets found yet.</div>
-              } else {
+              <div *ngIf="mediaItems.length === 0; else mediaList" class="rounded-2xl border border-border-subtle bg-surface-muted p-6 text-sm text-text-muted">
+                No media assets found yet.
+              </div>
+              <ng-template #mediaList>
                 <div class="space-y-4">
                   <div *ngFor="let item of mediaItems" class="rounded-3xl border border-border-subtle bg-surface-base p-4">
                     <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -85,7 +81,7 @@ export interface MediaItem {
                     </div>
                   </div>
                 </div>
-              }
+              </ng-template>
             </div>
           </div>
         </lib-card>

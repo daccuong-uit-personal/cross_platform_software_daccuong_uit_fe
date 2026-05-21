@@ -37,7 +37,10 @@ import { UiButton, UiCard } from '@fe/ui';
                 Edit Profile
               </a>
               <a routerLink="/media" class="inline-flex items-center justify-center rounded-xl border border-border-subtle bg-surface-base px-4 py-2 text-sm font-semibold text-text-base transition hover:bg-surface-subtle">
-                Open Media Studio
+                Open Media Platform (creator files)
+              </a>
+              <a routerLink="/media/studio" class="inline-flex items-center justify-center rounded-xl border border-border-subtle bg-surface-base px-4 py-2 text-sm font-semibold text-text-base transition hover:bg-surface-subtle">
+                Open Media Studio (admin files)
               </a>
               <a routerLink="/dashboard" class="inline-flex items-center justify-center rounded-xl border border-border-subtle bg-surface-base px-4 py-2 text-sm font-semibold text-text-base transition hover:bg-surface-subtle">
                 Open Dashboard

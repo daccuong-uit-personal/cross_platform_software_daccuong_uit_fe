@@ -45,6 +45,8 @@
 │   │
 │   └── features/               # tag: type:feature
 │       ├── auth/               # scope:auth — Login, Register (lazy loaded at /auth)
+│       ├── home/               # scope:home — Homepage and quick links
+│       ├── media/              # scope:media — Creator and admin media management
 │       └── dashboard/          # scope:dashboard — Dashboard (lazy loaded at /dashboard)
 │
 ├── docs/
@@ -99,10 +101,20 @@ npx nx run-many -t test
 | Phase | Name | Status |
 |---|---|---|
 | **0** | Cross Project Foundation Platform | ✅ Complete |
-| **1** | Frontend Foundation Platform | 🔜 Next |
-| 2 | Design System Platform | ⏳ Planned |
-| 3 | Auth + Identity Platform | ⏳ Planned |
-| 4–16 | ... | ⏳ Planned |
+| **1** | Frontend Foundation Platform | ✅ Complete |
+| **2** | Design System Platform | ✅ Complete |
+| **3** | Auth + Identity Platform | ✅ Complete |
+| **4** | Media Platform | ✅ Complete |
+| **5** | Social Platform | 🔜 Next |
+| **6** | Realtime Platform | ⏳ Planned |
+| **7** | Search Platform | ⏳ Planned |
+| **8** | Creator Studio Platform | ⏳ Planned |
+| **9** | Chat Platform | ⏳ Planned |
+| **10** | Commerce Platform | ⏳ Planned |
+| **11** | Live Platform | ⏳ Planned |
+| **12** | Recommendation Platform | ⏳ Planned |
+| **13** | Performance Platform | ⏳ Planned |
+| **14** | Platform Engineering | ⏳ Planned |
 
 ## Phase 0 — What was built
 
@@ -115,11 +127,20 @@ npx nx run-many -t test
 - **Shared UI**: `UiButton`, `UiCard` in `@fe/ui` with inline styles (library build compatible).
 - **ESLint Module Boundaries**: Dependency rules strictly enforced.
 
+## Phase 4 — What was built
+
+- **Media Platform**: Creator file management page at `/media` with authenticated user upload, preview, delete, and user-specific media listing.
+- **Media Studio**: Admin/system-wide media management page at `/media/studio` with list filtering, sorting, pagination, and delete actions via shared table component.
+- **Shared Media API client**: `MediaApiService` supports CRUD and list operations with `filter`, `sort`, `page`, `pageSize`.
+- **Shared Table Component**: reusable table in `libs/ui/src/lib/components/shared-table` for list views across media and future admin pages.
+- **Route organization**: `/media` lazy-loads `@fe/features/media`, preserving separate creator and admin flows.
+
 ## Architecture Decisions
 
 See [`docs/architecture/`](./docs/architecture/) for:
 - Design Tokens specification
 - i18n guidelines
 - Monorepo structure and module boundaries
+- Media feature architecture and route design
 
 See [`docs/ai/frontend-ai-playbook.md`](./docs/ai/frontend-ai-playbook.md) for the full roadmap and FE philosophy.

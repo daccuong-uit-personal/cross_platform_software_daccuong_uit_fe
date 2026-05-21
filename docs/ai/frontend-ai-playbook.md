@@ -62,7 +62,7 @@ libs/
 └── features/
     ├── auth/        # Login, Register — type:feature, scope:auth
     ├── profile/     # Profile page and UI flow — type:feature, scope:profile
-    ├── media/       # Media Studio page and UI flow — type:feature, scope:media
+    ├── media/       # Media pages and UI flow — type:feature, scope:media (creator + admin)
     └── dashboard/   # Dashboard — type:feature, scope:dashboard
 ```
 
@@ -93,8 +93,8 @@ type:core    → core only
 | **1** | Frontend Foundation Platform | ✅ Done |
 | **2** | Design System Platform | ✅ Done |
 | **3** | Auth + Identity Platform | ✅ Done |
-| **4** | Media Platform | 🔜 Next |
-| **5** | Social Platform | ⏳ Planned |
+| **4** | Media Platform | ✅ Done |
+| **5** | Social Platform | 🔜 Next |
 | **6** | Realtime Platform | ⏳ Planned |
 | **7** | Search Platform | ⏳ Planned |
 | **8** | Creator Studio Platform | ⏳ Planned |
