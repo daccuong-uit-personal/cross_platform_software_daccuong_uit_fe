@@ -1,0 +1,8 @@
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'fe-home-shell',
+  templateUrl: './home-shell.component.html',
+  styleUrls: ['./home-shell.component.css'],
+})
+export class HomeShellComponent {}

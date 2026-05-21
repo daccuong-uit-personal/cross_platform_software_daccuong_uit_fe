@@ -94,7 +94,7 @@ type:core    → core only
 | **2** | Design System Platform | ✅ Done |
 | **3** | Auth + Identity Platform | ✅ Done |
 | **4** | Media Platform | ✅ Done |
-| **5** | Social Platform | 🔜 Next |
+| **5** | Social Platform (UI Prototype) | 🔜 Next |
 | **6** | Realtime Platform | ⏳ Planned |
 | **7** | Search Platform | ⏳ Planned |
 | **8** | Creator Studio Platform | ⏳ Planned |

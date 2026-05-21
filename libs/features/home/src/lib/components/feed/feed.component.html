@@ -1,0 +1,76 @@
+<div class="feed-page">
+  <section class="feed-header">
+    <div class="title-block">
+      <div class="feed-label">
+        <span class="badge">For you</span>
+        <h2>Bảng tin</h2>
+      </div>
+      <ul class="feed-tabs">
+        <li class="tab active">Dành cho bạn</li>
+        <li class="tab">Đang theo dõi</li>
+      </ul>
+    </div>
+    <div class="search-wrapper">
+      <span class="search-icon">🔍</span>
+      <input type="search" placeholder="Tìm kiếm trong bảng tin" />
+    </div>
+  </section>
+
+  <section class="compose-card">
+    <div class="compose-avatar"></div>
+    <div class="compose-body">
+      <div class="compose-top">
+        <div>
+          <p class="compose-label">Chia sẻ thăng tiến của bạn</p>
+          <p class="compose-subtitle">Viết gì đó thật hay và gắn thẻ bạn bè.</p>
+        </div>
+        <button class="post-btn">Đăng</button>
+      </div>
+      <div class="compose-actions">
+        <button><span>📷</span> Ảnh</button>
+        <button><span>🎞️</span> GIF</button>
+        <button><span>📍</span> Địa điểm</button>
+        <button><span>😊</span> Emoji</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="post-list">
+    <article *ngFor="let post of posts" class="post-card">
+      <div class="post-card-top">
+        <div class="post-card-author">
+          <div class="avatar"></div>
+          <div>
+            <p class="username">{{ post.author.fullName || post.author.username }}</p>
+            <p class="post-meta">{{ post.createdAt | date:'shortTime' }} · {{ post.privacy === 'public' ? 'Công khai' : 'Riêng tư' }}</p>
+          </div>
+        </div>
+        <span class="post-badge" *ngIf="post.isPinned">📌 Ghim</span>
+      </div>
+
+      <p class="post-text">{{ post.content }}</p>
+
+      <div class="post-tags" *ngIf="post.hashtags.length || post.mentions.length">
+        <span class="tag" *ngFor="let tag of post.hashtags">#{{ tag }}</span>
+        <span class="tag mention" *ngFor="let mention of post.mentions">@{{ mention }}</span>
+      </div>
+
+      <div class="post-media" *ngIf="post.images.length">
+        <img *ngFor="let image of post.images" [src]="image" alt="Post media" />
+      </div>
+
+      <div class="post-stats">
+        <span>❤️ {{ post.likesCount }}</span>
+        <span>💬 {{ post.commentsCount }}</span>
+        <span>↗️ {{ post.sharesCount }}</span>
+      </div>
+
+      <div class="post-actions">
+        <button><span>💬</span> Bình luận</button>
+        <button><span>❤️</span> Thích</button>
+        <button><span>↗️</span> Chia sẻ</button>
+        <button><span>🔖</span> Lưu</button>
+      </div>
+    </article>
+  </section>
+</div>

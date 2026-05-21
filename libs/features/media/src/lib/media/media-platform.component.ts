@@ -1,8 +1,6 @@
-import { Component, effect, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { AuthService } from '@fe/core';
-import { MediaService } from '@fe/domain/media';
 import { UiButton, UiCard } from '@fe/ui';
 
 export interface MediaItem {
@@ -12,6 +10,30 @@ export interface MediaItem {
   type?: string;
   createdAt?: string;
 }
+
+const MOCK_MEDIA_ITEMS: MediaItem[] = [
+  {
+    id: 'media_001',
+    originalName: 'creator-portrait.png',
+    type: 'image/png',
+    status: 'ready',
+    createdAt: '2026-05-18T09:24:00Z',
+  },
+  {
+    id: 'media_002',
+    originalName: 'event-trailer.mp4',
+    type: 'video/mp4',
+    status: 'processing',
+    createdAt: '2026-05-17T14:12:00Z',
+  },
+  {
+    id: 'media_003',
+    originalName: 'cover-art.jpg',
+    type: 'image/jpeg',
+    status: 'ready',
+    createdAt: '2026-05-16T08:05:00Z',
+  },
+];
 
 @Component({
   standalone: true,
@@ -37,7 +59,7 @@ export interface MediaItem {
               <div class="flex items-center justify-between gap-3">
                 <div>
                   <h2 class="text-xl font-semibold text-text-base">Upload new media</h2>
-                  <p class="text-sm text-text-muted">Supported via the backend media API. Choose a file to send to the service.</p>
+                  <p class="text-sm text-text-muted">Mock mode enabled. Uploads are simulated locally and do not call a backend service.</p>
                 </div>
                 <lib-button type="button" class="!px-5 !py-3" [disabled]="isUploading" (click)="selectFile(fileInput)">{{ isUploading ? 'Uploading...' : 'Upload file' }}</lib-button>
               </div>
@@ -90,22 +112,10 @@ export interface MediaItem {
   `,
 })
 export class MediaPlatformComponent {
-  private authService = inject(AuthService);
-  private mediaService = inject(MediaService);
-
-  mediaItems: MediaItem[] = [];
+  mediaItems: MediaItem[] = [...MOCK_MEDIA_ITEMS];
   isUploading = false;
   message = '';
   error = '';
-
-  constructor() {
-    effect(() => {
-      const userId = this.authService.user()?.id;
-      if (userId) {
-        this.loadMedia(userId);
-      }
-    });
-  }
 
   get tokenPreview() {
     return localStorage.getItem('token') ? 'stored in localStorage' : 'not available';
@@ -114,65 +124,37 @@ export class MediaPlatformComponent {
   onFileSelected(event: Event) {
     const target = event.target as HTMLInputElement;
     const file = target.files?.[0];
-    const userId = this.authService.user()?.id;
 
     if (!file) {
       return;
     }
 
-    if (!userId) {
-      this.error = 'User chưa được xác thực. Vui lòng đăng nhập lại.';
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('userId', userId);
-
     this.isUploading = true;
     this.message = '';
     this.error = '';
 
-    this.mediaService.uploadMedia(formData).subscribe({
-      next: () => {
-        this.message = 'Upload thành công. Danh sách media đã được cập nhật.';
-        this.loadMedia(userId);
+    setTimeout(() => {
+      this.mediaItems = [
+        {
+          id: `media_${Date.now()}`,
+          originalName: file.name,
+          type: file.type || 'file',
+          status: 'ready',
+          createdAt: new Date().toISOString(),
+        },
+        ...this.mediaItems,
+      ];
+      this.message = 'Upload thành công. Media đã được thêm tạm thời.';
+      this.isUploading = false;
+      if (target) {
         target.value = '';
-      },
-      error: () => {
-        this.error = 'Upload thất bại. Vui lòng thử lại.';
-      },
-      complete: () => {
-        this.isUploading = false;
-      },
-    });
-  }
-
-  loadMedia(userId: string) {
-    this.mediaService.getMediaList(userId, 'ready', undefined, 1, 20).subscribe({
-      next: (items) => {
-        this.mediaItems = items ?? [];
-      },
-      error: () => {
-        this.error = 'Không thể tải danh sách media. Vui lòng thử lại.';
-        this.mediaItems = [];
-      },
-    });
+      }
+    }, 600);
   }
 
   removeItem(mediaId: string) {
-    this.mediaService.deleteMedia(mediaId).subscribe({
-      next: () => {
-        this.message = 'Media đã được xóa.';
-        const userId = this.authService.user()?.id;
-        if (userId) {
-          this.loadMedia(userId);
-        }
-      },
-      error: () => {
-        this.error = 'Không thể xóa media. Vui lòng thử lại.';
-      },
-    });
+    this.mediaItems = this.mediaItems.filter((item) => item.id !== mediaId);
+    this.message = 'Media đã được xóa tạm thời.';
   }
 
   selectFile(input: HTMLInputElement) {
@@ -180,6 +162,6 @@ export class MediaPlatformComponent {
   }
 
   getPreviewUrl(mediaId: string) {
-    return this.mediaService.getPreviewUrl(mediaId);
+    return `https://example.com/media/${mediaId}`;
   }
 }

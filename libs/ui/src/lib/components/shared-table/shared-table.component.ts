@@ -9,6 +9,8 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./shared-table.component.css'],
 })
 export class SharedTableComponent {
+  // expose Math to templates that reference Math functions
+  Math = Math;
   @Input() columns: Array<{ key: string; label: string; sortable?: boolean }> = [];
   @Input() data: any[] = [];
   @Input() total = 0;

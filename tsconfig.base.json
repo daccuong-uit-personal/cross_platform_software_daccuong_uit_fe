@@ -24,6 +24,7 @@
       "@fe/features/media": ["./libs/features/media/src/index.ts"],
       "@fe/domain/profile": ["./libs/domain/profile/src/index.ts"],
       "@fe/domain/media": ["./libs/domain/media/src/index.ts"]
+      ,"@fe/domain/social": ["./libs/domain/social/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
