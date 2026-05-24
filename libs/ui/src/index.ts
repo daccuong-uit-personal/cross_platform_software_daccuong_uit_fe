@@ -12,3 +12,9 @@ export * from './lib/footer/auth-footer.component';
 export * from './lib/footer/app-footer.component';
 export * from './lib/components';
 
+// Layouts
+export * from './lib/layouts/form-layout.component';
+
+// Styling utilities
+export * from './lib/styles/component-styles';
+

@@ -1,57 +1,93 @@
+:host {
+  display: block;
+}
+
 .home-shell {
   display: grid;
-  grid-template-columns: 260px minmax(0, 1fr) 320px;
+  grid-template-columns: 280px minmax(0, 1fr) 350px;
   min-height: 100vh;
-  background: #f4f4f6;
+  background: var(--color-surface-subtle, #f8fafc);
+  color: var(--color-text-base, #0f172a);
 }
+
 .sidebar {
   position: sticky;
   top: 0;
   align-self: start;
-  min-height: 100vh;
-  border-right: 1px solid rgba(0, 0, 0, 0.08);
-  background: #fff;
+  height: 100vh;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-right: 1px solid rgba(226, 232, 240, 0.8);
+  z-index: 10;
 }
+
 .home-main {
   min-height: 100vh;
-  overflow: auto;
-  background: #f4f4f6;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: transparent;
+  display: flex;
+  flex-direction: column;
 }
+
 .main-content {
-  max-width: 760px;
+  max-width: 680px;
+  width: 100%;
   margin: 0 auto;
-  padding: 24px 0;
+  padding: 0;
+  border-left: 1px solid rgba(226, 232, 240, 0.8);
 }
-.rightbar {
-  position: sticky;
-  top: 0;
-  min-height: 100vh;
-  border-left: 1px solid rgba(0, 0, 0, 0.08);
-  background: #f8f9fb;
+::-webkit-scrollbar-track {
+  background: transparent;
 }
-@media (max-width: 1180px) {
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Responsive Design */
+@media (max-width: 1280px) {
   .home-shell {
-    grid-template-columns: minmax(0, 1fr) 320px;
+    grid-template-columns: 88px minmax(0, 1fr) 320px;
   }
-  .sidebar {
+}
+
+@media (max-width: 1024px) {
+  .home-shell {
+    grid-template-columns: 88px minmax(0, 1fr);
+  }
+  .rightbar {
     display: none;
   }
 }
-@media (max-width: 900px) {
+
+@media (max-width: 768px) {
   .home-shell {
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column-reverse;
   }
-  .sidebar,
-  .rightbar {
-    position: static;
-    min-height: auto;
-    border: none;
-    background: transparent;
+  
+  .sidebar {
+    position: fixed;
+    bottom: 0;
+    top: auto;
+    width: 100%;
+    height: auto;
+    border-right: none;
+    border-top: 1px solid rgba(226, 232, 240, 0.8);
+    z-index: 50;
   }
+  
   .home-main {
-    background: transparent;
+    padding-bottom: 60px; /* Space for bottom nav */
   }
+  
   .main-content {
-    padding: 16px;
+    border-left: none;
+    border-right: none;
   }
 }

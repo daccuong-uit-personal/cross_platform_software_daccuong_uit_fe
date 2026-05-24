@@ -30,6 +30,12 @@ export const appRoutes: Route[] = [
     loadChildren: () =>
       import('@fe/features/dashboard').then((m) => m.dashboardRoutes),
   },
+  {
+    path: 'settings',
+    canActivate: [authGuard],
+    loadChildren: () =>
+      import('@fe/features/settings').then((m) => m.settingsRoutes),
+  },
   { path: 'login', redirectTo: 'auth/login' },
   { path: 'register', redirectTo: 'auth/register' },
   { path: '**', redirectTo: 'home' },

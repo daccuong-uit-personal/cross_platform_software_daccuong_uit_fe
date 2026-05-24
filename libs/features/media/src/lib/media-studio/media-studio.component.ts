@@ -3,11 +3,13 @@ import { CommonModule } from '@angular/common';
 import { MediaApiService } from '../services/media-api.service';
 import { FileItem, ListFilesParams } from '../models/media.model';
 import { SharedTableComponent } from '@fe/ui';
+import { BottomMenuComponent } from '@fe/features/home';
+
 
 @Component({
   standalone: true,
   selector: 'feature-media-studio',
-  imports: [CommonModule, SharedTableComponent],
+  imports: [CommonModule, SharedTableComponent, BottomMenuComponent],
   templateUrl: './media-studio.component.html',
   styleUrls: ['./media-studio.component.css'],
 })

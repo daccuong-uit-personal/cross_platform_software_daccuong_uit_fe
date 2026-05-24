@@ -1,16 +1,16 @@
 .placeholder-page {
-  padding: 28px;
+  padding: calc(var(--std-padding-scale) * 1.5rem);
   display: grid;
-  gap: 22px;
+  gap: calc(var(--std-padding-scale) * 1.4rem);
 }
 .placeholder-hero {
   display: flex;
   align-items: flex-start;
-  gap: 18px;
+  gap: calc(var(--std-padding-scale) * 1.2rem);
 }
 .placeholder-hero h1 {
   margin: 0 0 10px;
-  font-size: 34px;
+  font-size: var(--font-size-heading);
 }
 .placeholder-hero p {
   margin: 0;
@@ -19,13 +19,13 @@
 }
 .placeholder-grid {
   display: grid;
-  gap: 16px;
+  gap: calc(var(--std-padding-scale) * 1rem);
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
 }
 .placeholder-card {
   display: grid;
   gap: 12px;
-  padding: 22px;
+  padding: calc(var(--std-padding-scale) * 1.25rem);
   border-radius: 24px;
   background: #fff;
   border: 1px solid rgba(15, 23, 42, 0.08);
@@ -37,17 +37,17 @@
   border-color: rgba(15, 23, 42, 0.14);
 }
 .item-icon {
-  width: 52px;
-  height: 52px;
+  width: var(--std-icon-size-xl);
+  height: var(--std-icon-size-xl);
   display: grid;
   place-items: center;
   background: #eff6ff;
   border-radius: 16px;
-  font-size: 22px;
+  font-size: var(--font-size-subtitle);
 }
 .placeholder-card h2 {
   margin: 0;
-  font-size: 18px;
+  font-size: var(--font-size-subtitle);
 }
 .placeholder-card p {
   margin: 4px 0 0;
@@ -61,7 +61,8 @@
   color: #fff;
   padding: 10px 18px;
   border-radius: 999px;
-  font-weight: 700;
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-strong);
   cursor: pointer;
   transition: background 0.2s ease;
 }

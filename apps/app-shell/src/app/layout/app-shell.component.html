@@ -1,8 +1,13 @@
-<div class="flex min-h-screen w-full bg-surface-base text-text-base transition-colors duration-300">
+<div class="flex flex-col min-h-screen bg-surface-base text-text-base transition-colors duration-300">
   
-  <!-- Sidebar (Authenticated Only) -->
   @if (authService.isAuthenticated()) {
-    <aside class="hidden lg:flex w-64 flex-col border-r border-border-subtle bg-surface-base sticky top-0 h-screen z-40">
+    <ui-shared-header></ui-shared-header>
+  }
+
+  <div class="flex flex-1 min-h-0">
+    <!-- Sidebar (Authenticated Only) -->
+    @if (authService.isAuthenticated()) {
+      <aside class="hidden lg:flex w-64 flex-col border-r border-border-subtle bg-surface-base sticky top-[60px] h-[calc(100vh-60px)] z-40">
       <div class="flex items-center gap-3 p-6 border-b border-border-subtle">
         <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-primary text-xl font-bold text-white shadow-glow">
           SC
@@ -30,6 +35,10 @@
            <svg width="20" height="20" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M44 40H4V8H44V40Z" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/><path d="M4 14H44" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><path d="M14 8V40" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg>
            Dashboard
         </a>
+        <a routerLink="/settings" routerLinkActive="bg-surface-subtle text-brand-primary" class="flex items-center gap-3 px-4 py-3 rounded-xl font-semibold transition-all hover:bg-surface-subtle">
+           <svg width="20" height="20" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M41.5 10H35.5C32.7386 10 30.5 12.2386 30.5 15C30.5 17.7614 32.7386 20 35.5 20H41.5V10Z" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/><path d="M22 15C22 11.134 18.866 8 15 8C11.134 8 8 11.134 8 15C8 18.866 11.134 22 15 22C18.866 22 22 18.866 22 15ZM22 15H30.5M30.5 15C30.5 12.2386 32.7386 10 35.5 10H41.5V20H35.5C32.7386 20 30.5 17.7614 30.5 15ZM30.5 15V26" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 33C8 29.134 11.134 26 15 26C18.866 26 22 29.134 22 33C22 36.866 18.866 40 15 40C11.134 40 8 36.866 8 33ZM8 33H30.5M30.5 33C30.5 30.2386 32.7386 28 35.5 28H41.5V38H35.5C32.7386 38 30.5 35.7614 30.5 33ZM30.5 33V22" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+           Settings
+        </a>
       </nav>
 
       <div class="p-4 border-t border-border-subtle">
@@ -47,5 +56,6 @@
       <router-outlet></router-outlet>
     </main>
   </div>
+</div>
 </div>
 

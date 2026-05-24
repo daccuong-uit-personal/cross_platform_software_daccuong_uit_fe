@@ -3,7 +3,16 @@
 ## Purpose
 Tài liệu **duy nhất** tổng hợp toàn bộ triết lý, nguyên tắc, và roadmap vision cho dự án frontend Social Commerce Creator Platform.
 
-> Xem thêm agent responsibilities: [`agent-roles.md`](./agent-roles.md)
+> Xem agent skills: [`AGENTS.md`](./AGENTS.md) — Detailed technical guides per agent
+
+### Agent Skills Documentation
+Mỗi AI agent có skill file chi tiết với code examples:
+- **[Frontend Architect](../ai-context/frontend-architecture.md)** — Nx structure, boundaries, governance
+- **[Angular Generator](../ai-context/angular-component-generation.md)** — Components, features, Signals
+- **[UI System](../ai-context/design-system-component-generation.md)** — Design tokens, styling, components
+- **[API Integration](../ai-context/api-integration.md)** — Backend contracts, type safety, services
+- **[Performance & QA](../ai-context/performance-qa.md)** — Optimization, testing, accessibility
+- **[Social UX & Intelligence](../ai-context/social-ux-intelligence.md)** — Feed design, social patterns
 
 ---
 

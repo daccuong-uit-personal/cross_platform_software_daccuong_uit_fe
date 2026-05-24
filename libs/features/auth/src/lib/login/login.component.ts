@@ -146,7 +146,7 @@ export class LoginComponent {
     this.authFacade.login(payload).subscribe({
       next: () => {
         toast.success('Đăng nhập thành công!');
-        this.router.navigate(['/dashboard']);
+        this.router.navigate(['/home']);
       },
       error: () => {
         // Toast already shown by the global error interceptor — no duplicate needed.

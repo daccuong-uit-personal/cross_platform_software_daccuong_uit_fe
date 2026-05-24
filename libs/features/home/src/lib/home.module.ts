@@ -13,6 +13,7 @@ import { RightSidebarComponent } from './components/right-sidebar/right-sidebar.
 @NgModule({
   imports: [
     CommonModule,
+    HomeShellComponent,
     FeedComponent,
     BottomMenuComponent,
     DiscoverComponent,
@@ -27,6 +28,14 @@ import { RightSidebarComponent } from './components/right-sidebar/right-sidebar.
         children: [
           { path: '', component: FeedComponent },
           { path: 'discover', component: DiscoverComponent },
+          {
+            path: 'reels',
+            component: FeaturePlaceholderComponent,
+            data: {
+              title: 'Reels',
+              description: 'Khám phá và tận hưởng các video ngắn giải trí.',
+            },
+          },
           {
             path: 'notifications',
             component: FeaturePlaceholderComponent,
@@ -52,11 +61,11 @@ import { RightSidebarComponent } from './components/right-sidebar/right-sidebar.
             },
           },
           {
-            path: 'grok',
+            path: 'reals-ai',
             component: FeaturePlaceholderComponent,
             data: {
-              title: 'Grok',
-              description: 'Trí tuệ nhân tạo cho nội dung và khám phá.',
+              title: 'Reals AI',
+              description: 'Trí tuệ nhân tạo hỗ trợ sáng tạo nội dung.',
             },
           },
           {
@@ -65,14 +74,6 @@ import { RightSidebarComponent } from './components/right-sidebar/right-sidebar.
             data: {
               title: 'Dấu trang',
               description: 'Bài viết đã lưu để đọc lại sau.',
-            },
-          },
-          {
-            path: 'studio',
-            component: FeaturePlaceholderComponent,
-            data: {
-              title: 'Studio người sáng tạo',
-              description: 'Công cụ creator và thống kê nội dung.',
             },
           },
           {

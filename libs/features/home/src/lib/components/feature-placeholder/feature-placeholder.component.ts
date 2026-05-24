@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 
 interface PlaceholderItem {
   icon: string;
@@ -9,6 +10,8 @@ interface PlaceholderItem {
 }
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, RouterModule],
   selector: 'fe-feature-placeholder',
   templateUrl: './feature-placeholder.component.html',
   styleUrls: ['./feature-placeholder.component.css'],

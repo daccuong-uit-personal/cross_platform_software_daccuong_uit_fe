@@ -14,6 +14,10 @@ export * from './lib/services/loading.service';
 export * from './lib/services/cache.service';
 export * from './lib/services/theme.service';
 
+// Design System
+export * from './lib/design-system/design-tokens';
+export * from './lib/design-system/ui-settings.service';
+
 // Interceptors
 export * from './lib/interceptors/auth.interceptor';
 export * from './lib/interceptors/loading.interceptor';

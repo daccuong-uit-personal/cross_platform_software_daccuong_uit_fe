@@ -1,0 +1,358 @@
+<div class="fb-profile-page">
+  <!-- Profile Header Section -->
+  <div class="fb-header-wrapper">
+    <div class="fb-header-container">
+      <!-- Cover Photo -->
+      <div class="fb-cover-photo">
+        <div class="cover-image-placeholder"></div>
+        <button class="edit-cover-btn">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.75 3a.75.75 0 0 1 .75.75v16.5a.75.75 0 0 1-1.5 0V3.75a.75.75 0 0 1 .75-.75ZM3.75 11.75a.75.75 0 0 1 .75-.75h16.5a.75.75 0 0 1 0 1.5H4.5a.75.75 0 0 1-.75-.75Z"/></svg>
+          Thêm ảnh bìa
+        </button>
+      </div>
+
+      <!-- Profile Info (Avatar, Name, Actions) -->
+      <div class="fb-profile-info-section">
+        <div class="fb-avatar-container">
+          <div class="fb-avatar">
+            <div class="avatar-image"></div>
+            <button class="edit-avatar-btn">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7ZM10.5 5.5h3l1.83 2h3.17c1.1 0 2 .9 2 2v10c0 1.1-.9 2-2 2H5.5c-1.1 0-2-.9-2-2v-10c0-1.1.9-2 2-2h3.17l1.83-2ZM12 19.5a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11Z"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="fb-name-actions-row">
+          <div class="fb-name-bio">
+            <h1>{{ displayName || username || 'Người dùng Reals' }}</h1>
+            <span class="fb-friends-count">{{ friendsCount }} bạn bè</span>
+            <div class="fb-friends-avatars">
+              <div class="pile-avatar c1"></div>
+              <div class="pile-avatar c2"></div>
+              <div class="pile-avatar c3"></div>
+              <div class="pile-avatar c4"></div>
+              <div class="pile-avatar c5"></div>
+            </div>
+          </div>
+
+          <div class="fb-profile-actions">
+            <button class="btn-primary">
+              <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2Zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2Z"/></svg>
+              Thêm vào tin
+            </button>
+            <button class="btn-secondary" (click)="setActiveTab('about')">
+              <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25ZM20.71 7.04a.996.996 0 0 0 0-1.41l-2.34-2.34a.996.996 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83Z"/></svg>
+              Chỉnh sửa trang cá nhân
+            </button>
+            <button class="btn-secondary btn-icon-only">
+              <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Tabs Navigation -->
+        <div class="fb-tabs-container">
+          <ul class="fb-tabs">
+            <li [class.active]="activeTab === 'posts'" (click)="setActiveTab('posts')">Bài viết</li>
+            <li [class.active]="activeTab === 'about'" (click)="setActiveTab('about')">Giới thiệu</li>
+            <li [class.active]="activeTab === 'friends'" (click)="setActiveTab('friends')">Bạn bè</li>
+            <li [class.active]="activeTab === 'photos'" (click)="setActiveTab('photos')">Ảnh</li>
+            <li [class.active]="activeTab === 'reels'" (click)="setActiveTab('reels')">Reels</li>
+            <li [class.active]="activeTab === 'groups'" (click)="setActiveTab('groups')">Nhóm</li>
+            <li [class.active]="activeTab === 'events'" (click)="setActiveTab('events')" class="hide-mobile">Sự kiện</li>
+            <li [class.active]="activeTab === 'checkin'" (click)="setActiveTab('checkin')" class="hide-mobile">Check-in</li>
+            <li class="more-tab">Xem thêm <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Content Section -->
+  <div class="fb-content-wrapper">
+    <div class="fb-content-container">
+      
+      <!-- POSTS TAB -->
+      <div class="fb-tab-content posts-layout" *ngIf="activeTab === 'posts'">
+        
+        <!-- Left Sidebar (Intro, Photos, Friends) -->
+        <div class="fb-sidebar">
+          
+          <!-- Intro Box -->
+          <div class="fb-box">
+            <h3>Giới thiệu</h3>
+            <p class="bio-text">Welcome to my profile! Developer, Creator, Learner.</p>
+            <button class="btn-full-width">Chỉnh sửa tiểu sử</button>
+            
+            <ul class="intro-details">
+              <li>
+                <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 010-5 2.5 2.5 0 010 5z"/></svg>
+                <span>Sống tại <strong>Thành phố Hồ Chí Minh</strong></span>
+              </li>
+              <li>
+                <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                <span>Tham gia vào <strong>Tháng 5 2026</strong></span>
+              </li>
+              <li>
+                <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm6.93 6h-2.95a15.65 15.65 0 00-1.38-3.56A8.03 8.03 0 0118.92 8zM12 4.04c.83 1.2 1.48 2.53 1.91 3.96h-3.82c.43-1.43 1.08-2.76 1.91-3.96zM4.26 14C4.1 13.36 4 12.69 4 12s.1-1.36.26-2h3.38c-.08.66-.14 1.32-.14 2 0 .68.06 1.34.14 2H4.26zm.82 2h2.95c.32 1.25.78 2.45 1.38 3.56A7.987 7.987 0 015.08 16zm2.95-8H5.08a7.987 7.987 0 013.84-3.56A15.65 15.65 0 007.54 8zM12 19.96c-.83-1.2-1.48-2.53-1.91-3.96h3.82c-.43 1.43-1.08 2.76-1.91 3.96zM14.34 14H9.66c-.09-.66-.16-1.32-.16-2 0-.68.07-1.35.16-2h4.68c.09.65.16 1.32.16 2 0 .68-.07 1.34-.16 2zm1.2 5.56c.6-1.11 1.06-2.31 1.38-3.56h2.95a8.03 8.03 0 01-4.33 3.56zM16.36 14c.08-.66.14-1.32.14-2 0-.68-.06-1.34-.14-2h3.38c.16.64.26 1.31.26 2s-.1 1.36-.26 2h-3.38z"/></svg>
+                <span>Đến từ <strong>Hà Nội</strong></span>
+              </li>
+            </ul>
+            <button class="btn-full-width">Chỉnh sửa chi tiết</button>
+            
+            <div class="story-highlights">
+              <div class="highlight-item add-new">
+                <div class="highlight-circle">
+                  <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+                </div>
+                <span>Thêm mới</span>
+              </div>
+              <div class="highlight-item">
+                <div class="highlight-circle img-1"></div>
+                <span>Du lịch</span>
+              </div>
+              <div class="highlight-item">
+                <div class="highlight-circle img-2"></div>
+                <span>Công việc</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Photos Box -->
+          <div class="fb-box">
+            <div class="box-header">
+              <h3>Ảnh</h3>
+              <a href="javascript:void(0)" (click)="setActiveTab('photos')" class="see-all-link">Xem tất cả ảnh</a>
+            </div>
+            <div class="photos-grid">
+              <div class="photo-item photo-1"></div>
+              <div class="photo-item photo-2"></div>
+              <div class="photo-item photo-3"></div>
+              <div class="photo-item photo-4"></div>
+              <div class="photo-item photo-5"></div>
+              <div class="photo-item photo-6"></div>
+              <div class="photo-item photo-7"></div>
+              <div class="photo-item photo-8"></div>
+              <div class="photo-item photo-9"></div>
+            </div>
+          </div>
+
+          <!-- Friends Box -->
+          <div class="fb-box">
+            <div class="box-header">
+              <div class="header-titles">
+                <h3>Bạn bè</h3>
+                <span class="subtitle">{{ friendsCount }} người bạn</span>
+              </div>
+              <a href="javascript:void(0)" (click)="setActiveTab('friends')" class="see-all-link">Xem tất cả bạn bè</a>
+            </div>
+            <div class="friends-grid">
+              <div class="friend-item">
+                <div class="friend-avatar f1"></div>
+                <span>Nguyễn Văn A</span>
+              </div>
+              <div class="friend-item">
+                <div class="friend-avatar f2"></div>
+                <span>Trần Thị B</span>
+              </div>
+              <div class="friend-item">
+                <div class="friend-avatar f3"></div>
+                <span>Lê Hoàng C</span>
+              </div>
+              <div class="friend-item">
+                <div class="friend-avatar f4"></div>
+                <span>Phạm D</span>
+              </div>
+              <div class="friend-item">
+                <div class="friend-avatar f5"></div>
+                <span>Vũ E</span>
+              </div>
+              <div class="friend-item">
+                <div class="friend-avatar f6"></div>
+                <span>Hoàng F</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Main Feed -->
+        <div class="fb-main-feed">
+          <!-- Create Post Box -->
+          <div class="fb-box create-post-box">
+            <div class="create-post-top">
+              <div class="avatar-small"></div>
+              <div class="create-post-input">
+                {{ displayName || username || 'Bạn' }} ơi, bạn đang nghĩ gì thế?
+              </div>
+            </div>
+            <div class="create-post-divider"></div>
+            <div class="create-post-actions">
+              <button class="action-btn">
+                <svg viewBox="0 0 24 24" fill="#E42645" width="24" height="24"><path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/></svg>
+                <span>Video trực tiếp</span>
+              </button>
+              <button class="action-btn">
+                <svg viewBox="0 0 24 24" fill="#41B35D" width="24" height="24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
+                <span>Ảnh/video</span>
+              </button>
+              <button class="action-btn hide-mobile">
+                <svg viewBox="0 0 24 24" fill="#EAB026" width="24" height="24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+                <span>Sự kiện trong đời</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Filters / Posts Management -->
+          <div class="fb-box filters-box">
+            <div class="filters-header">
+              <h3>Bài viết</h3>
+              <div class="filters-actions">
+                <button class="btn-secondary">
+                  <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M3 17v2h6v-2H3zM3 5v2h10V5H3zm10 16v-2h8v-2h-8v-2h-2v6h2zM7 9v2H3v2h4v2h2V9H7zm14 4v-2H11v2h10zm-6-4h2V7h4V5h-4V3h-2v6z"/></svg>
+                  Bộ lọc
+                </button>
+                <button class="btn-secondary">
+                  <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.06-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.73,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.06,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.43-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.49-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/></svg>
+                  Quản lý bài viết
+                </button>
+              </div>
+            </div>
+            <div class="filters-tabs">
+              <button class="filter-tab active">
+                <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+                Chế độ xem danh sách
+              </button>
+              <button class="filter-tab">
+                <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z"/></svg>
+                Chế độ xem lưới
+              </button>
+            </div>
+          </div>
+
+          <!-- Sample Post -->
+          <div class="fb-box post-box">
+            <div class="post-header">
+              <div class="avatar-small"></div>
+              <div class="post-info">
+                <h4>{{ displayName || username || 'Người dùng Reals' }}</h4>
+                <div class="post-meta">
+                  <span>15 giờ</span>
+                  <span class="dot">·</span>
+                  <svg viewBox="0 0 24 24" fill="currentColor" width="12" height="12"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+                </div>
+              </div>
+              <button class="icon-btn ml-auto">
+                <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M6 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm12 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
+              </button>
+            </div>
+            
+            <div class="post-content">
+              <p>Chào mọi người! Đây là giao diện trang cá nhân mới. Giao diện này được thiết kế giống với Facebook, mang lại trải nghiệm thân thiện và dễ sử dụng hơn. 🚀✨</p>
+            </div>
+            
+            <!-- Sample Post Image -->
+            <div class="post-image-placeholder"></div>
+            
+            <div class="post-stats">
+              <div class="stats-left">
+                <div class="reaction-icon like-reaction">
+                  <svg viewBox="0 0 24 24" fill="#fff" width="12" height="12"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/></svg>
+                </div>
+                <span>42</span>
+              </div>
+              <div class="stats-right">
+                <span>5 bình luận</span>
+                <span>2 chia sẻ</span>
+              </div>
+            </div>
+            
+            <div class="post-actions-bar">
+              <button class="post-action-btn">
+                <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/></svg>
+                Thích
+              </button>
+              <button class="post-action-btn">
+                <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
+                Bình luận
+              </button>
+              <button class="post-action-btn">
+                <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/></svg>
+                Chia sẻ
+              </button>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+
+      <!-- ABOUT TAB -->
+      <div class="fb-tab-content about-layout" *ngIf="activeTab === 'about'">
+        <div class="fb-box about-box">
+          <div class="about-sidebar">
+            <h3>Giới thiệu</h3>
+            <ul class="about-menu">
+              <li class="active">Tổng quan</li>
+              <li>Công việc và học vấn</li>
+              <li>Nơi từng sống</li>
+              <li>Thông tin liên hệ cơ bản</li>
+              <li>Gia đình và các mối quan hệ</li>
+              <li>Chi tiết về bạn</li>
+              <li>Sự kiện trong đời</li>
+            </ul>
+          </div>
+          <div class="about-main">
+            <!-- Legacy Form wrapper for updating profile -->
+            <div class="edit-profile-section">
+              <h4>Chỉnh sửa thông tin cá nhân</h4>
+              <p class="edit-profile-desc">Cập nhật thông tin định danh và hiển thị trên hệ thống Reals.</p>
+              
+              <form class="profile-form" (ngSubmit)="save()">
+                <div class="form-group">
+                  <label>Email</label>
+                  <input type="email" class="form-input disabled" [disabled]="true" [(ngModel)]="email" name="email" placeholder="Email của bạn">
+                  <span class="help-text">Email được liên kết với tài khoản và không thể thay đổi.</span>
+                </div>
+                
+                <div class="form-group">
+                  <label>Tên hiển thị</label>
+                  <input type="text" class="form-input" [(ngModel)]="displayName" name="displayName" placeholder="Nhập tên hiển thị">
+                </div>
+                
+                <div class="form-group">
+                  <label>Tên người dùng (Username)</label>
+                  <div class="input-with-prefix">
+                    <span class="prefix">&#64;</span>
+                    <input type="text" class="form-input prefixed" [(ngModel)]="username" name="username" placeholder="username">
+                  </div>
+                </div>
+
+                <div class="form-actions">
+                  <div class="status-msg" *ngIf="status" [class.success]="status.includes('thành công')" [class.error]="status.includes('Không thể')">
+                    {{ status }}
+                  </div>
+                  <button type="submit" class="btn-primary" [disabled]="saving">
+                    {{ saving ? 'Đang lưu...' : 'Lưu thay đổi' }}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- OTHER TABS PLACEHOLDER -->
+      <div class="fb-tab-content empty-layout" *ngIf="activeTab !== 'posts' && activeTab !== 'about'">
+        <div class="fb-box empty-box">
+          <div class="empty-state">
+            <svg viewBox="0 0 24 24" fill="#cbd5e1" width="64" height="64"><path d="M21 3H3C2 3 1 4 1 5v14c0 1.1.9 2 2 2h18c1 0 2-.9 2-2V5c0-1-1-2-2-2zm0 15.92c-.02.03-.06.06-.08.08H3.08c-.03-.02-.06-.05-.08-.08V5.08C3.02 5.05 3.05 5.02 3.08 5h17.83c.03.02.06.05.08.08v13.84zM11 9.99V7.5l-3.5 3.5 3.5 3.5v-2.49c3.31 0 6 2.69 6 6 0-.79-.15-1.56-.44-2.27A6.98 6.98 0 0011 9.99z"/></svg>
+            <h3>Chưa có nội dung để hiển thị</h3>
+            <p>Nội dung cho tab <strong>{{ activeTab }}</strong> sẽ được cập nhật trong tương lai.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

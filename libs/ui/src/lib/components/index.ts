@@ -1,1 +1,4 @@
 export * from './shared-table/shared-table.component';
+export * from './sidebar-menu/sidebar-menu.component';
+export * from './sidebar-menu/safe-html.pipe';
+export * from './shared-header/shared-header.component';

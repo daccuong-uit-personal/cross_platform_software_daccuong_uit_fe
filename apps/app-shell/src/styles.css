@@ -14,6 +14,21 @@
   
   /* Dynamic Typography */
   --font-family: 'Outfit', sans-serif;
+  
+  /* Scaling Factors (set by UiSettingsService) */
+  --font-size-scale: 0.84;
+  --padding-scale: 0.7;
+  --line-height: 1.5;
+  --font-size-heading: calc(var(--font-size-scale, 0.84) * 1.75rem);  /* Level 1: Form Title */
+  --font-size-title: calc(var(--font-size-scale, 0.84) * 1.25rem);    /* Level 2: Menu */
+  --font-size-subtitle: calc(var(--font-size-scale, 0.84) * 1.125rem);/* Level 3: Section Title */
+  --font-size-body: calc(var(--font-size-scale, 0.84) * 1rem);        /* Level 4: Group/Sub-section */
+  --font-size-label: calc(var(--font-size-scale, 0.84) * 0.9375rem);  /* Level 5: Normal text */
+  --font-size-caption: calc(var(--font-size-scale, 0.84) * 0.8125rem);
+  --font-weight-heavy: 800;
+  --font-weight-strong: 700;
+  --font-weight-medium: 600;
+  --font-weight-regular: 500;
 }
 
 /* Base Reset & Core Styles */
@@ -49,6 +64,8 @@ body, button, input, select, textarea, .tiktok-btn {
   --color-btn-hover: #e3e3e3;
   --color-btn-border: rgba(22, 24, 35, 0.12);
   --color-btn-border-hover: rgba(22, 24, 35, 0.2);
+  --color-brand-primary: #fe2c55; /* TikTok Red */
+  --color-brand-primary-hover: #e0284d;
 }
 
 /* Dark Theme */
@@ -62,6 +79,8 @@ body, button, input, select, textarea, .tiktok-btn {
   --color-btn-hover: #3a3a3a;
   --color-btn-border: rgba(255, 255, 255, 0.12);
   --color-btn-border-hover: rgba(255, 255, 255, 0.2);
+  --color-brand-primary: #ff3b5c; /* Slightly lighter red for dark mode */
+  --color-brand-primary-hover: #ea3654;
 }
 
 /* Ocean Theme */
@@ -75,6 +94,8 @@ body, button, input, select, textarea, .tiktok-btn {
   --color-btn-hover: #253e61;
   --color-btn-border: rgba(147, 197, 253, 0.2);
   --color-btn-border-hover: rgba(147, 197, 253, 0.4);
+  --color-brand-primary: #38bdf8; /* Ocean blue */
+  --color-brand-primary-hover: #0ea5e9;
 }
 
 /* Forest Theme */
@@ -88,6 +109,8 @@ body, button, input, select, textarea, .tiktok-btn {
   --color-btn-hover: #234432;
   --color-btn-border: rgba(165, 214, 167, 0.2);
   --color-btn-border-hover: rgba(165, 214, 167, 0.4);
+  --color-brand-primary: #4ade80; /* Forest green */
+  --color-brand-primary-hover: #22c55e;
 }
 
 /* TikTok Brand */
@@ -100,20 +123,60 @@ body, button, input, select, textarea, .tiktok-btn {
   display: flex;
   align-items: center;
   width: 100%;
-  height: 52px;
-  padding: 0 16px;
+  height: auto;
+  padding: var(--std-button-padding-vertical) var(--std-button-padding-horizontal);
   border: 1px solid var(--color-btn-border);
   background-color: var(--color-btn-bg);
   color: var(--color-text-base);
   font-family: 'Outfit', sans-serif;
-  font-size: 15px;
+  font-size: var(--font-size-body);
   font-weight: 600;
   /* Matching TikTok's rounded buttons */
-  border-radius: 4px;
+  border-radius: var(--std-button-border-radius);
   cursor: pointer;
-  transition: background-color 0.15s ease, border-color 0.15s ease;
+  transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
   position: relative;
   overflow: hidden;
+}
+
+button,
+button[type="button"],
+button[type="submit"],
+input[type="button"],
+input[type="submit"],
+.std-button,
+.btn,
+.button {
+  font-family: var(--font-family), sans-serif;
+  font-size: var(--font-size-body);
+  padding: var(--std-button-padding-vertical) var(--std-button-padding-horizontal);
+  border-radius: var(--std-button-border-radius);
+  min-height: calc(var(--std-button-padding-vertical) * 2 + var(--font-size-body));
+  cursor: pointer;
+}
+
+.std-icon,
+.icon-inline,
+.icon-button,
+svg.icon,
+button svg,
+button[type="button"] svg,
+button[type="submit"] svg,
+input[type="button"] svg,
+input[type="submit"] svg,
+.std-button svg,
+.btn svg,
+.button svg,
+.nav-icon svg,
+.header-brand-icon svg,
+.header-more-btn svg,
+.studio-icon svg,
+.upload-btn svg,
+.filter-btn svg {
+  width: 1em !important;
+  height: 1em !important;
+  display: inline-flex;
+  vertical-align: middle;
 }
 
 .tiktok-btn:hover {
@@ -124,16 +187,21 @@ body, button, input, select, textarea, .tiktok-btn {
 /* Icon pinned to left edge, text centered in remaining space */
 .tiktok-btn-icon {
   position: absolute;
-  left: 16px;
+  left: 0.85rem;
   top: 50%;
   transform: translateY(-50%);
-  width: 24px;
-  height: 24px;
+  width: 1.25em;
+  height: 1.25em;
   display: flex;
   align-items: center;
   justify-content: center;
   pointer-events: none;
   flex-shrink: 0;
+}
+
+.tiktok-btn-icon svg {
+  width: 1em !important;
+  height: 1em !important;
 }
 
 /* ─── Animations ─────────────────────────────────────────────────────── */
@@ -155,9 +223,148 @@ body, button, input, select, textarea, .tiktok-btn {
 
 /* ─── Typography helpers ─────────────────────────────────────────────── */
 .text-h1 {
-  font-size: 2rem;
-  font-weight: 700;
+  font-size: var(--font-size-heading);
+  font-weight: var(--font-weight-strong);
   line-height: 1.2;
+}
+
+.std-section-title,
+.text-h1 {
+  font-size: var(--font-size-heading);
+  font-weight: var(--font-weight-strong);
+  line-height: 1.2;
+  margin: 0 0 1rem 0;
+  color: var(--color-text-base);
+}
+
+.std-section-subtitle,
+.std-subtitle {
+  font-size: var(--font-size-subtitle);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-base);
+  margin: 0;
+}
+
+.std-group-label {
+  font-size: var(--font-size-caption);
+  font-weight: var(--font-weight-strong);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-muted);
+  margin: 0 0 0.5rem 0;
+}
+
+.std-row-name,
+.std-label {
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-base);
+  margin: 0;
+}
+
+.std-row-desc,
+.std-caption {
+  font-size: var(--font-size-caption);
+  color: var(--color-text-muted);
+  line-height: 1.6;
+  margin: 0.25rem 0 0 0;
+}
+
+.std-row-value,
+.std-row-action,
+.std-meta,
+.std-badge {
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.std-card {
+  background: var(--color-surface-base);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 1rem;
+  box-shadow: 0 18px 44px rgba(15, 23, 42, 0.06);
+}
+
+.std-card-body {
+  padding: calc(var(--padding-scale, 1) * 1.5rem);
+}
+
+.std-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.7);
+}
+
+.std-row:last-child {
+  border-bottom: none;
+}
+
+.std-row-link {
+  cursor: pointer;
+  transition: background 0.2s ease;
+  border-radius: 0.75rem;
+  margin: 0 -1rem;
+  padding: 1rem;
+}
+
+.std-row-link:hover {
+  background: rgba(15, 23, 42, 0.04);
+}
+
+.std-toggle {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.std-toggle input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.std-toggle-track {
+  width: 44px;
+  height: 24px;
+  border-radius: 9999px;
+  background: #cbd5e1;
+  position: relative;
+  transition: background 0.25s ease;
+}
+
+.std-toggle-track::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: white;
+  transition: transform 0.25s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.std-toggle input:checked ~ .std-toggle-track {
+  background: #0f172a;
+}
+
+.std-toggle input:checked ~ .std-toggle-track::after {
+  transform: translateX(20px);
+}
+
+.std-chevron {
+  width: 18px;
+  height: 18px;
+  color: var(--color-text-muted);
+  flex-shrink: 0;
 }
 
 .text-muted {
