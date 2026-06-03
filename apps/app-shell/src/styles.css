@@ -54,77 +54,102 @@ body, button, input, select, textarea, .tiktok-btn {
   font-family: var(--font-family), sans-serif !important;
 }
 
-/* Light Theme */
+/* Light Theme — Telegram Light */
 :root {
   --color-surface-base: #ffffff;
-  --color-surface-subtle: #f8f8f8;
-  --color-border-subtle: #e3e3e3;
-  --color-text-base: #161823;
-  --color-text-muted: #73757d;
+  --color-surface-subtle: #f4f4f5;
+  --color-border-subtle: #e4e4e7;
+  --color-text-base: #000000;
+  --color-text-muted: #707579;
   --color-text-inverse: #ffffff;
-  --color-error: #ef4444;
-  --color-btn-bg: #f1f1f2;
-  --color-btn-hover: #e3e3e3;
-  --color-btn-border: rgba(22, 24, 35, 0.12);
-  --color-btn-border-hover: rgba(22, 24, 35, 0.2);
-  --color-brand-primary: #fe2c55; /* TikTok Red */
-  --color-brand-primary-hover: #e0284d;
+  --color-error: #df3f40;
+  --color-btn-bg: #eaf4fb;
+  --color-btn-hover: #d4eaf7;
+  --color-btn-border: rgba(42, 171, 238, 0.2);
+  --color-btn-border-hover: rgba(42, 171, 238, 0.4);
+  /* Telegram brand: Sky Blue #2AABEE */
+  --color-brand-primary: #2aabee;
+  --color-brand-primary-hover: #1c93e3;
+  --color-brand-gradient: linear-gradient(135deg, #2aabee, #1c93e3);
+  --color-brand-accent: #1c93e3;
+  --color-brand-secondary: #5dc8f5;
 }
 
-/* Dark Theme */
+/* Dark Theme — Telegram Dark */
 .dark {
-  --color-surface-base: #121212;
-  --color-surface-subtle: #1f1f1f;
-  --color-border-subtle: #2f2f2f;
-  --color-text-base: #ffffff;
-  --color-text-muted: #a7a7a7;
-  --color-text-inverse: #121212;
-  --color-error: #ff6b6b;
-  --color-btn-bg: #2f2f2f;
-  --color-btn-hover: #3a3a3a;
-  --color-btn-border: rgba(255, 255, 255, 0.12);
-  --color-btn-border-hover: rgba(255, 255, 255, 0.2);
-  --color-brand-primary: #ff3b5c; /* Slightly lighter red for dark mode */
-  --color-brand-primary-hover: #ea3654;
+  /* Telegram dark: navy-blue surfaces, not pure black */
+  --color-surface-base: #17212b;
+  --color-surface-subtle: #232e3c;
+  --color-border-subtle: #303d4b;
+  --color-text-base: #f5f5f5;
+  --color-text-muted: #708499;
+  --color-text-inverse: #17212b;
+  --color-error: #df3f40;
+  --color-btn-bg: #232e3c;
+  --color-btn-hover: #2b5278;
+  --color-btn-border: rgba(42, 171, 238, 0.2);
+  --color-btn-border-hover: rgba(42, 171, 238, 0.4);
+  /* Telegram brand: Sky Blue #2AABEE */
+  --color-brand-primary: #2aabee;
+  --color-brand-primary-hover: #1c93e3;
+  --color-brand-gradient: linear-gradient(135deg, #2aabee, #1c93e3);
+  --color-brand-accent: #1c93e3;
+  --color-brand-secondary: #5dc8f5;
 }
 
-/* Ocean Theme */
+/* Ocean Theme — Threads (Meta) */
 .ocean {
-  --color-surface-base: #0f1c30;
-  --color-surface-subtle: #182a45;
-  --color-border-subtle: #253e61;
-  --color-text-base: #e0f2fe;
-  --color-text-muted: #93c5fd;
-  --color-text-inverse: #0f1c30;
-  --color-error: #f87171;
-  --color-btn-bg: #182a45;
-  --color-btn-hover: #253e61;
-  --color-btn-border: rgba(147, 197, 253, 0.2);
-  --color-btn-border-hover: rgba(147, 197, 253, 0.4);
-  --color-brand-primary: #38bdf8; /* Ocean blue */
-  --color-brand-primary-hover: #0ea5e9;
+  /* Threads: ultra-minimal black-and-white with warm near-black surfaces */
+  --color-surface-base: #101010;
+  --color-surface-subtle: #1a1a1a;
+  --color-border-subtle: #2f2f2f;
+  --color-text-base: #f5f5f5;
+  --color-text-muted: #777777;
+  --color-text-inverse: #101010;
+  --color-error: #ff4d4d;
+  --color-btn-bg: #1f1f1f;
+  --color-btn-hover: #2d2d2d;
+  --color-btn-border: rgba(255, 255, 255, 0.1);
+  --color-btn-border-hover: rgba(255, 255, 255, 0.18);
+  /* Threads brand: pure black/white, no hue accent */
+  --color-brand-primary: #ffffff;
+  --color-brand-primary-hover: #d0d0d0;
+  --color-brand-gradient: linear-gradient(135deg, #ffffff, #a0a0a0);
+  --color-brand-accent: #ffffff;
+  --color-brand-secondary: #555555;
 }
 
-/* Forest Theme */
+/* Forest Theme — TikTok */
 .forest {
-  --color-surface-base: #0e1d15;
-  --color-surface-subtle: #172d21;
-  --color-border-subtle: #234432;
-  --color-text-base: #e8f5e9;
-  --color-text-muted: #a5d6a7;
-  --color-text-inverse: #0e1d15;
-  --color-error: #fca5a5;
-  --color-btn-bg: #172d21;
-  --color-btn-hover: #234432;
-  --color-btn-border: rgba(165, 214, 167, 0.2);
-  --color-btn-border-hover: rgba(165, 214, 167, 0.4);
-  --color-brand-primary: #4ade80; /* Forest green */
-  --color-brand-primary-hover: #22c55e;
+  /* TikTok: near-black background, Razzmatazz red + Splash cyan accents */
+  --color-surface-base: #010101;
+  --color-surface-subtle: #121212;
+  --color-border-subtle: #2b2b2b;
+  --color-text-base: #ffffff;
+  --color-text-muted: #8a8a8a;
+  --color-text-inverse: #010101;
+  --color-error: #fe2c55;
+  --color-btn-bg: #1a1a1a;
+  --color-btn-hover: #2a2a2a;
+  --color-btn-border: rgba(254, 44, 85, 0.25);
+  --color-btn-border-hover: rgba(254, 44, 85, 0.45);
+  /* TikTok brand: Razzmatazz #FE2C55 & Splash #25F4EE */
+  --color-brand-primary: #fe2c55;
+  --color-brand-primary-hover: #e0284d;
+  --color-brand-gradient: linear-gradient(135deg, #fe2c55, #25f4ee);
+  --color-brand-accent: #25f4ee;
+  --color-brand-secondary: #25f4ee;
 }
 
-/* TikTok Brand */
+/* Brand reference tokens — shared across themes */
 :root {
   --color-tiktok-primary: #fe2c55;
+  --color-tiktok-cyan: #25f4ee;
+  --color-instagram-purple: #833ab4;
+  --color-instagram-red: #fd1d1d;
+  --color-instagram-orange: #fcaf45;
+  --color-threads-black: #000000;
+  --color-threads-white: #ffffff;
 }
 
 /* ─── TikTok Button ─────────────────────────────────────────────────── */

@@ -18,11 +18,15 @@
   gap: 12px;
   padding: 16px 20px 12px;
   background: var(--color-surface-base, #ffffff);
+  border: 1px solid var(--color-border-subtle, rgba(148, 163, 184, 0.24));
+  border-radius: 0;
 }
 
 .feed-tabs {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
+  border: 1px solid var(--color-border-subtle, rgba(148, 163, 184, 0.24));
+  border-radius: 0;
   gap: 0;
   align-items: center;
 }
@@ -31,7 +35,7 @@
   width: 100%;
   padding: 12px 0;
   border: none;
-  border-radius: 8px;
+  border-radius: 0;
   background: transparent;
   color: var(--color-text-muted, rgba(0, 0, 0, 0.64));
   font-size: var(--font-size-subtitle);
@@ -282,7 +286,7 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  background: var(--color-surface-subtle, #f3f4f6);
+  background: transparent;
   border-radius: 12px;
   border: 1px solid var(--color-border-subtle, rgba(255, 255, 255, 0.08));
 }
