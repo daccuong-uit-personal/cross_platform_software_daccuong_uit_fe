@@ -1,6 +1,17 @@
-import { Component, inject, signal } from '@angular/core';
+import {
+  Component,
+  inject,
+  signal,
+  HostListener,
+  ElementRef,
+  ViewChild
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, Router, NavigationEnd } from '@angular/router';
+import {
+  RouterModule,
+  Router,
+  NavigationEnd
+} from '@angular/router';
 import { AuthService } from '@fe/core';
 import { filter } from 'rxjs/operators';
 
@@ -14,26 +25,68 @@ import { filter } from 'rxjs/operators';
 export class RightSidebarComponent {
   private authService = inject(AuthService);
   private router = inject(Router);
+  private elementRef = inject(ElementRef);
+
+  @ViewChild('menuDropdown')
+  menuDropdown: any;
 
   user = this.authService.user;
+
   showMenu = signal(false);
   isHome = signal(true);
 
   constructor() {
-    this.router.events.pipe(
-      filter(event => event instanceof NavigationEnd)
-    ).subscribe((event: any) => {
-      this.isHome.set(event.url === '/home' || event.url === '/');
-    });
-    this.isHome.set(this.router.url === '/home' || this.router.url === '/');
+    this.router.events
+      .pipe(
+        filter(
+          event => event instanceof NavigationEnd
+        )
+      )
+      .subscribe((event: any) => {
+        this.isHome.set(
+          event.url === '/home' ||
+          event.url === '/'
+        );
+      });
+
+    this.isHome.set(
+      this.router.url === '/home' ||
+      this.router.url === '/'
+    );
   }
 
-  toggleMenu() {
+  toggleMenu(event?: Event) {
+    if (event) {
+      event.stopPropagation();
+    }
+
     this.showMenu.update(v => !v);
+  }
+
+  closeMenu() {
+    this.showMenu.set(false);
+  }
+
+  @HostListener(
+    'document:click',
+    ['$event']
+  )
+  onDocumentClick(event: MouseEvent) {
+    if (
+      this.showMenu() &&
+      !this.elementRef.nativeElement.contains(
+        event.target
+      )
+    ) {
+      this.closeMenu();
+    }
   }
 
   logout() {
     this.authService.logout();
-    this.router.navigate(['/auth/login']);
+
+    this.router.navigate([
+      '/auth/login',
+    ]);
   }
 }

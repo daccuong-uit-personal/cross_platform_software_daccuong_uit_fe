@@ -4,10 +4,10 @@
     <ui-shared-header></ui-shared-header>
   }
 
-  <div class="flex flex-1 min-h-0">
+  <div class="flex flex-1 min-h-0 pt-[72px]" [class.pt-0]="!authService.isAuthenticated()">
     <!-- Sidebar (Authenticated Only) -->
     @if (authService.isAuthenticated()) {
-      <aside class="hidden lg:flex w-64 flex-col border-r border-border-subtle bg-surface-base sticky top-[60px] h-[calc(100vh-60px)] z-40">
+      <aside class="hidden lg:flex w-64 flex-col border-r border-border-subtle bg-surface-base sticky top-[72px] h-[calc(100vh-72px)] z-40">
       <div class="flex items-center gap-3 p-6 border-b border-border-subtle">
         <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-primary text-xl font-bold text-white shadow-glow">
           SC

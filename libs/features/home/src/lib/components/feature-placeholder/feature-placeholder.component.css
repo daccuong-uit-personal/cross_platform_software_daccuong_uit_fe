@@ -14,7 +14,7 @@
 }
 .placeholder-hero p {
   margin: 0;
-  color: #334155;
+  color: var(--color-text-muted, #334155);
   max-width: 680px;
 }
 .placeholder-grid {
@@ -27,21 +27,21 @@
   gap: 12px;
   padding: calc(var(--std-padding-scale) * 1.25rem);
   border-radius: 24px;
-  background: #fff;
-  border: 1px solid rgba(15, 23, 42, 0.08);
+  background: var(--color-surface-base, #ffffff);
+  border: 1px solid var(--color-border-subtle, rgba(15, 23, 42, 0.08));
   box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
   transition: transform 0.2s ease, border-color 0.2s ease;
 }
 .placeholder-card:hover {
   transform: translateY(-2px);
-  border-color: rgba(15, 23, 42, 0.14);
+  border-color: var(--color-border-subtle, rgba(15, 23, 42, 0.14));
 }
 .item-icon {
   width: var(--std-icon-size-xl);
   height: var(--std-icon-size-xl);
   display: grid;
   place-items: center;
-  background: #eff6ff;
+  background: var(--color-surface-subtle, #eff6ff);
   border-radius: 16px;
   font-size: var(--font-size-subtitle);
 }
@@ -51,14 +51,14 @@
 }
 .placeholder-card p {
   margin: 4px 0 0;
-  color: #475569;
+  color: var(--color-text-muted, #475569);
   line-height: 1.6;
 }
 .placeholder-card button {
   width: fit-content;
   border: none;
-  background: #0f172a;
-  color: #fff;
+  background: var(--color-text-base, #0f172a);
+  color: var(--color-text-inverse, #ffffff);
   padding: 10px 18px;
   border-radius: 999px;
   font-size: var(--font-size-body);
@@ -67,5 +67,5 @@
   transition: background 0.2s ease;
 }
 .placeholder-card button:hover {
-  background: #1e293b;
+  background: var(--color-text-muted, #1e293b);
 }

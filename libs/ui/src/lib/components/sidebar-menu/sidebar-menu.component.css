@@ -21,7 +21,7 @@
   border-radius: 16px;
   color: var(--color-text-base, #334155);
   text-decoration: none;
-  font-size: var(--font-size-title);
+  font-size: var(--font-size-subtitle);
   font-weight: 600;
   line-height: 1.3;
   transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;

@@ -161,7 +161,7 @@ import { UiSettingsService, type UiSettings } from '@fe/core';
     }
 
     .settings-title {
-      font-size: var(--font-size-title);
+      font-size: var(--font-size-subtitle);
       font-weight: 700;
       margin: 0 0 0.5rem 0;
       color: var(--color-text-base);
@@ -181,7 +181,7 @@ import { UiSettingsService, type UiSettings } from '@fe/core';
     }
 
     .section-title {
-      font-size: calc(var(--font-size-scale, 1) * 1.25rem);
+      font-size: var(--font-size-subtitle);
       font-weight: 600;
       margin: 0 0 1.5rem 0;
       color: var(--color-text-base);

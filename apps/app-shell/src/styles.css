@@ -22,6 +22,7 @@
   --font-size-heading: calc(var(--font-size-scale, 0.84) * 1.75rem);  /* Level 1: Form Title */
   --font-size-title: calc(var(--font-size-scale, 0.84) * 1.25rem);    /* Level 2: Menu */
   --font-size-subtitle: calc(var(--font-size-scale, 0.84) * 1.125rem);/* Level 3: Section Title */
+  --font-size-subtitle-sm: calc(var(--font-size-scale, 0.84) * 1.0625rem); /* Level 3.5: Slightly smaller section title */
   --font-size-body: calc(var(--font-size-scale, 0.84) * 1rem);        /* Level 4: Group/Sub-section */
   --font-size-label: calc(var(--font-size-scale, 0.84) * 0.9375rem);  /* Level 5: Normal text */
   --font-size-caption: calc(var(--font-size-scale, 0.84) * 0.8125rem);
@@ -60,6 +61,8 @@ body, button, input, select, textarea, .tiktok-btn {
   --color-border-subtle: #e3e3e3;
   --color-text-base: #161823;
   --color-text-muted: #73757d;
+  --color-text-inverse: #ffffff;
+  --color-error: #ef4444;
   --color-btn-bg: #f1f1f2;
   --color-btn-hover: #e3e3e3;
   --color-btn-border: rgba(22, 24, 35, 0.12);
@@ -75,6 +78,8 @@ body, button, input, select, textarea, .tiktok-btn {
   --color-border-subtle: #2f2f2f;
   --color-text-base: #ffffff;
   --color-text-muted: #a7a7a7;
+  --color-text-inverse: #121212;
+  --color-error: #ff6b6b;
   --color-btn-bg: #2f2f2f;
   --color-btn-hover: #3a3a3a;
   --color-btn-border: rgba(255, 255, 255, 0.12);
@@ -90,6 +95,8 @@ body, button, input, select, textarea, .tiktok-btn {
   --color-border-subtle: #253e61;
   --color-text-base: #e0f2fe;
   --color-text-muted: #93c5fd;
+  --color-text-inverse: #0f1c30;
+  --color-error: #f87171;
   --color-btn-bg: #182a45;
   --color-btn-hover: #253e61;
   --color-btn-border: rgba(147, 197, 253, 0.2);
@@ -105,6 +112,8 @@ body, button, input, select, textarea, .tiktok-btn {
   --color-border-subtle: #234432;
   --color-text-base: #e8f5e9;
   --color-text-muted: #a5d6a7;
+  --color-text-inverse: #0e1d15;
+  --color-error: #fca5a5;
   --color-btn-bg: #172d21;
   --color-btn-hover: #234432;
   --color-btn-border: rgba(165, 214, 167, 0.2);
