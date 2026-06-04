@@ -361,10 +361,10 @@ export class UiSettingsComponent {
   ];
 
   fontSizeOptions = [
-    { value: 'compact' as const, label: 'Compact', preview: '-15%' },
+    { value: 'compact' as const, label: 'Compact', preview: '-20%' },
     { value: 'normal' as const, label: 'Normal', preview: '100%' },
-    { value: 'large' as const, label: 'Large', preview: '+15%' },
-    { value: 'xlarge' as const, label: 'X-Large', preview: '+30%' },
+    { value: 'large' as const, label: 'Large', preview: '+20%' },
+    { value: 'xlarge' as const, label: 'X-Large', preview: '+40%' },
   ];
 
   lineHeightOptions = [
@@ -375,8 +375,8 @@ export class UiSettingsComponent {
   ];
 
   paddingScaleOptions = [
-    { value: 'compact' as const, label: 'Compact (-20%)' },
-    { value: 'normal' as const, label: 'Normal (100%)' },
+    { value: 'compact' as const, label: 'Compact (-30%)' },
+    { value: 'normal' as const, label: 'Normal (75%)' },
     { value: 'comfortable' as const, label: 'Comfortable (+20%)' },
     { value: 'spacious' as const, label: 'Spacious (+50%)' },
   ];

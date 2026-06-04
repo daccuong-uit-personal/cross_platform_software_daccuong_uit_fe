@@ -28,6 +28,7 @@ export const DEFAULT_UI_SETTINGS: UiSettings = {
   fontFamily: 'ui',
   fontSize: 'normal',
   lineHeight: 'normal',
+  // default back to compact (original default)
   paddingScale: 'compact',
   theme: 'light',
   highContrast: false,
@@ -36,18 +37,18 @@ export const DEFAULT_UI_SETTINGS: UiSettings = {
 
 // Font size multipliers (relative to base)
 const FONT_SIZE_SCALES: Record<UiSettings['fontSize'], number> = {
-  compact: 0.58,
-  normal: 0.71,
-  large: 0.84,
-  xlarge: 0.97,
+  compact: 0.533,
+  normal: 0.667,
+  large: 0.800,
+  xlarge: 0.934,
 };
 
 // Padding scale multipliers (relative to base)
 const PADDING_SCALES: Record<UiSettings['paddingScale'], number> = {
-  compact: 0.7,
-  normal: 1,
-  comfortable: 1.2,
-  spacious: 1.5,
+  compact: 0.525,
+  normal: 0.75,
+  comfortable: 0.9,
+  spacious: 1.125,
 };
 
 @Injectable({ providedIn: 'root' })
@@ -80,6 +81,7 @@ export class UiSettingsService {
     effect(() => {
       this.applySettingsToDOM(this.settings$());
     });
+
   }
 
   // ══════════════════════════════════════════════════════════════
@@ -176,11 +178,11 @@ export class UiSettingsService {
     // Apply font family
     root.style.setProperty('--font-family', this.getFontFamily());
 
-    // Apply font size scale
-    root.style.setProperty('--font-size-scale', String(FONT_SIZE_SCALES[settings.fontSize]));
+    const fontScale = FONT_SIZE_SCALES[settings.fontSize];
+    const paddingScale = PADDING_SCALES[settings.paddingScale];
 
-    // Apply padding scale
-    root.style.setProperty('--padding-scale', String(PADDING_SCALES[settings.paddingScale]));
+    root.style.setProperty('--font-size-scale', String(fontScale));
+    root.style.setProperty('--padding-scale', String(paddingScale));
 
     // Apply line height
     root.style.setProperty('--line-height', String(this.getLineHeight()));

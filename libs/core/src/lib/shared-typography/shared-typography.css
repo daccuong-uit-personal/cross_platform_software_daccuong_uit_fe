@@ -4,7 +4,7 @@
 */
 
 :root {
-  --std-font-scale: calc(var(--font-size-scale, 0.7));
+  --std-font-scale: calc(var(--font-size-scale, 0.667));
   --std-padding-scale: calc(var(--padding-scale, 0.7));
   --std-section-title-size: calc(var(--std-font-scale) * 2rem);
   --std-section-title-weight: 700;

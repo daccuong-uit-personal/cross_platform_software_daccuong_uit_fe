@@ -15,8 +15,8 @@
 .feed-header {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding: 16px 20px 12px;
+  gap: calc(12px * var(--padding-scale, 1));
+  padding: calc(16px * var(--padding-scale, 1)) calc(20px * var(--padding-scale, 1)) calc(12px * var(--padding-scale, 1));
   background: var(--color-surface-base, #ffffff);
   border: 1px solid var(--color-border-subtle, rgba(148, 163, 184, 0.24));
   border-radius: 0;
@@ -33,7 +33,7 @@
 
 .tab {
   width: 100%;
-  padding: 12px 0;
+  padding: calc(12px * var(--padding-scale, 1)) 0;
   border: none;
   border-radius: 0;
   background: transparent;
@@ -63,24 +63,24 @@
   width: 100%;
   padding: 0;
   border: none;
-  border-radius: 12px;
+  border-radius: calc(12px * var(--padding-scale, 1));
   background: var(--color-surface-subtle, #f3f4f6);
-  gap: 10px;
+  gap: calc(10px * var(--padding-scale, 1));
 }
 
 .compose-top {
   display: flex;
   align-items: center;
   width: 100%;
-  max-width: 780px;
-  padding: 10px 0 14px 18px;
+  max-width: calc(780px * var(--padding-scale, 1));
+  padding: calc(10px * var(--padding-scale, 1)) 0 calc(14px * var(--padding-scale, 1)) calc(18px * var(--padding-scale, 1));
   border-bottom: 1px solid var(--color-border-subtle, rgba(148, 163, 184, 0.24));
 }
 
 .compose-input {
   position: relative;
   width: 100%;
-  padding: 18px 16px 18px 86px;
+  padding: calc(18px * var(--padding-scale, 1)) calc(16px * var(--padding-scale, 1)) calc(18px * var(--padding-scale, 1)) calc(86px * var(--padding-scale, 1));
   border: none;
   background: transparent;
   color: var(--color-text-muted, rgba(148, 163, 184, 0.72));
@@ -88,16 +88,16 @@
   font-size: calc(var(--font-size-subtitle) + 0.1rem);
   font-weight: 500;
   cursor: pointer;
-  min-height: 60px;
+  min-height: calc(60px * var(--padding-scale, 1));
 }
 
 .compose-input-avatar {
   position: absolute;
-  left: 16px;
+  left: calc(16px * var(--padding-scale, 1));
   top: 50%;
   transform: translateY(-50%);
-  width: 48px;
-  height: 48px;
+  width: calc(48px * var(--padding-scale, 1));
+  height: calc(48px * var(--padding-scale, 1));
   border-radius: 50%;
   background: linear-gradient(135deg, var(--color-brand-primary, #fe2c55), rgba(254, 44, 85, 0.75));
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
@@ -113,42 +113,42 @@
 
 .compose-actions {
   width: 100%;
-  max-width: 780px;
+  max-width: calc(780px * var(--padding-scale, 1));
   margin: 0 auto;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 16px;
-  padding: 10px 48px 10px;
+  gap: calc(16px * var(--padding-scale, 1));
+  padding: calc(10px * var(--padding-scale, 1)) calc(48px * var(--padding-scale, 1)) calc(10px * var(--padding-scale, 1));
   border-bottom: 1px solid var(--color-border-subtle, rgba(148, 163, 184, 0.24));
 }
 
 .compose-footer {
   width: 100%;
-  max-width: 640px;
+  max-width: calc(640px * var(--padding-scale, 1));
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 12px;
-  padding: 0 4px;
+  gap: calc(12px * var(--padding-scale, 1));
+  padding: 0 calc(4px * var(--padding-scale, 1));
 }
 
 .compose-footer .action-buttons.compact {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: calc(8px * var(--padding-scale, 1));
 }
 
 .post-btn {
-  min-width: 96px;
-  padding: 12px 24px;
-  margin-left: 8px;
-  min-height: 48px;
+  min-width: calc(96px * var(--padding-scale, 1));
+  padding: calc(12px * var(--padding-scale, 1)) calc(24px * var(--padding-scale, 1));
+  margin-left: calc(8px * var(--padding-scale, 1));
+  min-height: calc(48px * var(--padding-scale, 1));
   border: none;
   border-radius: 9999px;
   background: var(--color-brand-primary, #fe2c55);
   color: var(--color-text-inverse, #fff);
-  font-size: 0.95rem;
+  font-size: calc(var(--font-size-scale, 1) * 0.95rem);
   font-weight: 700;
   cursor: pointer;
   transition: transform 0.2s ease, background 0.2s ease;
@@ -164,7 +164,7 @@
   display: grid;
   grid-template-columns: 1fr auto;
   align-items: center;
-  gap: 12px;
+  gap: calc(12px * var(--padding-scale, 1));
 }
 
 .search-container {
@@ -173,20 +173,20 @@
 
 .search-icon {
   position: absolute;
-  left: 14px;
+  left: calc(14px * var(--padding-scale, 1));
   top: 50%;
   transform: translateY(-50%);
-  width: 18px;
-  height: 18px;
+  width: calc(18px * var(--padding-scale, 1));
+  height: calc(18px * var(--padding-scale, 1));
   color: var(--color-text-muted, #6b7280);
   pointer-events: none;
 }
 
 .search-input {
   width: 100%;
-  padding: 12px 16px 12px 42px;
+  padding: calc(12px * var(--padding-scale, 1)) calc(16px * var(--padding-scale, 1)) calc(12px * var(--padding-scale, 1)) calc(42px * var(--padding-scale, 1));
   border: 1px solid var(--color-border-subtle, rgba(255, 255, 255, 0.12));
-  border-radius: 20px;
+  border-radius: calc(20px * var(--padding-scale, 1));
   background: var(--color-surface-base, #ffffff);
   color: var(--color-text-base, #0f172a);
   font-size: var(--font-size-body);
@@ -206,7 +206,7 @@
 
 .action-buttons {
   display: flex;
-  gap: 8px;
+  gap: calc(8px * var(--padding-scale, 1));
   flex-wrap: wrap;
 }
 
@@ -214,10 +214,10 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 48px;
-  height: 48px;
-  min-width: 48px;
-  min-height: 48px;
+  width: calc(48px * var(--padding-scale, 1));
+  height: calc(48px * var(--padding-scale, 1));
+  min-width: calc(48px * var(--padding-scale, 1));
+  min-height: calc(48px * var(--padding-scale, 1));
   border: none;
   border-radius: 50%;
   background: var(--color-surface-subtle, #f3f4f6);
@@ -233,8 +233,8 @@
 }
 
 .action-btn img {
-  width: 24px;
-  height: 24px;
+  width: calc(24px * var(--padding-scale, 1));
+  height: calc(24px * var(--padding-scale, 1));
   object-fit: contain;
   display: block;
 }
@@ -250,7 +250,7 @@
 }
 
 .post-btn {
-  padding: 10px 22px;
+  padding: calc(10px * var(--padding-scale, 1)) calc(22px * var(--padding-scale, 1));
   border: none;
   border-radius: 9999px;
   background: var(--color-brand-primary, #fe2c55);
@@ -277,22 +277,22 @@
 .feed-posts {
   display: flex;
   flex-direction: column;
-  gap: 18px;
-  padding: 16px 24px 24px;
+  gap: calc(18px * var(--padding-scale, 1));
+  padding: calc(16px * var(--padding-scale, 1)) calc(24px * var(--padding-scale, 1)) calc(24px * var(--padding-scale, 1));
 }
 
 .post-card {
-  padding: 20px 20px 18px;
+  padding: calc(20px * var(--padding-scale, 1)) calc(20px * var(--padding-scale, 1)) calc(18px * var(--padding-scale, 1));
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: calc(16px * var(--padding-scale, 1));
   background: transparent;
-  border-radius: 12px;
+  border-radius: calc(12px * var(--padding-scale, 1));
   border: 1px solid var(--color-border-subtle, rgba(255, 255, 255, 0.08));
 }
 
 .post-card + .post-card {
-  margin-top: 16px;
+  margin-top: calc(16px * var(--padding-scale, 1));
 }
 
 .post-card:not(:last-child) {
@@ -307,18 +307,18 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 16px;
+  gap: calc(16px * var(--padding-scale, 1));
 }
 
 .post-card-author {
   display: flex;
-  gap: 12px;
+  gap: calc(12px * var(--padding-scale, 1));
   align-items: center;
 }
 
 .avatar {
-  width: 48px;
-  height: 48px;
+  width: calc(48px * var(--padding-scale, 1));
+  height: calc(48px * var(--padding-scale, 1));
   border-radius: 50%;
   background: var(--color-surface-subtle, #f3f4f6);
   flex-shrink: 0;
@@ -337,7 +337,7 @@
 }
 
 .post-meta {
-  margin: 4px 0 0;
+  margin: calc(4px * var(--padding-scale, 1)) 0 0;
   font-size: var(--font-size-caption);
   color: var(--color-text-muted, rgba(148, 163, 184, 0.72));
 }
@@ -346,10 +346,10 @@
   border: none;
   background: transparent;
   color: var(--color-text-muted, rgba(148, 163, 184, 0.72));
-  font-size: 1.25rem;
+  font-size: calc(var(--font-size-scale, 1) * 1.25rem);
   line-height: 1;
   cursor: pointer;
-  padding: 6px;
+  padding: calc(6px * var(--padding-scale, 1));
   border-radius: 9999px;
   transition: background-color 0.2s ease;
 }
@@ -368,7 +368,7 @@
 .post-tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: calc(10px * var(--padding-scale, 1));
 }
 
 .tag {
@@ -384,23 +384,23 @@
 
 .post-media {
   display: grid;
-  gap: 10px;
-  margin-top: 8px;
+  gap: calc(10px * var(--padding-scale, 1));
+  margin-top: calc(8px * var(--padding-scale, 1));
   width: 100%;
 }
 
 .post-media img {
   width: 100%;
-  height: 320px;
-  max-height: 320px;
-  border-radius: 16px;
+  height: calc(320px * var(--padding-scale, 1));
+  max-height: calc(320px * var(--padding-scale, 1));
+  border-radius: calc(16px * var(--padding-scale, 1));
   object-fit: cover;
 }
 
 .post-stats {
   display: flex;
   flex-wrap: wrap;
-  gap: 18px;
+  gap: calc(18px * var(--padding-scale, 1));
   font-size: var(--font-size-caption);
   color: var(--color-text-muted, rgba(148, 163, 184, 0.72));
 }
@@ -408,16 +408,16 @@
 .post-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 8px;
+  gap: calc(10px * var(--padding-scale, 1));
+  margin-bottom: calc(8px * var(--padding-scale, 1));
 }
 
 .post-actions button {
   width: auto;
-  min-width: 80px;
-  padding: 10px 12px;
+  min-width: calc(80px * var(--padding-scale, 1));
+  padding: calc(10px * var(--padding-scale, 1)) calc(12px * var(--padding-scale, 1));
   border: none;
-  border-radius: 16px;
+  border-radius: calc(16px * var(--padding-scale, 1));
   background: var(--color-surface-subtle, #f3f4f6);
   color: var(--color-text-base, #0f172a);
   font-size: var(--font-size-caption);
@@ -426,7 +426,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: flex-start;
-  gap: 4px;
+  gap: calc(4px * var(--padding-scale, 1));
   transition: transform 0.2s ease;
 }
 
@@ -437,9 +437,9 @@
 }
 
 .action-count {
-  margin-right: 10px;
+  margin-right: calc(10px * var(--padding-scale, 1));
   color: var(--color-text-muted, rgba(148, 163, 184, 0.72));
-  font-size: 0.85rem;
+  font-size: calc(var(--font-size-scale, 1) * 0.85rem);
   font-weight: 500;
 }
 
@@ -468,7 +468,7 @@
 /* ═════════════════════════════════════════════════════════════ */
 @media (max-width: 840px) {
   .feed-header {
-    padding: 14px 16px 12px;
+    padding: calc(14px * var(--padding-scale, 1)) calc(16px * var(--padding-scale, 1)) calc(12px * var(--padding-scale, 1));
   }
 
   .feed-controls {
@@ -486,7 +486,7 @@
 
 @media (max-width: 640px) {
   .feed-header {
-    padding: 12px 14px;
+    padding: calc(12px * var(--padding-scale, 1)) calc(14px * var(--padding-scale, 1));
   }
 
   .action-buttons {
