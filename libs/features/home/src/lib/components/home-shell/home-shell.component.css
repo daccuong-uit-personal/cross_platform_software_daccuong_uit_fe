@@ -24,11 +24,14 @@
 }
 
 .rightbar {
-  position: relative;
+  position: sticky;
+  top: 0;
   align-self: start;
   display: flex;
   flex-direction: column;
-  height: fit-content;
+  height: auto;
+  max-height: 100vh;
+  overflow: hidden;
 }
 
 .home-main {

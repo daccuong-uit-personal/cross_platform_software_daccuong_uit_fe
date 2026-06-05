@@ -30,7 +30,7 @@ button {
   color: white;
   border-radius: 6px;
   padding: 0 12px;
-  height: 36px;
+  height: 40px;
   font-weight: 600;
   display: flex;
   align-items: center;
@@ -45,7 +45,7 @@ button {
   color: var(--fb-text);
   border-radius: 6px;
   padding: 0 12px;
-  height: 36px;
+  height: 40px;
   font-weight: 600;
   display: flex;
   align-items: center;

@@ -65,6 +65,7 @@ export class SocialPostService {
       likesCount: 0,
       commentsCount: 0,
       sharesCount: 0,
+      viewsCount: 0,
       isLiked: false,
       isBookmarked: false,
       hashtags: payload.hashtags || [],

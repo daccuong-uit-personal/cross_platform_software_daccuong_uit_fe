@@ -17,7 +17,7 @@
   
   /* Scaling Factors (set by UiSettingsService) */
   --font-size-scale: 0.667;
-  --padding-scale: 0.525;
+  --padding-scale: 0.63;
   --line-height: 1.5;
   --font-size-heading: calc(var(--font-size-scale, 1) * 1.75rem);  /* Level 1: Form Title */
   --font-size-title: calc(var(--font-size-scale, 1) * 1.25rem);    /* Level 2: Menu */
@@ -37,6 +37,11 @@
 *::before,
 *::after {
   box-sizing: border-box;
+}
+
+html {
+  font-size: 120%;
+  line-height: var(--line-height, 1.5);
 }
 
 body {

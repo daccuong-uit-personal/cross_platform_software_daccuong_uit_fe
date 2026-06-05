@@ -1,3 +1,3 @@
 .create-page { padding: 24px; }
 .create-grid { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
-.create-button { flex: 1 1 180px; border-radius: 16px; border: none; padding: 16px; background: var(--color-text-base, #161823); color: var(--color-text-inverse, #ffffff); cursor: pointer; }
+.create-button { flex: 1 1 180px; border-radius: 16px; border: none; padding: 0 16px; height: 40px; background: var(--color-text-base, #161823); color: var(--color-text-inverse, #ffffff); cursor: pointer; display: flex; align-items: center; justify-content: center; }

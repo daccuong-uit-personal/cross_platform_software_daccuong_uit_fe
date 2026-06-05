@@ -375,8 +375,8 @@ export class UiSettingsComponent {
   ];
 
   paddingScaleOptions = [
-    { value: 'compact' as const, label: 'Compact (-30%)' },
-    { value: 'normal' as const, label: 'Normal (75%)' },
+    { value: 'compact' as const, label: 'Compact (-20%)' },
+    { value: 'normal' as const, label: 'Normal' },
     { value: 'comfortable' as const, label: 'Comfortable (+20%)' },
     { value: 'spacious' as const, label: 'Spacious (+50%)' },
   ];

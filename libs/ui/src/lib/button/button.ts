@@ -10,7 +10,7 @@ import { CommonModule } from '@angular/common';
     lib-button button {
       position: relative;
       display: inline-flex;
-      height: 3rem;
+      height: 2.5rem;
       width: 100%;
       align-items: center;
       justify-content: center;

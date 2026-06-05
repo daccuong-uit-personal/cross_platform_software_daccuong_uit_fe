@@ -37,18 +37,18 @@ export const DEFAULT_UI_SETTINGS: UiSettings = {
 
 // Font size multipliers (relative to base)
 const FONT_SIZE_SCALES: Record<UiSettings['fontSize'], number> = {
-  compact: 0.533,
-  normal: 0.667,
-  large: 0.800,
-  xlarge: 0.934,
+  compact: 0.64,
+  normal: 0.8,
+  large: 0.96,
+  xlarge: 1.12,
 };
 
 // Padding scale multipliers (relative to base)
 const PADDING_SCALES: Record<UiSettings['paddingScale'], number> = {
-  compact: 0.525,
-  normal: 0.75,
-  comfortable: 0.9,
-  spacious: 1.125,
+  compact: 0.63,
+  normal: 0.9,
+  comfortable: 1.08,
+  spacious: 1.35,
 };
 
 @Injectable({ providedIn: 'root' })

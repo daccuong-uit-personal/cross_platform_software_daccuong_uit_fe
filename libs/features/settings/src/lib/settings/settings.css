@@ -152,9 +152,9 @@
 /* Row item */
 .settings-row {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
-  padding: 12px 0;
+  padding: 14px 0;
   border-bottom: 1px solid var(--color-border-subtle, rgba(226, 232, 240, 0.75));
   gap: 12px;
 }
@@ -168,7 +168,7 @@
   cursor: pointer;
   transition: background 0.15s ease;
   border-radius: 10px;
-  padding: 12px 0;
+  padding: 14px 0;
   margin: 0 -8px;
 }
 
@@ -182,7 +182,13 @@
   flex-direction: column;
   flex: 1;
   min-width: 0;
-  gap: 4px;
+  gap: 6px;
+}
+
+.settings-row-action,
+.settings-row-value {
+  align-self: flex-start;
+  margin-top: 0.2rem;
 }
 
 /* Level 5: Row name */

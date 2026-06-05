@@ -31,6 +31,7 @@ export interface Post {
   likesCount: number;
   commentsCount: number;
   sharesCount: number;
+  viewsCount?: number;
   isLiked: boolean;
   isBookmarked: boolean;
   hashtags: string[];

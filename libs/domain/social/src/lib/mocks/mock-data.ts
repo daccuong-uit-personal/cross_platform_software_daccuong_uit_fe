@@ -32,6 +32,7 @@ export interface MockPost {
   likesCount: number;
   commentsCount: number;
   sharesCount: number;
+  viewsCount?: number;
   isLiked: boolean;
   isBookmarked: boolean;
   hashtags: string[];
@@ -197,6 +198,7 @@ export const MOCK_POSTS: MockPost[] = [
     likesCount: 245,
     commentsCount: 32,
     sharesCount: 18,
+    viewsCount: 3_200,
     isLiked: true,
     isBookmarked: false,
     hashtags: ['angular', 'web', 'development'],
@@ -219,6 +221,7 @@ export const MOCK_POSTS: MockPost[] = [
     likesCount: 512,
     commentsCount: 67,
     sharesCount: 89,
+    viewsCount: 8_480,
     isLiked: false,
     isBookmarked: true,
     hashtags: ['design', 'accessibility', 'ui'],
@@ -242,6 +245,7 @@ export const MOCK_POSTS: MockPost[] = [
     likesCount: 189,
     commentsCount: 24,
     sharesCount: 12,
+    viewsCount: 2_060,
     isLiked: false,
     isBookmarked: false,
     hashtags: ['codelife', 'developer', 'coffee'],

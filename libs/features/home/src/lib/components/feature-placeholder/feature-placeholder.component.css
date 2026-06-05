@@ -59,12 +59,16 @@
   border: none;
   background: var(--color-text-base, #0f172a);
   color: var(--color-text-inverse, #ffffff);
-  padding: 10px 18px;
+  padding: 0 18px;
+  height: 40px;
   border-radius: 999px;
   font-size: var(--font-size-body);
   font-weight: var(--font-weight-strong);
   cursor: pointer;
   transition: background 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .placeholder-card button:hover {
   background: var(--color-text-muted, #1e293b);
