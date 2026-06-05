@@ -8,7 +8,7 @@ import { DiscoverComponent } from './components/discover/discover.component';
 import { CreateComponent } from './components/create/create.component';
 import { ActivityComponent } from './components/activity/activity.component';
 import { FeaturePlaceholderComponent } from './components/feature-placeholder/feature-placeholder.component';
-import { RightSidebarComponent } from './components/right-sidebar/right-sidebar.component';
+import { RightSidebarComponent } from '@fe/ui';
 
 @NgModule({
   imports: [

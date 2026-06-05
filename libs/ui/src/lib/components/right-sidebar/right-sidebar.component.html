@@ -54,7 +54,7 @@
           </div>
         </div>
 
-        <ng-container *ngIf="isHome()">
+        <ng-container *ngIf="isHome(); else profileSidebar">
           <div class="profile-stats">
             <div>
               <span>1.2k</span>
@@ -176,7 +176,7 @@
 
       </ng-container>
 
-      <ng-container *ngIf="isProfile() && !isHome()">
+      <ng-template #profileSidebar>
         <section class="suggestion-card">
           <div class="section-title">Thông tin nhanh</div>
           <p class="profile-quick-text">
@@ -197,7 +197,7 @@
           </p>
           <button>Khám phá nội dung</button>
         </section>
-      </ng-container>
+      </ng-template>
 
     </form>
   </div>
