@@ -2,8 +2,60 @@
   <div class="sidebar-scroll-container">
     <form class="sidebar-scroll-form">
 
-      <!-- Profile card removed as requested -->
+      <!-- ═══ Studio Navigation Button (TOP) ═══ -->
+      <a routerLink="/media/studio" class="studio-nav-btn" id="profile-sidebar-studio-btn">
+        <div class="studio-btn-glow"></div>
 
+        <div class="studio-btn-left">
+          <div class="studio-icon-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="23 7 16 12 23 17 23 7"></polygon>
+              <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
+            </svg>
+          </div>
+          <div class="studio-btn-text">
+            <span class="studio-label">Studio</span>
+            <span class="studio-sub">Quản lý nội dung</span>
+          </div>
+        </div>
+
+        <div class="studio-badges">
+          <div class="studio-badge-item video-badge" title="Video đã đăng">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="23 7 16 12 23 17 23 7"></polygon>
+              <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
+            </svg>
+            <span class="badge-count" *ngIf="videoCount() > 0">
+              {{ videoCount() > 99 ? '99+' : videoCount() }}
+            </span>
+          </div>
+
+          <div class="studio-badge-item view-badge" title="Lượt xem">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+            <span class="badge-count" *ngIf="viewsCount() > 0">
+              {{ viewsCount() > 99 ? '99+' : viewsCount() }}
+            </span>
+          </div>
+
+          <div class="studio-arrow">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12h14"></path>
+              <path d="M12 5l7 7-7 7"></path>
+            </svg>
+          </div>
+        </div>
+      </a>
+
+
+
+      <!-- ═══ Suggestion Cards ═══ -->
       <section class="suggestion-card">
         <div class="section-title">Tối ưu hóa hồ sơ</div>
         <p class="profile-quick-text">
@@ -28,19 +80,6 @@
           <li><strong>Hashtag:</strong> Dùng 5-10 hashtag phù hợp.</li>
         </ul>
         <a class="show-more" routerLink="/media">Đăng bài ngay</a>
-      </section>
-
-      <section class="suggestion-card">
-        <div class="section-title">Kiểm tra thống kê</div>
-        <p class="profile-quick-text">
-          Theo dõi lượt xem, lượt like, và tương tác hàng ngày để tối ưu nội dung.
-        </p>
-        <ul class="profile-quick-list">
-          <li><strong>Lượt xem:</strong> Bài nào được xem nhiều nhất?</li>
-          <li><strong>Tương tác:</strong> Kiểm tra rate like, comment, share.</li>
-          <li><strong>Người theo dõi:</strong> Theo dõi tốc độ tăng trưởng.</li>
-        </ul>
-        <a class="show-more" routerLink="/profile/analytics">Xem thống kê</a>
       </section>
 
     </form>

@@ -1,13 +1,11 @@
-<div class="home-shell">
-  <aside class="sidebar">
-    <fe-bottom-menu></fe-bottom-menu>
-  </aside>
-  <main class="home-main">
-    <section class="main-content">
-      <router-outlet></router-outlet>
-    </section>
-  </main>
-  <aside class="rightbar">
-    <fe-right-sidebar></fe-right-sidebar>
-  </aside>
-</div>
+<ui-page-shell [menuItems]="menuItems">
+
+  <!-- Main feed content -->
+  <div slot="main">
+    <router-outlet></router-outlet>
+  </div>
+
+  <!-- Right sidebar -->
+  <fe-right-sidebar slot="rightbar"></fe-right-sidebar>
+
+</ui-page-shell>

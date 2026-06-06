@@ -2,14 +2,14 @@ import { Component, effect, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '@fe/core';
-import { SidebarMenuComponent, SidebarMenuItem } from '@fe/ui';
+import { PageShellComponent, SidebarMenuItem } from '@fe/ui';
 import { ProfileRightSidebarComponent } from '../components/profile-right-sidebar/profile-right-sidebar.component';
 import { MOCK_POSTS } from '@fe/domain/social';
 
 @Component({
   standalone: true,
   selector: 'feat-profile-page',
-  imports: [CommonModule, RouterModule, SidebarMenuComponent, ProfileRightSidebarComponent],
+  imports: [CommonModule, RouterModule, PageShellComponent, ProfileRightSidebarComponent],
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.css'],
 })

@@ -30,7 +30,18 @@
   --font-weight-strong: 700;
   --font-weight-medium: 600;
   --font-weight-regular: 500;
+
+  /* ─── Page Shell Layout Tokens ───────────────────────────────
+     Single source-of-truth for all page layout dimensions.
+     Changing these propagates to Home, Profile, and Settings.
+  ─────────────────────────────────────────────────────────── */
+  --page-sidebar-width: calc(280px * var(--padding-scale, 1));       /* Left nav — full labels */
+  --page-sidebar-collapsed: calc(88px * var(--padding-scale, 1));    /* Left nav — icons only */
+  --page-rightbar-width: calc(320px * var(--padding-scale, 1));      /* Right sidebar */
+  --page-rightbar-width-full: calc(364px * var(--padding-scale, 1)); /* Right sidebar — full */
+  --header-height: calc(72px * var(--padding-scale, 1));             /* ui-shared-header */
 }
+
 
 /* Base Reset & Core Styles */
 *,

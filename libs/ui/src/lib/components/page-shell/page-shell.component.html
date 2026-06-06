@@ -1,0 +1,59 @@
+<div class="page-shell">
+
+  <!-- ═══ LEFT SIDEBAR ═══ -->
+  <aside class="page-sidebar">
+    <nav class="page-sidebar-nav">
+
+      <!-- Brand logo -->
+      <a [routerLink]="brandLink" class="page-brand">
+        <div class="page-brand-icon">
+          <svg viewBox="0 0 48 48" fill="none" stroke="currentColor"
+               stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="10" y="10" width="28" height="28" rx="8"></rect>
+            <path d="M18 18L30 30"></path>
+            <path d="M30 18L18 30"></path>
+          </svg>
+        </div>
+        <span class="page-brand-title">Reals</span>
+      </a>
+
+      <!-- Navigation menu -->
+      <ui-sidebar-menu [items]="menuItems"></ui-sidebar-menu>
+
+      <!-- Settings footer -->
+      @if (showSettingsFooter) {
+        <div class="page-sidebar-footer">
+          <a routerLink="/settings" class="page-settings-link">
+            <div class="page-settings-avatar">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="8" r="3"></circle>
+                <path d="M5.5 20.5c1.5-2.5 4-4 6.5-4s5 1.5 6.5 4"></path>
+              </svg>
+            </div>
+            <div class="page-settings-meta">
+              <span class="page-settings-name">Cài đặt</span>
+              <span class="page-settings-hint">Chung & giao diện</span>
+            </div>
+          </a>
+        </div>
+      }
+
+    </nav>
+  </aside>
+
+  <!-- ═══ MAIN CONTENT ═══ -->
+  <main class="page-main">
+    <div class="page-main-content">
+      <ng-content select="[slot=main]"></ng-content>
+    </div>
+  </main>
+
+  <!-- ═══ RIGHT SIDEBAR ═══ -->
+  @if (showRightbar) {
+    <aside class="page-rightbar">
+      <ng-content select="[slot=rightbar]"></ng-content>
+    </aside>
+  }
+
+</div>

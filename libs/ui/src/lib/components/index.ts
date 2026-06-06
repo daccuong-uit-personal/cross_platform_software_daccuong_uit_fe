@@ -3,3 +3,4 @@ export * from './sidebar-menu/sidebar-menu.component';
 export * from './sidebar-menu/safe-html.pipe';
 export * from './shared-header/shared-header.component';
 export * from './right-sidebar/right-sidebar.component';
+export * from './page-shell/page-shell.component';
