@@ -12,34 +12,80 @@
   --color-danger: oklch(0.55 0.22 25);
   --color-info: oklch(0.6 0.18 210);
   
-  /* Dynamic Typography */
+  /* Dynamic Typography System 
+     ─────────────────────────────────────────────────────────
+     Base System: All font sizes calculated from --font-size-body
+     When user adjusts Typography in Settings, only --font-size-body 
+     changes, and ALL other sizes scale proportionally.
+     ─────────────────────────────────────────────────────────── */
   --font-family: 'Outfit', sans-serif;
   
   /* Scaling Factors (set by UiSettingsService) */
-  --font-size-scale: 0.667;
-  --padding-scale: 0.63;
+  --font-size-scale: 1;
+  --padding-scale: 1;
   --line-height: 1.5;
-  --font-size-heading: calc(var(--font-size-scale, 1) * 1.75rem);  /* Level 1: Form Title */
-  --font-size-title: calc(var(--font-size-scale, 1) * 1.25rem);    /* Level 2: Menu */
-  --font-size-subtitle: calc(var(--font-size-scale, 1) * 1.125rem);/* Level 3: Section Title */
-  --font-size-subtitle-sm: calc(var(--font-size-scale, 1) * 1.0625rem); /* Level 3.5: Slightly smaller section title */
-  --font-size-body: calc(var(--font-size-scale, 1) * 1rem);        /* Level 4: Group/Sub-section */
-  --font-size-label: calc(var(--font-size-scale, 1) * 0.9375rem);  /* Level 5: Normal text */
-  --font-size-caption: calc(var(--font-size-scale, 1) * 0.8125rem);
+  
+  /* ▌ BASE TYPOGRAPHY TIERS — Dynamic System ▌
+     Changes to --font-size-body cascade to all dependent sizes */
+  --font-size-body: 15px;                           /* Level 4: Base body text — core tier */
+  --font-size-sm: calc(var(--font-size-body) - 2px);     /* Level 5: Labels, captions */
+  --font-size-xs: calc(var(--font-size-body) - 4px);     /* Tiny: helper text */
+  
+  --font-size-md: calc(var(--font-size-body) + 1px);     /* Level 3.5: Subtitle tier */
+  --font-size-lg: calc(var(--font-size-body) + 3px);     /* Level 3: Section titles */
+  --font-size-heading-md: calc(var(--font-size-body) + 5px);  /* Level 2: Menu/lead text */
+  --font-size-heading-lg: calc(var(--font-size-body) + 9px);  /* Level 1: Page titles — large */
+  --font-size-xl: calc(var(--font-size-body) + 5px);     /* Extra large — emphatic text */
+  
+  /* Legacy tier names (for backward compatibility) */
+  --font-size-heading: var(--font-size-heading-lg);  /* Max 24px */
+  --font-size-title: var(--font-size-heading-md);    /* Menu / section lead */
+  --font-size-subtitle: var(--font-size-lg);         /* Section title */
+  --font-size-subtitle-sm: var(--font-size-md);      /* Slightly smaller section title */
+  --font-size-label: var(--font-size-sm);            /* Labels, inputs */
+  --font-size-caption: var(--font-size-xs);          /* Tiny captions */
+  
+  /* ▌ TYPOGRAPHY WEIGHTS ▌ */
   --font-weight-heavy: 800;
   --font-weight-strong: 700;
   --font-weight-medium: 600;
   --font-weight-regular: 500;
-
+  
+  /* ▌ DYNAMIC SPACING SYSTEM ▌
+     Base unit scales from 4px. User adjusts in Settings → spacing scale changes.
+     All padding/margin then recalculates using multiplication/division.
+  */
+  --spacing-scale-base: 4px;          /* Base unit — default 4px (1 × base) */
+  --spacing-1: calc(var(--spacing-scale-base) * 1);    /* 4px */
+  --spacing-2: calc(var(--spacing-scale-base) * 2);    /* 8px */
+  --spacing-2.5: calc(var(--spacing-scale-base) * 2.5);  /* 10px */
+  --spacing-3: calc(var(--spacing-scale-base) * 3);    /* 12px */
+  --spacing-4: calc(var(--spacing-scale-base) * 4);    /* 16px — default padding */
+  --spacing-5: calc(var(--spacing-scale-base) * 5);    /* 20px */
+  --spacing-6: calc(var(--spacing-scale-base) * 6);    /* 24px — card padding */
+  --spacing-7: calc(var(--spacing-scale-base) * 7);    /* 28px */
+  --spacing-8: calc(var(--spacing-scale-base) * 8);    /* 32px — section gap */
+  --spacing-10: calc(var(--spacing-scale-base) * 10);  /* 40px */
+  --spacing-12: calc(var(--spacing-scale-base) * 12);  /* 48px */
+  --spacing-16: calc(var(--spacing-scale-base) * 16);  /* 64px — large section */
+  --spacing-20: calc(var(--spacing-scale-base) * 20);  /* 80px */
+  --spacing-24: calc(var(--spacing-scale-base) * 24);  /* 96px */
+  
+  /* ▌ CARD & BORDER STYLING ▌ */
+  --card-border-radius: 12px;
+  --card-padding: var(--spacing-6);   /* 24px or scaled */
+  
   /* ─── Page Shell Layout Tokens ───────────────────────────────
      Single source-of-truth for all page layout dimensions.
      Changing these propagates to Home, Profile, and Settings.
   ─────────────────────────────────────────────────────────── */
-  --page-sidebar-width: calc(280px * var(--padding-scale, 1));       /* Left nav — full labels */
-  --page-sidebar-collapsed: calc(88px * var(--padding-scale, 1));    /* Left nav — icons only */
-  --page-rightbar-width: calc(320px * var(--padding-scale, 1));      /* Right sidebar */
-  --page-rightbar-width-full: calc(364px * var(--padding-scale, 1)); /* Right sidebar — full */
-  --header-height: calc(72px * var(--padding-scale, 1));             /* ui-shared-header */
+  --page-sidebar-width: 280px;      /* Left nav — full labels */
+  --page-sidebar-collapsed: 88px;   /* Left nav — icons only */
+  --page-main-width: 680px;         /* Main feed width */
+  --page-rightbar-width: 320px;     /* Right sidebar */
+  --page-rightbar-width-full: 320px;/* Right sidebar — full */
+  --page-content-max-width: 1340px; /* Page max width */
+  --header-height: 72px;            /* ui-shared-header */
 }
 
 
@@ -75,6 +121,7 @@ body, button, input, select, textarea, .tiktok-btn {
   --color-surface-base: #ffffff;
   --color-surface-subtle: #f4f4f5;
   --color-border-subtle: #e4e4e7;
+  --color-border-default: #e4e4e7;
   --color-text-base: #000000;
   --color-text-muted: #707579;
   --color-text-inverse: #ffffff;

@@ -6,8 +6,8 @@
 .home-sidebar-panel {
   display: flex;
   flex-direction: column;
-  gap: 18px;
-  padding: var(--home-sidebar-padding-top, 8px) var(--home-sidebar-padding-horizontal, 16px) var(--home-sidebar-padding-bottom, 0px);
+  gap: calc(var(--spacing-scale-base) * 4.5);
+  padding: var(--home-sidebar-padding-top, var(--spacing-2)) var(--home-sidebar-padding-horizontal, var(--spacing-4)) var(--home-sidebar-padding-bottom, 0px);
   background: var(--color-surface-base, #ffffff);
   border: 1px solid var(--color-border-subtle, rgba(226, 232, 240, 0.8));
   border-radius: 0;
@@ -24,8 +24,8 @@
 .sidebar-brand {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: var(--home-brand-padding-vertical, 6px) var(--home-brand-padding-horizontal, 12px);
+  gap: var(--spacing-2.5);
+  padding: var(--home-brand-padding-vertical, calc(var(--spacing-scale-base) * 1.5)) var(--home-brand-padding-horizontal, var(--spacing-3));
   margin-left: var(--home-brand-offset-left, -16px);
   border-radius: 12px;
   background: transparent;
@@ -86,8 +86,8 @@
   margin-bottom: 0;
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 8px 12px;
+  gap: var(--spacing-2.5);
+  padding: calc(var(--spacing-scale-base) * 2) var(--spacing-3);
   min-height: var(--home-menu-item-height, 44px);
   border-radius: 12px;
   background: transparent;
@@ -113,8 +113,8 @@
 }
 
 .avatar svg {
-  width: 16px;
-  height: 16px;
+  width: calc(var(--spacing-scale-base) * 4);
+  height: calc(var(--spacing-scale-base) * 4);
 }
 
 .user-meta {

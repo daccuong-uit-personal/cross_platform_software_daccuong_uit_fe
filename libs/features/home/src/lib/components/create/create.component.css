@@ -1,3 +1,3 @@
-.create-page { padding: 24px; }
-.create-grid { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
-.create-button { flex: 1 1 180px; border-radius: 16px; border: none; padding: 0 16px; height: 40px; background: var(--color-text-base, #161823); color: var(--color-text-inverse, #ffffff); cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.create-page { padding: var(--spacing-6); }
+.create-grid { display: flex; flex-wrap: wrap; gap: var(--spacing-3); margin-top: var(--spacing-6); }
+.create-button { flex: 1 1 180px; border-radius: 16px; border: none; padding: 0 var(--spacing-4); height: 40px; background: var(--color-text-base, #161823); color: var(--color-text-inverse, #ffffff); cursor: pointer; display: flex; align-items: center; justify-content: center; }

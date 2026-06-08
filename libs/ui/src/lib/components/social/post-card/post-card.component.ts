@@ -123,17 +123,17 @@ import { LikeButtonComponent } from '../like-button/like-button.component';
   styles: [
     `
       .post-card {
-        background: #fff;
-        border: 1px solid #e0e0e0;
-        border-radius: 12px;
+        background: var(--color-surface-base);
+        border: 1px solid var(--color-border-subtle);
+        border-radius: var(--card-border-radius, 12px);
         padding: 16px;
         margin-bottom: 16px;
         transition: all 0.2s ease;
+      }
 
-        &:hover {
-          border-color: #d0d0d0;
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-        }
+      .post-card:hover {
+        border-color: var(--color-border-default);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
       }
 
       .post-header {
@@ -164,21 +164,21 @@ import { LikeButtonComponent } from '../like-button/like-button.component';
 
       .author-name {
         margin: 0;
-        font-size: 15px;
+        font-size: var(--font-size-body);
         font-weight: 700;
-        color: #000;
+        color: var(--color-text-base);
       }
 
       .author-username {
         margin: 2px 0 0 0;
-        font-size: 13px;
-        color: #666;
+        font-size: var(--font-size-label);
+        color: var(--color-text-muted);
       }
 
       .post-time {
         margin: 4px 0 0 0;
-        font-size: 12px;
-        color: #999;
+        font-size: var(--font-size-caption);
+        color: var(--color-text-muted);
       }
 
       .menu-btn {
@@ -201,9 +201,9 @@ import { LikeButtonComponent } from '../like-button/like-button.component';
 
       .post-text {
         margin: 0;
-        font-size: 15px;
+        font-size: var(--font-size-body);
         line-height: 1.5;
-        color: #000;
+        color: var(--color-text-base);
       }
 
       .tags {
@@ -243,29 +243,32 @@ import { LikeButtonComponent } from '../like-button/like-button.component';
       }
 
       .post-media {
-        margin: 12px -16px 12px -16px;
-        padding: 0 16px;
+        margin: 12px 0;
+        border-radius: var(--card-border-radius, 12px);
+        overflow: hidden;
+        max-height: 500px;
       }
 
       .images-container {
-        display: flex;
-        border-radius: 12px;
+        display: grid;
+        gap: 4px;
+        border-radius: var(--card-border-radius, 12px);
         overflow: hidden;
+        width: 100%;
+        max-height: 500px;
+      }
 
-        &.multiple {
-          gap: 2px;
-
-          .post-image {
-            flex: 1;
-          }
-        }
+      .images-container.multiple {
+        grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
       }
 
       .post-image,
       .post-video {
         width: 100%;
-        max-height: 400px;
+        height: 100%;
+        min-height: 240px;
         object-fit: cover;
+        display: block;
       }
 
       .post-stats {

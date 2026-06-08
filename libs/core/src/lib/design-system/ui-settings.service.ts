@@ -171,23 +171,70 @@ export class UiSettingsService {
 
   /**
    * Apply settings to DOM (document root)
+   * 
+   * This is the core method that propagates user settings to CSS variables.
+   * When typography or spacing scale changes, all dependent sizes automatically adjust.
+   * 
+   * ▌ Dynamic Typography System ▌
+   * - Base font size: 15px (--font-size-body)
+   * - Multiplied by user's font size scale (0.64 → 1.12)
+   * - All other sizes (sm, lg, heading-lg, etc.) scale proportionally using calc()
+   * 
+   * ▌ Dynamic Spacing System ▌
+   * - Base spacing unit: 4px (--spacing-scale-base)
+   * - Multiplied by user's padding scale (0.63 → 1.35)
+   * - All spacing tiers (--spacing-1 to --spacing-24) scale using calc() multipliers
    */
   private applySettingsToDOM(settings: UiSettings): void {
     const root = document.documentElement;
 
-    // Apply font family
+    // ══════════════════════════════════════════════════════════════
+    // 1. FONT FAMILY & LINE HEIGHT (non-scaling)
+    // ══════════════════════════════════════════════════════════════
     root.style.setProperty('--font-family', this.getFontFamily());
-
-    const fontScale = FONT_SIZE_SCALES[settings.fontSize];
-    const paddingScale = PADDING_SCALES[settings.paddingScale];
-
-    root.style.setProperty('--font-size-scale', String(fontScale));
-    root.style.setProperty('--padding-scale', String(paddingScale));
-
-    // Apply line height
     root.style.setProperty('--line-height', String(this.getLineHeight()));
 
-    // Apply theme
+    // ══════════════════════════════════════════════════════════════
+    // 2. TYPOGRAPHY SCALING
+    // ══════════════════════════════════════════════════════════════
+    const fontScale = FONT_SIZE_SCALES[settings.fontSize];
+    const BASE_FONT_SIZE = 15; // pixels (from design tokens)
+    const scaledFontSizeBody = BASE_FONT_SIZE * fontScale;
+
+    // Set legacy scaling factor (for backward compatibility with existing calc() expressions)
+    root.style.setProperty('--font-size-scale', String(fontScale));
+
+    // Set the DYNAMIC base font size (this cascades to all other font sizes)
+    root.style.setProperty('--font-size-body', `${scaledFontSizeBody}px`);
+    
+    // All other font sizes (--font-size-sm, --font-size-heading-lg, etc.)
+    // will automatically scale because they use calc() with --font-size-body
+    // Example: --font-size-sm: calc(var(--font-size-body) - 2px)
+    //   When --font-size-body = 12px, --font-size-sm = 10px
+    //   When --font-size-body = 18px, --font-size-sm = 16px
+
+    // ══════════════════════════════════════════════════════════════
+    // 3. SPACING SCALING
+    // ══════════════════════════════════════════════════════════════
+    const paddingScale = PADDING_SCALES[settings.paddingScale];
+    const BASE_SPACING = 4; // pixels (from design tokens — base unit)
+    const scaledSpacingBase = BASE_SPACING * paddingScale;
+
+    // Set legacy scaling factor (for backward compatibility)
+    root.style.setProperty('--padding-scale', String(paddingScale));
+
+    // Set the DYNAMIC base spacing unit (this cascades to all spacing tiers)
+    root.style.setProperty('--spacing-scale-base', `${scaledSpacingBase}px`);
+
+    // All spacing tiers (--spacing-1 to --spacing-24) will automatically scale
+    // because they use calc() with --spacing-scale-base
+    // Example: --spacing-4: calc(var(--spacing-scale-base) * 4)
+    //   When --spacing-scale-base = 3px, --spacing-4 = 12px
+    //   When --spacing-scale-base = 5.4px, --spacing-4 = 21.6px
+
+    // ══════════════════════════════════════════════════════════════
+    // 4. THEME & ACCESSIBILITY
+    // ══════════════════════════════════════════════════════════════
     document.documentElement.className = this.getThemeClass();
     document.body.classList.toggle('high-contrast', settings.highContrast);
     document.body.classList.toggle('reduce-motion', settings.reducedMotion);

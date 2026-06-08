@@ -108,7 +108,7 @@
 .studio-btn-text {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: calc(var(--spacing-scale-base) * 0.5);
 }
 
 .studio-label {
@@ -168,10 +168,10 @@
   right: -6px;
   min-width: 18px;
   height: 18px;
-  padding: 0 4px;
+  padding: 0 var(--spacing-1);
   background: #fff;
   color: var(--color-brand-primary, #fe2c55);
-  font-size: 10px;
+  font-size: var(--font-size-xs);
   font-weight: 800;
   border-radius: 9999px;
   display: flex;
@@ -268,7 +268,7 @@
 }
 
 .profile-handle {
-  margin: 2px 0 0;
+  margin: calc(var(--spacing-scale-base) * 0.5) 0 0;
   color: var(--color-text-muted, rgba(255, 255, 255, 0.64));
   font-size: var(--font-size-caption);
   line-height: 1.2;
@@ -328,7 +328,7 @@
 
 .dropdown-item {
   display: block;
-  padding: calc(10px * var(--padding-scale, 1)) calc(16px * var(--padding-scale, 1));
+  padding: calc(var(--spacing-scale-base) * 2.5) var(--spacing-4);
   color: var(--color-text-base, #0f172a);
   text-decoration: none;
   font-size: var(--font-size-body);
@@ -374,7 +374,7 @@
 .profile-stats small {
   color: var(--color-text-muted, #64748b);
   font-size: var(--font-size-caption);
-  margin-top: 4px;
+  margin-top: var(--spacing-1);
 }
 
 /* Profile Actions Row */
@@ -416,10 +416,10 @@
   right: -5px;
   min-width: 18px;
   height: 18px;
-  padding: 0 3px;
+  padding: 0 calc(var(--spacing-scale-base) * 0.75);
   background: var(--color-brand-primary, #fe2c55);
   color: #fff;
-  font-size: 10px;
+  font-size: var(--font-size-xs);
   font-weight: 800;
   border-radius: 9999px;
   display: flex;
@@ -470,13 +470,13 @@
 .section-title {
   font-size: var(--font-size-subtitle);
   font-weight: var(--font-weight-heavy);
-  margin-bottom: calc(20px * var(--padding-scale, 1));
+  margin-bottom: calc(var(--spacing-scale-base) * 5);
   color: var(--color-text-base, #0f172a);
 }
 
 .show-more {
   display: inline-block;
-  margin-top: calc(20px * var(--padding-scale, 1));
+  margin-top: calc(var(--spacing-scale-base) * 5);
   color: var(--color-brand-primary, #3b82f6);
   cursor: pointer;
   font-weight: var(--font-weight-medium);
@@ -490,7 +490,7 @@
 }
 
 .suggestion-card {
-  padding: calc(20px * var(--padding-scale, 1));
+  padding: calc(var(--spacing-scale-base) * 5);
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
 }
 

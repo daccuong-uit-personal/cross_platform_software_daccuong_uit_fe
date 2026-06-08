@@ -6,17 +6,22 @@
    ═══════════════════════════════════════════════════════════════ */
 
 :host {
-  display: block;
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  width: 100%;
   min-height: 100vh;
+  padding: 0 8px;
+  box-sizing: border-box;
+  background: var(--color-surface-base);
 }
 
-/* ─── 3-column grid ─────────────────────────────────────────── */
+/* ─── 3-column layout spread across the viewport ─────────────────────────────────────────── */
 .page-shell {
-  display: grid;
-  grid-template-columns:
-    var(--page-sidebar-width)
-    minmax(0, 1fr)
-    var(--page-rightbar-width-full);
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  width: 100%;
   min-height: 100vh;
   background: var(--color-surface-base);
   color: var(--color-text-base);
@@ -24,15 +29,20 @@
 
 /* ─── Left Sidebar ──────────────────────────────────────────── */
 .page-sidebar {
+  width: var(--page-sidebar-width);
+  min-width: var(--page-sidebar-width);
   position: sticky;
   top: 0;
   height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   align-self: stretch;
-  background: var(--color-surface-base);
+  background: transparent;
   border-right: 1px solid var(--color-border-subtle);
   z-index: 10;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  margin-left: -8px;
+  padding-left: 8px;
 }
 
 .page-sidebar-nav {
@@ -85,9 +95,7 @@
 }
 
 .page-brand-title {
-  font-size: clamp(1rem,
-    calc(var(--font-size-subtitle, 1.125rem) * 1.666),
-    2.6rem);
+  font-size: 22px;
   font-weight: 900;
   color: var(--color-text-base);
   line-height: 1;
@@ -165,114 +173,83 @@
 .page-main {
   min-height: 100vh;
   display: flex;
-  flex-direction: column;
+  justify-content: center;
   overflow-x: hidden;
   background: transparent;
+  flex: 0 0 var(--page-main-width);
 }
 
 .page-main-content {
-  width: 100%;
-  max-width: calc(820px * var(--padding-scale, 1));
-  margin: 0 auto;
-  border-left: 1px solid var(--color-border-subtle);
+  width: var(--page-main-width);
+  max-width: var(--page-main-width);
+  margin: 0;
+  border-left: 1px solid var(--color-border-default);
+  border-right: 1px solid var(--color-border-default);
   min-height: 100vh;
+  padding: 24px 0;
+  box-sizing: border-box;
+  flex-shrink: 0;
 }
 
 /* ─── Right Sidebar ─────────────────────────────────────────── */
 .page-rightbar {
+  width: var(--page-rightbar-width);
+  min-width: var(--page-rightbar-width);
   position: sticky;
   top: 0;
   height: 100vh;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  border-left: 1px solid var(--color-border-subtle);
+  background: transparent;
+  border: none;
+  flex-shrink: 0;
+  margin-right: -8px;
+  padding-right: 8px;
 }
 
 /* ═══════════════════════════════════════════════════════════════
    RESPONSIVE BREAKPOINTS
    ═══════════════════════════════════════════════════════════════ */
 
-/* 1280px: collapse left nav to icons, rightbar narrows */
-@media (max-width: 1280px) {
-  .page-shell {
-    grid-template-columns:
-      var(--page-sidebar-collapsed)
-      minmax(0, 1fr)
-      var(--page-rightbar-width);
-  }
-
-  .page-brand-title,
-  .page-settings-meta {
-    display: none;
-  }
-
-  .page-sidebar-nav {
-    align-items: center;
-    padding: calc(8px * var(--padding-scale, 1)) 4px 0;
-  }
-
-  .page-settings-link {
-    justify-content: center;
-    padding: calc(10px * var(--padding-scale, 1));
-  }
-}
-
-/* 1024px: hide right sidebar */
-@media (max-width: 1024px) {
-  .page-shell {
-    grid-template-columns:
-      var(--page-sidebar-collapsed)
-      minmax(0, 1fr);
-  }
-
+/* 1280px: hide right sidebar entirely on tablet and keep fixed left + main widths */
+@media (max-width: 1279.98px) {
   .page-rightbar {
     display: none;
   }
+
+  .page-main-content {
+    border-right: none;
+  }
 }
 
-/* 768px: stack vertically, sidebar becomes fixed bottom bar */
-@media (max-width: 768px) {
+/* 768px: stack vertically and make main content take full width */
+@media (max-width: 767.98px) {
   .page-shell {
     display: flex;
-    flex-direction: column-reverse;
+    flex-direction: column;
+    gap: 0;
   }
 
   .page-sidebar {
-    position: fixed;
-    bottom: 0;
-    top: auto;
-    left: 0;
-    right: 0;
+    position: relative;
     width: 100%;
+    min-width: auto;
     height: auto;
     border-right: none;
-    border-top: 1px solid var(--color-border-subtle);
-    z-index: 50;
-  }
-
-  .page-sidebar-nav {
-    flex-direction: row;
-    height: auto;
-    padding: 0;
-    overflow-x: auto;
-    overflow-y: hidden;
-    align-items: center;
-    justify-content: space-around;
-  }
-
-  .page-brand,
-  .page-settings-link {
-    display: none;
+    border-bottom: 1px solid var(--color-border-default);
   }
 
   .page-main {
-    padding-bottom: calc(60px * var(--padding-scale, 1));
+    padding: 0;
   }
 
   .page-main-content {
+    width: 100%;
+    max-width: 100%;
     border-left: none;
     border-right: none;
-    max-width: 100%;
+    padding: 24px 16px;
   }
 }
+
