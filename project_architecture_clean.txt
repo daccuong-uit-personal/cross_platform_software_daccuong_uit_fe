@@ -1,0 +1,407 @@
+cross_platform_software_daccuong_uit_fe
+├── .gitignore
+├── .prettierignore
+├── .prettierrc
+├── apps
+│   └── app-shell
+│       ├── eslint.config.mjs
+│       ├── project.json
+│       ├── src
+│       │   ├── app
+│       │   │   ├── app.component.spec.ts
+│       │   │   ├── app.component.ts
+│       │   │   ├── app.config.ts
+│       │   │   ├── layout
+│       │   │   │   ├── app-shell.component.html
+│       │   │   │   ├── app-shell.component.ts
+│       │   │   │   └── index.ts
+│       │   │   ├── routes
+│       │   │   │   ├── app.routes.ts
+│       │   │   │   └── index.ts
+│       │   │   └── transloco-loader.ts
+│       │   ├── environments
+│       │   │   └── environment.ts
+│       │   ├── index.html
+│       │   ├── main.ts
+│       │   └── styles.css
+│       ├── tsconfig.app.json
+│       ├── tsconfig.json
+│       └── tsconfig.spec.json
+├── docker-compose.yml
+├── Dockerfile
+├── docs
+│   ├── ai-context
+│   │   ├── AGENTS.md
+│   │   ├── angular-component-generation.md
+│   │   ├── api-integration.md
+│   │   ├── design-system-component-generation.md
+│   │   ├── frontend-ai-playbook.md
+│   │   ├── frontend-architecture.md
+│   │   ├── performance-qa.md
+│   │   └── social-ux-intelligence.md
+│   ├── api
+│   │   └── backend-contracts.md
+│   ├── architecture
+│   │   ├── auth-redirect-note.md
+│   │   ├── i18n-guidelines.md
+│   │   ├── media-feature.md
+│   │   └── nx-workspace.md
+│   ├── development
+│   │   └── coding-standards.md
+│   ├── README.md
+│   ├── requirements
+│   │   └── product-requirements.md
+│   └── ui-ux
+│       ├── design-tokens.json
+│       ├── DESIGN_SYSTEM_GUIDE.md
+│       ├── DESIGN_TOKENS.md
+│       └── IMPLEMENTATION_SUMMARY.md
+├── eslint.config.mjs
+├── generate_tree.js
+├── jest.config.ts
+├── jest.preset.js
+├── libs
+│   ├── core
+│   │   ├── eslint.config.mjs
+│   │   ├── jest.config.cts
+│   │   ├── ng-package.json
+│   │   ├── package.json
+│   │   ├── project.json
+│   │   ├── README.md
+│   │   ├── src
+│   │   │   ├── index.ts
+│   │   │   ├── lib
+│   │   │   │   ├── config
+│   │   │   │   │   ├── app-config.ts
+│   │   │   │   │   ├── assets-config.ts
+│   │   │   │   │   ├── index.ts
+│   │   │   │   │   └── url-config.ts
+│   │   │   │   ├── design-system
+│   │   │   │   │   ├── design-tokens.ts
+│   │   │   │   │   └── ui-settings.service.ts
+│   │   │   │   ├── guards
+│   │   │   │   │   ├── auth.guard.ts
+│   │   │   │   │   └── guest.guard.ts
+│   │   │   │   ├── interceptors
+│   │   │   │   │   ├── auth.interceptor.ts
+│   │   │   │   │   ├── error.interceptor.ts
+│   │   │   │   │   └── loading.interceptor.ts
+│   │   │   │   ├── models
+│   │   │   │   │   └── error.model.ts
+│   │   │   │   ├── services
+│   │   │   │   │   ├── api.service.ts
+│   │   │   │   │   ├── auth.service.ts
+│   │   │   │   │   ├── cache.service.ts
+│   │   │   │   │   ├── error.service.ts
+│   │   │   │   │   ├── loading.service.ts
+│   │   │   │   │   └── theme.service.ts
+│   │   │   │   └── shared-typography
+│   │   │   │       └── shared-typography.css
+│   │   │   └── test-setup.ts
+│   │   ├── tsconfig.json
+│   │   ├── tsconfig.lib.json
+│   │   └── tsconfig.spec.json
+│   ├── domain
+│   │   ├── media
+│   │   │   ├── ng-package.json
+│   │   │   ├── package.json
+│   │   │   ├── project.json
+│   │   │   ├── src
+│   │   │   │   ├── index.ts
+│   │   │   │   └── lib
+│   │   │   │       └── services
+│   │   │   │           └── media.service.ts
+│   │   │   ├── tsconfig.json
+│   │   │   └── tsconfig.lib.json
+│   │   ├── profile
+│   │   │   ├── ng-package.json
+│   │   │   ├── package.json
+│   │   │   ├── project.json
+│   │   │   ├── src
+│   │   │   │   ├── index.ts
+│   │   │   │   └── lib
+│   │   │   │       └── services
+│   │   │   │           └── profile.service.ts
+│   │   │   ├── tsconfig.json
+│   │   │   └── tsconfig.lib.json
+│   │   └── social
+│   │       ├── ng-package.json
+│   │       ├── package.json
+│   │       ├── project.json
+│   │       ├── src
+│   │       │   ├── index.ts
+│   │       │   └── lib
+│   │       │       ├── mock-data.ts
+│   │       │       ├── mocks
+│   │       │       │   ├── index.ts
+│   │       │       │   └── mock-data.ts
+│   │       │       ├── models
+│   │       │       │   ├── index.ts
+│   │       │       │   └── social.models.ts
+│   │       │       └── services
+│   │       │           ├── index.ts
+│   │       │           ├── social-comment.service.ts
+│   │       │           ├── social-notification.service.ts
+│   │       │           ├── social-post.service.ts
+│   │       │           ├── social-search.service.ts
+│   │       │           └── social-user.service.ts
+│   │       ├── tsconfig.json
+│   │       └── tsconfig.lib.json
+│   ├── features
+│   │   ├── auth
+│   │   │   ├── eslint.config.mjs
+│   │   │   ├── jest.config.cts
+│   │   │   ├── ng-package.json
+│   │   │   ├── package.json
+│   │   │   ├── project.json
+│   │   │   ├── README.md
+│   │   │   ├── src
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── lib
+│   │   │   │   │   ├── data-access
+│   │   │   │   │   │   ├── auth.facade.ts
+│   │   │   │   │   │   └── index.ts
+│   │   │   │   │   ├── lib.routes.ts
+│   │   │   │   │   ├── login
+│   │   │   │   │   │   ├── components
+│   │   │   │   │   │   │   ├── login-form-email.component.ts
+│   │   │   │   │   │   │   └── login-selection.component.ts
+│   │   │   │   │   │   └── login.component.ts
+│   │   │   │   │   └── register
+│   │   │   │   │       ├── components
+│   │   │   │   │       │   ├── register-form-email.component.ts
+│   │   │   │   │       │   └── register-selection.component.ts
+│   │   │   │   │       └── register.component.ts
+│   │   │   │   └── test-setup.ts
+│   │   │   ├── tsconfig.json
+│   │   │   ├── tsconfig.lib.json
+│   │   │   └── tsconfig.spec.json
+│   │   ├── dashboard
+│   │   │   ├── eslint.config.mjs
+│   │   │   ├── jest.config.cts
+│   │   │   ├── ng-package.json
+│   │   │   ├── package.json
+│   │   │   ├── project.json
+│   │   │   ├── README.md
+│   │   │   ├── src
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── lib
+│   │   │   │   │   ├── dashboard
+│   │   │   │   │   │   ├── dashboard.component.css
+│   │   │   │   │   │   ├── dashboard.component.html
+│   │   │   │   │   │   └── dashboard.component.ts
+│   │   │   │   │   └── lib.routes.ts
+│   │   │   │   └── test-setup.ts
+│   │   │   ├── tsconfig.json
+│   │   │   ├── tsconfig.lib.json
+│   │   │   └── tsconfig.spec.json
+│   │   ├── home
+│   │   │   ├── jest.config.cts
+│   │   │   ├── ng-package.json
+│   │   │   ├── package.json
+│   │   │   ├── project.json
+│   │   │   ├── README.md
+│   │   │   ├── src
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── lib
+│   │   │   │   │   ├── components
+│   │   │   │   │   │   ├── activity
+│   │   │   │   │   │   │   ├── activity.component.css
+│   │   │   │   │   │   │   ├── activity.component.html
+│   │   │   │   │   │   │   └── activity.component.ts
+│   │   │   │   │   │   ├── bottom-menu
+│   │   │   │   │   │   │   ├── bottom-menu.component.css
+│   │   │   │   │   │   │   ├── bottom-menu.component.html
+│   │   │   │   │   │   │   └── bottom-menu.component.ts
+│   │   │   │   │   │   ├── create
+│   │   │   │   │   │   │   ├── create.component.css
+│   │   │   │   │   │   │   ├── create.component.html
+│   │   │   │   │   │   │   └── create.component.ts
+│   │   │   │   │   │   ├── discover
+│   │   │   │   │   │   │   ├── discover.component.css
+│   │   │   │   │   │   │   ├── discover.component.html
+│   │   │   │   │   │   │   └── discover.component.ts
+│   │   │   │   │   │   ├── feature-placeholder
+│   │   │   │   │   │   │   ├── feature-placeholder.component.css
+│   │   │   │   │   │   │   ├── feature-placeholder.component.html
+│   │   │   │   │   │   │   └── feature-placeholder.component.ts
+│   │   │   │   │   │   ├── feed
+│   │   │   │   │   │   │   ├── feed.component.css
+│   │   │   │   │   │   │   ├── feed.component.html
+│   │   │   │   │   │   │   └── feed.component.ts
+│   │   │   │   │   │   ├── home-shell
+│   │   │   │   │   │   │   ├── home-shell.component.css
+│   │   │   │   │   │   │   ├── home-shell.component.html
+│   │   │   │   │   │   │   └── home-shell.component.ts
+│   │   │   │   │   │   └── right-sidebar
+│   │   │   │   │   │       ├── right-sidebar.component.css
+│   │   │   │   │   │       ├── right-sidebar.component.html
+│   │   │   │   │   │       └── right-sidebar.component.ts
+│   │   │   │   │   ├── home
+│   │   │   │   │   │   └── home.component.ts
+│   │   │   │   │   ├── home.module.ts
+│   │   │   │   │   ├── home.routes.ts
+│   │   │   │   │   └── lib.routes.ts
+│   │   │   │   └── test-setup.ts
+│   │   │   ├── tsconfig.json
+│   │   │   ├── tsconfig.lib.json
+│   │   │   └── tsconfig.spec.json
+│   │   ├── media
+│   │   │   ├── jest.config.cts
+│   │   │   ├── ng-package.json
+│   │   │   ├── package.json
+│   │   │   ├── project.json
+│   │   │   ├── README.md
+│   │   │   ├── src
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── lib
+│   │   │   │   │   ├── lib.routes.ts
+│   │   │   │   │   ├── media
+│   │   │   │   │   │   └── media-platform.component.ts
+│   │   │   │   │   ├── media-studio
+│   │   │   │   │   │   ├── media-studio.component.css
+│   │   │   │   │   │   ├── media-studio.component.html
+│   │   │   │   │   │   └── media-studio.component.ts
+│   │   │   │   │   ├── models
+│   │   │   │   │   │   └── media.model.ts
+│   │   │   │   │   └── services
+│   │   │   │   │       └── media-api.service.ts
+│   │   │   │   └── test-setup.ts
+│   │   │   ├── tsconfig.json
+│   │   │   ├── tsconfig.lib.json
+│   │   │   └── tsconfig.spec.json
+│   │   ├── profile
+│   │   │   ├── jest.config.cts
+│   │   │   ├── ng-package.json
+│   │   │   ├── package.json
+│   │   │   ├── project.json
+│   │   │   ├── README.md
+│   │   │   ├── src
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── lib
+│   │   │   │   │   ├── components
+│   │   │   │   │   │   └── profile-right-sidebar
+│   │   │   │   │   │       ├── profile-right-sidebar.component.css
+│   │   │   │   │   │       ├── profile-right-sidebar.component.html
+│   │   │   │   │   │       └── profile-right-sidebar.component.ts
+│   │   │   │   │   ├── lib.routes.ts
+│   │   │   │   │   ├── profile
+│   │   │   │   │   │   ├── profile.component.css
+│   │   │   │   │   │   ├── profile.component.html
+│   │   │   │   │   │   └── profile.component.ts
+│   │   │   │   │   └── services
+│   │   │   │   └── test-setup.ts
+│   │   │   ├── tsconfig.json
+│   │   │   ├── tsconfig.lib.json
+│   │   │   └── tsconfig.spec.json
+│   │   ├── settings
+│   │   │   ├── eslint.config.mjs
+│   │   │   ├── jest.config.cts
+│   │   │   ├── project.json
+│   │   │   ├── README.md
+│   │   │   ├── src
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── lib
+│   │   │   │   │   ├── lib.routes.ts
+│   │   │   │   │   ├── settings
+│   │   │   │   │   │   ├── settings.css
+│   │   │   │   │   │   ├── settings.html
+│   │   │   │   │   │   ├── settings.spec.ts
+│   │   │   │   │   │   └── settings.ts
+│   │   │   │   │   └── ui-settings
+│   │   │   │   │       └── ui-settings.component.ts
+│   │   │   │   └── test-setup.ts
+│   │   │   ├── tsconfig.json
+│   │   │   ├── tsconfig.lib.json
+│   │   │   └── tsconfig.spec.json
+│   │   └── social
+│   │       └── src
+│   │           └── lib
+│   │               └── feed
+│   │                   └── feed.component.ts
+│   └── ui
+│       ├── eslint.config.mjs
+│       ├── ng-package.json
+│       ├── package.json
+│       ├── project.json
+│       ├── README.md
+│       ├── src
+│       │   ├── index.ts
+│       │   └── lib
+│       │       ├── button
+│       │       │   ├── action-button.ts
+│       │       │   └── button.ts
+│       │       ├── card
+│       │       │   └── card.ts
+│       │       ├── components
+│       │       │   ├── index.ts
+│       │       │   ├── page-shell
+│       │       │   │   ├── page-shell.component.css
+│       │       │   │   ├── page-shell.component.html
+│       │       │   │   └── page-shell.component.ts
+│       │       │   ├── right-sidebar
+│       │       │   │   ├── right-sidebar.component.css
+│       │       │   │   ├── right-sidebar.component.html
+│       │       │   │   └── right-sidebar.component.ts
+│       │       │   ├── shared-header
+│       │       │   │   ├── shared-header.component.css
+│       │       │   │   ├── shared-header.component.html
+│       │       │   │   └── shared-header.component.ts
+│       │       │   ├── shared-table
+│       │       │   │   ├── shared-table.component.css
+│       │       │   │   ├── shared-table.component.html
+│       │       │   │   └── shared-table.component.ts
+│       │       │   ├── sidebar-menu
+│       │       │   │   ├── safe-html.pipe.ts
+│       │       │   │   ├── sidebar-menu.component.css
+│       │       │   │   ├── sidebar-menu.component.html
+│       │       │   │   └── sidebar-menu.component.ts
+│       │       │   └── social
+│       │       │       ├── comment-section
+│       │       │       │   └── comment-section.component.ts
+│       │       │       ├── follow-button
+│       │       │       │   └── follow-button.component.ts
+│       │       │       ├── index.ts
+│       │       │       ├── like-button
+│       │       │       │   └── like-button.component.ts
+│       │       │       ├── post-card
+│       │       │       │   └── post-card.component.ts
+│       │       │       └── user-card
+│       │       │           └── user-card.component.ts
+│       │       ├── directives
+│       │       │   ├── index.ts
+│       │       │   └── loading.directive.ts
+│       │       ├── footer
+│       │       │   ├── app-footer.component.ts
+│       │       │   └── auth-footer.component.ts
+│       │       ├── header
+│       │       │   └── app-header.component.ts
+│       │       ├── input
+│       │       │   └── input.ts
+│       │       ├── language-selector
+│       │       │   └── language-selector.ts
+│       │       ├── layouts
+│       │       │   └── form-layout.component.ts
+│       │       ├── loader
+│       │       │   ├── index.ts
+│       │       │   └── inline-loader.component.ts
+│       │       ├── logo
+│       │       │   └── logo.component.ts
+│       │       ├── skeleton
+│       │       │   ├── index.ts
+│       │       │   ├── skeleton-card.component.ts
+│       │       │   ├── skeleton-list.component.ts
+│       │       │   └── skeleton.component.ts
+│       │       ├── styles
+│       │       │   └── component-styles.ts
+│       │       └── ui.spec.ts
+│       ├── tsconfig.json
+│       ├── tsconfig.lib.json
+│       ├── tsconfig.lib.prod.json
+│       └── tsconfig.spec.json
+├── nginx.conf
+├── nx.json
+├── package-lock.json
+├── package.json
+├── README.md
+└── tsconfig.base.json

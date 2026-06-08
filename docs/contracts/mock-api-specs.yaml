@@ -1,0 +1,1218 @@
+openapi: "3.1.0"
+info:
+  title: "Cross-Platform Social Creator Platform — Frontend-Defined API Spec"
+  version: "1.0.0"
+  description: |
+    ## ⚠️ QUAN TRỌNG — ĐỌC TRƯỚC KHI DÙNG
+    
+    File này là **Hợp đồng API do Frontend định nghĩa trước** (Frontend-First API Contract).
+    
+    **Trạng thái hiện tại:**
+    - ✅ FE đang dùng: Mock data local (môi trường development)
+    - ⏳ BE chưa triển khai: Các endpoint này chưa có server thật
+    - 🎯 Mục tiêu: Khi FE chạy mượt với Mock Data → File này trở thành Hard Contract cho BE
+    
+    **Workflow:**
+    1. FE thiết kế endpoint và response shape theo nhu cầu UI
+    2. FE implement Service + Mock Data theo spec này
+    3. FE test đầy đủ với mock data
+    4. File này được bàn giao cho BE team → BE implement đúng theo spec
+    5. FE chỉ cần đổi environment flag để switch từ mock sang real API
+
+  contact:
+    name: "Frontend Team"
+  license:
+    name: "Internal"
+
+servers:
+  - url: "http://localhost:3000/api/v1"
+    description: "Local Mock Server (json-server hoặc MSW)"
+  - url: "https://api.reals-platform.dev/api/v1"
+    description: "Development Backend (khi BE sẵn sàng)"
+  - url: "https://api.reals-platform.com/api/v1"
+    description: "Production"
+
+tags:
+  - name: "auth"
+    description: "Xác thực người dùng — Đăng nhập, Đăng ký, Token refresh"
+  - name: "posts"
+    description: "Bài đăng — CRUD posts, Feed, Discover"
+  - name: "comments"
+    description: "Bình luận — Nested comments, Replies"
+  - name: "users"
+    description: "Người dùng — Profile, Follow/Unfollow, Suggestions"
+  - name: "notifications"
+    description: "Thông báo — In-app notifications"
+  - name: "media"
+    description: "Media assets — Upload, Processing status"
+  - name: "search"
+    description: "Tìm kiếm — Users, Posts, Hashtags"
+  - name: "hashtags"
+    description: "Hashtags — Trending, Hashtag pages"
+
+# ==============================================================================
+# PATHS
+# ==============================================================================
+paths:
+
+  # ============================================================
+  # AUTH
+  # ============================================================
+  /auth/login:
+    post:
+      tags: [auth]
+      summary: "Đăng nhập bằng email + password"
+      operationId: "auth.login"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+            example:
+              email: "demouser@reals.com"
+              password: "Demo@123"
+      responses:
+        "200":
+          description: "Đăng nhập thành công"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+
+  /auth/register:
+    post:
+      tags: [auth]
+      summary: "Đăng ký tài khoản mới"
+      operationId: "auth.register"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterRequest"
+      responses:
+        "201":
+          description: "Đăng ký thành công"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+
+  /auth/refresh:
+    post:
+      tags: [auth]
+      summary: "Làm mới access token"
+      operationId: "auth.refresh"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                refreshToken:
+                  type: string
+      responses:
+        "200":
+          description: "Token mới"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthTokens"
+
+  /auth/logout:
+    post:
+      tags: [auth]
+      summary: "Đăng xuất — invalidate token"
+      operationId: "auth.logout"
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: "Đăng xuất thành công"
+
+  # ============================================================
+  # POSTS / FEED
+  # ============================================================
+  /feed:
+    get:
+      tags: [posts]
+      summary: "Lấy Feed cá nhân (người đang theo dõi)"
+      operationId: "feed.getPersonalFeed"
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/PageParam"
+        - $ref: "#/components/parameters/PageSizeParam"
+      responses:
+        "200":
+          description: "Danh sách posts trong feed"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaginatedPostsResponse"
+
+  /discover:
+    get:
+      tags: [posts]
+      summary: "Lấy Feed khám phá (trending, recommended)"
+      operationId: "feed.getDiscoverFeed"
+      parameters:
+        - $ref: "#/components/parameters/PageParam"
+        - $ref: "#/components/parameters/PageSizeParam"
+        - name: "filter"
+          in: query
+          schema:
+            type: string
+            enum: ["trending", "latest", "for-you"]
+          description: "Loại bộ lọc discover"
+      responses:
+        "200":
+          description: "Danh sách posts khám phá"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaginatedPostsResponse"
+
+  /posts:
+    get:
+      tags: [posts]
+      summary: "Lấy danh sách posts (có filter)"
+      operationId: "posts.list"
+      parameters:
+        - $ref: "#/components/parameters/PageParam"
+        - $ref: "#/components/parameters/PageSizeParam"
+        - name: "authorId"
+          in: query
+          schema:
+            type: string
+          description: "Filter theo tác giả"
+        - name: "hashtag"
+          in: query
+          schema:
+            type: string
+          description: "Filter theo hashtag (không có #)"
+      responses:
+        "200":
+          description: "Danh sách posts"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaginatedPostsResponse"
+
+    post:
+      tags: [posts]
+      summary: "Tạo bài đăng mới"
+      operationId: "posts.create"
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreatePostRequest"
+      responses:
+        "201":
+          description: "Bài đăng đã được tạo"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PostResponse"
+
+  /posts/{postId}:
+    get:
+      tags: [posts]
+      summary: "Lấy chi tiết một bài đăng"
+      operationId: "posts.getById"
+      parameters:
+        - $ref: "#/components/parameters/PostIdParam"
+      responses:
+        "200":
+          description: "Chi tiết bài đăng"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PostResponse"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+
+    put:
+      tags: [posts]
+      summary: "Cập nhật bài đăng"
+      operationId: "posts.update"
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/PostIdParam"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdatePostRequest"
+      responses:
+        "200":
+          description: "Bài đăng sau khi cập nhật"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PostResponse"
+
+    delete:
+      tags: [posts]
+      summary: "Xóa bài đăng"
+      operationId: "posts.delete"
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/PostIdParam"
+      responses:
+        "204":
+          description: "Đã xóa thành công"
+
+  /posts/{postId}/like:
+    post:
+      tags: [posts]
+      summary: "Like bài đăng"
+      operationId: "posts.like"
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/PostIdParam"
+      responses:
+        "200":
+          description: "Like thành công"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  likeCount:
+                    type: integer
+                  isLikedByCurrentUser:
+                    type: boolean
+
+    delete:
+      tags: [posts]
+      summary: "Unlike bài đăng"
+      operationId: "posts.unlike"
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/PostIdParam"
+      responses:
+        "200":
+          description: "Unlike thành công"
+
+  # ============================================================
+  # COMMENTS
+  # ============================================================
+  /posts/{postId}/comments:
+    get:
+      tags: [comments]
+      summary: "Lấy danh sách comment của một post"
+      operationId: "comments.listByPost"
+      parameters:
+        - $ref: "#/components/parameters/PostIdParam"
+        - $ref: "#/components/parameters/PageParam"
+        - $ref: "#/components/parameters/PageSizeParam"
+      responses:
+        "200":
+          description: "Danh sách comments"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaginatedCommentsResponse"
+
+    post:
+      tags: [comments]
+      summary: "Thêm comment mới vào post"
+      operationId: "comments.create"
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/PostIdParam"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateCommentRequest"
+      responses:
+        "201":
+          description: "Comment đã được tạo"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CommentResponse"
+
+  /comments/{commentId}:
+    delete:
+      tags: [comments]
+      summary: "Xóa comment"
+      operationId: "comments.delete"
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/CommentIdParam"
+      responses:
+        "204":
+          description: "Đã xóa"
+
+  /comments/{commentId}/replies:
+    get:
+      tags: [comments]
+      summary: "Lấy replies của một comment"
+      operationId: "comments.getReplies"
+      parameters:
+        - $ref: "#/components/parameters/CommentIdParam"
+        - $ref: "#/components/parameters/PageParam"
+      responses:
+        "200":
+          description: "Danh sách replies"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaginatedCommentsResponse"
+
+  # ============================================================
+  # USERS
+  # ============================================================
+  /users/{userId}:
+    get:
+      tags: [users]
+      summary: "Lấy thông tin profile người dùng"
+      operationId: "users.getProfile"
+      parameters:
+        - $ref: "#/components/parameters/UserIdParam"
+      responses:
+        "200":
+          description: "Thông tin người dùng"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+
+    put:
+      tags: [users]
+      summary: "Cập nhật profile"
+      operationId: "users.updateProfile"
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/UserIdParam"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateProfileRequest"
+      responses:
+        "200":
+          description: "Profile sau khi cập nhật"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+
+  /users/{userId}/follow:
+    post:
+      tags: [users]
+      summary: "Follow người dùng"
+      operationId: "users.follow"
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/UserIdParam"
+      responses:
+        "200":
+          description: "Đã follow"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  followerCount:
+                    type: integer
+                  isFollowedByCurrentUser:
+                    type: boolean
+
+    delete:
+      tags: [users]
+      summary: "Unfollow người dùng"
+      operationId: "users.unfollow"
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/UserIdParam"
+      responses:
+        "200":
+          description: "Đã unfollow"
+
+  /users/{userId}/followers:
+    get:
+      tags: [users]
+      summary: "Danh sách followers"
+      operationId: "users.getFollowers"
+      parameters:
+        - $ref: "#/components/parameters/UserIdParam"
+        - $ref: "#/components/parameters/PageParam"
+      responses:
+        "200":
+          description: "Danh sách followers"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaginatedUsersResponse"
+
+  /users/{userId}/following:
+    get:
+      tags: [users]
+      summary: "Danh sách đang theo dõi"
+      operationId: "users.getFollowing"
+      parameters:
+        - $ref: "#/components/parameters/UserIdParam"
+        - $ref: "#/components/parameters/PageParam"
+      responses:
+        "200":
+          description: "Danh sách following"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaginatedUsersResponse"
+
+  /users/suggestions:
+    get:
+      tags: [users]
+      summary: "Gợi ý người dùng nên follow"
+      operationId: "users.getSuggestions"
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: "limit"
+          in: query
+          schema:
+            type: integer
+            default: 10
+      responses:
+        "200":
+          description: "Danh sách gợi ý"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+
+  # ============================================================
+  # NOTIFICATIONS
+  # ============================================================
+  /notifications:
+    get:
+      tags: [notifications]
+      summary: "Lấy danh sách thông báo"
+      operationId: "notifications.list"
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/PageParam"
+        - name: "unreadOnly"
+          in: query
+          schema:
+            type: boolean
+            default: false
+      responses:
+        "200":
+          description: "Danh sách thông báo"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaginatedNotificationsResponse"
+
+  /notifications/read-all:
+    post:
+      tags: [notifications]
+      summary: "Đánh dấu tất cả thông báo đã đọc"
+      operationId: "notifications.markAllRead"
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: "Đã đánh dấu tất cả là đã đọc"
+
+  /notifications/{notificationId}/read:
+    post:
+      tags: [notifications]
+      summary: "Đánh dấu một thông báo đã đọc"
+      operationId: "notifications.markOneRead"
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: notificationId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: "Đã đọc"
+
+  # ============================================================
+  # SEARCH
+  # ============================================================
+  /search/posts:
+    get:
+      tags: [search]
+      summary: "Tìm kiếm bài đăng"
+      operationId: "search.posts"
+      parameters:
+        - $ref: "#/components/parameters/SearchQueryParam"
+        - $ref: "#/components/parameters/PageParam"
+      responses:
+        "200":
+          description: "Kết quả tìm kiếm posts"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaginatedPostsResponse"
+
+  /search/users:
+    get:
+      tags: [search]
+      summary: "Tìm kiếm người dùng"
+      operationId: "search.users"
+      parameters:
+        - $ref: "#/components/parameters/SearchQueryParam"
+        - $ref: "#/components/parameters/PageParam"
+      responses:
+        "200":
+          description: "Kết quả tìm kiếm users"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaginatedUsersResponse"
+
+  /search/hashtags:
+    get:
+      tags: [search]
+      summary: "Tìm kiếm hashtag"
+      operationId: "search.hashtags"
+      parameters:
+        - $ref: "#/components/parameters/SearchQueryParam"
+      responses:
+        "200":
+          description: "Kết quả tìm kiếm hashtags"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Hashtag"
+
+  # ============================================================
+  # HASHTAGS
+  # ============================================================
+  /hashtags/trending:
+    get:
+      tags: [hashtags]
+      summary: "Lấy danh sách trending hashtags"
+      operationId: "hashtags.getTrending"
+      parameters:
+        - name: "limit"
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        "200":
+          description: "Trending hashtags"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Hashtag"
+
+  /hashtags/{tag}/posts:
+    get:
+      tags: [hashtags]
+      summary: "Lấy posts theo hashtag"
+      operationId: "hashtags.getPostsByTag"
+      parameters:
+        - name: tag
+          in: path
+          required: true
+          schema:
+            type: string
+          description: "Tên hashtag không có dấu #"
+        - $ref: "#/components/parameters/PageParam"
+      responses:
+        "200":
+          description: "Danh sách posts với hashtag này"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaginatedPostsResponse"
+
+  # ============================================================
+  # MEDIA
+  # ============================================================
+  /media/upload:
+    post:
+      tags: [media]
+      summary: "Upload media file"
+      operationId: "media.upload"
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                type:
+                  type: string
+                  enum: ["image", "video", "reel"]
+      responses:
+        "202":
+          description: "Upload accepted, đang processing"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MediaAssetResponse"
+
+  /media/{mediaId}/status:
+    get:
+      tags: [media]
+      summary: "Kiểm tra trạng thái processing của media"
+      operationId: "media.getStatus"
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: mediaId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: "Trạng thái hiện tại"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MediaAssetResponse"
+
+# ==============================================================================
+# COMPONENTS
+# ==============================================================================
+components:
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    PageParam:
+      name: page
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+      description: "Số trang (1-indexed)"
+
+    PageSizeParam:
+      name: pageSize
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 50
+        default: 20
+      description: "Số items mỗi trang"
+
+    PostIdParam:
+      name: postId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+
+    UserIdParam:
+      name: userId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+
+    CommentIdParam:
+      name: commentId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+
+    SearchQueryParam:
+      name: q
+      in: query
+      required: true
+      schema:
+        type: string
+        minLength: 1
+
+  schemas:
+
+    # ---- AUTH ----
+    LoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 6
+
+    RegisterRequest:
+      type: object
+      required: [email, password, username, displayName]
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 8
+        username:
+          type: string
+          minLength: 3
+          maxLength: 30
+          pattern: "^[a-zA-Z0-9_]+$"
+        displayName:
+          type: string
+          minLength: 1
+          maxLength: 50
+
+    AuthTokens:
+      type: object
+      properties:
+        accessToken:
+          type: string
+        refreshToken:
+          type: string
+        expiresIn:
+          type: integer
+          description: "Seconds until accessToken expires"
+
+    AuthUser:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+        username:
+          type: string
+        displayName:
+          type: string
+        avatarUrl:
+          type: string
+          nullable: true
+        role:
+          type: string
+          enum: [user, creator, admin]
+
+    AuthResponse:
+      type: object
+      properties:
+        user:
+          $ref: "#/components/schemas/AuthUser"
+        tokens:
+          $ref: "#/components/schemas/AuthTokens"
+
+    # ---- USER ----
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        username:
+          type: string
+        displayName:
+          type: string
+        avatarUrl:
+          type: string
+          nullable: true
+        bio:
+          type: string
+          nullable: true
+        followerCount:
+          type: integer
+        followingCount:
+          type: integer
+        postCount:
+          type: integer
+        isFollowedByCurrentUser:
+          type: boolean
+        isVerified:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+
+    UserResponse:
+      allOf:
+        - $ref: "#/components/schemas/ApiWrapper"
+        - type: object
+          properties:
+            data:
+              $ref: "#/components/schemas/User"
+
+    UpdateProfileRequest:
+      type: object
+      properties:
+        displayName:
+          type: string
+        bio:
+          type: string
+        avatarUrl:
+          type: string
+        website:
+          type: string
+        location:
+          type: string
+        isPrivate:
+          type: boolean
+
+    PaginatedUsersResponse:
+      allOf:
+        - $ref: "#/components/schemas/ApiWrapper"
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: "#/components/schemas/User"
+            meta:
+              $ref: "#/components/schemas/PaginationMeta"
+
+    # ---- POST ----
+    Post:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        author:
+          $ref: "#/components/schemas/User"
+        content:
+          type: string
+        mediaUrls:
+          type: array
+          items:
+            type: string
+        hashtags:
+          type: array
+          items:
+            type: string
+          description: "Không có dấu #"
+        likeCount:
+          type: integer
+        commentCount:
+          type: integer
+        shareCount:
+          type: integer
+        isLikedByCurrentUser:
+          type: boolean
+        visibility:
+          type: string
+          enum: [public, friends, private]
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    CreatePostRequest:
+      type: object
+      required: [content]
+      properties:
+        content:
+          type: string
+          minLength: 1
+        mediaUrls:
+          type: array
+          items:
+            type: string
+        visibility:
+          type: string
+          enum: [public, friends, private]
+          default: public
+
+    UpdatePostRequest:
+      type: object
+      properties:
+        content:
+          type: string
+        visibility:
+          type: string
+          enum: [public, friends, private]
+
+    PostResponse:
+      allOf:
+        - $ref: "#/components/schemas/ApiWrapper"
+        - type: object
+          properties:
+            data:
+              $ref: "#/components/schemas/Post"
+
+    PaginatedPostsResponse:
+      allOf:
+        - $ref: "#/components/schemas/ApiWrapper"
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: "#/components/schemas/Post"
+            meta:
+              $ref: "#/components/schemas/PaginationMeta"
+
+    # ---- COMMENT ----
+    Comment:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        postId:
+          type: string
+          format: uuid
+        author:
+          $ref: "#/components/schemas/User"
+        parentCommentId:
+          type: string
+          format: uuid
+          nullable: true
+        content:
+          type: string
+        likeCount:
+          type: integer
+        replyCount:
+          type: integer
+        isLikedByCurrentUser:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+
+    CreateCommentRequest:
+      type: object
+      required: [content]
+      properties:
+        content:
+          type: string
+          minLength: 1
+        parentCommentId:
+          type: string
+          nullable: true
+          description: "Nếu là reply, truyền ID của comment cha"
+
+    CommentResponse:
+      allOf:
+        - $ref: "#/components/schemas/ApiWrapper"
+        - type: object
+          properties:
+            data:
+              $ref: "#/components/schemas/Comment"
+
+    PaginatedCommentsResponse:
+      allOf:
+        - $ref: "#/components/schemas/ApiWrapper"
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: "#/components/schemas/Comment"
+            meta:
+              $ref: "#/components/schemas/PaginationMeta"
+
+    # ---- NOTIFICATION ----
+    Notification:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        type:
+          type: string
+          enum: [like, comment, follow, mention, repost, reply]
+        actor:
+          $ref: "#/components/schemas/User"
+        targetId:
+          type: string
+          description: "Post ID hoặc User ID bị tác động"
+        targetType:
+          type: string
+          enum: [post, comment, user]
+        isRead:
+          type: boolean
+        message:
+          type: string
+          description: "Mô tả hành động: 'đã thích bài đăng của bạn'"
+        createdAt:
+          type: string
+          format: date-time
+
+    PaginatedNotificationsResponse:
+      allOf:
+        - $ref: "#/components/schemas/ApiWrapper"
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: "#/components/schemas/Notification"
+            meta:
+              $ref: "#/components/schemas/PaginationMeta"
+            unreadCount:
+              type: integer
+
+    # ---- MEDIA ----
+    MediaAsset:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        ownerId:
+          type: string
+        url:
+          type: string
+          nullable: true
+          description: "null khi đang processing"
+        thumbnailUrl:
+          type: string
+          nullable: true
+        type:
+          type: string
+          enum: [image, video, reel]
+        status:
+          type: string
+          enum: [processing, ready, failed]
+        fileSize:
+          type: integer
+          description: "bytes"
+        duration:
+          type: number
+          nullable: true
+          description: "seconds, null for images"
+        createdAt:
+          type: string
+          format: date-time
+
+    MediaAssetResponse:
+      allOf:
+        - $ref: "#/components/schemas/ApiWrapper"
+        - type: object
+          properties:
+            data:
+              $ref: "#/components/schemas/MediaAsset"
+
+    # ---- HASHTAG ----
+    Hashtag:
+      type: object
+      properties:
+        tag:
+          type: string
+          description: "Không có dấu #"
+        postCount:
+          type: integer
+        istrending:
+          type: boolean
+
+    # ---- SHARED ----
+    PaginationMeta:
+      type: object
+      properties:
+        total:
+          type: integer
+        page:
+          type: integer
+        pageSize:
+          type: integer
+        totalPages:
+          type: integer
+        hasNextPage:
+          type: boolean
+        hasPrevPage:
+          type: boolean
+
+    ApiWrapper:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+          nullable: true
+
+    ApiError:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              example: "USER_NOT_FOUND"
+            message:
+              type: string
+            statusCode:
+              type: integer
+            details:
+              type: object
+              nullable: true
+
+  responses:
+    UnauthorizedError:
+      description: "Chưa xác thực hoặc token hết hạn"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ApiError"
+
+    NotFoundError:
+      description: "Không tìm thấy resource"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ApiError"
+
+    ValidationError:
+      description: "Dữ liệu đầu vào không hợp lệ"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ApiError"
