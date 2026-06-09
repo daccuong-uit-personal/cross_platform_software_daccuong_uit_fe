@@ -11,7 +11,7 @@
   --color-warning: oklch(0.75 0.18 85);
   --color-danger: oklch(0.55 0.22 25);
   --color-info: oklch(0.6 0.18 210);
-  
+
   /* Dynamic Typography System 
      ─────────────────────────────────────────────────────────
      Base System: All font sizes calculated from --font-size-body
@@ -19,73 +19,117 @@
      changes, and ALL other sizes scale proportionally.
      ─────────────────────────────────────────────────────────── */
   --font-family: 'Outfit', sans-serif;
-  
+
   /* Scaling Factors (set by UiSettingsService) */
   --font-size-scale: 1;
   --padding-scale: 1;
   --line-height: 1.5;
-  
-  /* ▌ BASE TYPOGRAPHY TIERS — Dynamic System ▌
-     Changes to --font-size-body cascade to all dependent sizes */
-  --font-size-body: 15px;                           /* Level 4: Base body text — core tier */
-  --font-size-sm: calc(var(--font-size-body) - 2px);     /* Level 5: Labels, captions */
-  --font-size-xs: calc(var(--font-size-body) - 4px);     /* Tiny: helper text */
-  
-  --font-size-md: calc(var(--font-size-body) + 1px);     /* Level 3.5: Subtitle tier */
-  --font-size-lg: calc(var(--font-size-body) + 3px);     /* Level 3: Section titles */
-  --font-size-heading-md: calc(var(--font-size-body) + 5px);  /* Level 2: Menu/lead text */
-  --font-size-heading-lg: calc(var(--font-size-body) + 9px);  /* Level 1: Page titles — large */
-  --font-size-xl: calc(var(--font-size-body) + 5px);     /* Extra large — emphatic text */
-  
-  /* Legacy tier names (for backward compatibility) */
-  --font-size-heading: var(--font-size-heading-lg);  /* Max 24px */
-  --font-size-title: var(--font-size-heading-md);    /* Menu / section lead */
-  --font-size-subtitle: var(--font-size-lg);         /* Section title */
-  --font-size-subtitle-sm: var(--font-size-md);      /* Slightly smaller section title */
-  --font-size-label: var(--font-size-sm);            /* Labels, inputs */
-  --font-size-caption: var(--font-size-xs);          /* Tiny captions */
-  
+
+  /* ▌ BASE TYPOGRAPHY TIERS — Dynamic System (Root: 14.4px) ▌
+     Khóa cứng gốc 18px. Mọi cỡ chữ cascade từ biến này.
+     Khi UiSettingsService thay --font-size-body, toàn hệ thống scale theo. */
+  --font-size-body: 18px;
+  /* Gốc: Body text, nav items, row labels     */
+
+  /* ── Hạ bậc (Sub-scale) ─────────────────────────────────── */
+  --font-size-label: calc(var(--font-size-body) - 2px);
+  /* 16px — label, username phụ    */
+  --font-size-caption: calc(var(--font-size-body) - 4px);
+  /* 14px — timestamp, mô tả nhỏ  */
+
+  /* ── Tăng bậc (Up-scale) ────────────────────────────────── */
+  --font-size-heading-sm: calc(var(--font-size-body) + 2px);
+  /* 20px — tiêu đề khối con, setting name  */
+  --font-size-heading-md: calc(var(--font-size-body) + 4px);
+  /* 22px — tiêu đề card, xu hướng          */
+  --font-size-heading-lg: calc(var(--font-size-body) + 8px);
+  /* 26px — tên profile, chữ Cài đặt        */
+
+  /* ── Alias nội bộ (Internal aliases — giữ backward-compat) ─ */
+  --font-size-sm: var(--font-size-label);
+  /* 16px */
+  --font-size-xs: var(--font-size-caption);
+  /* 14px */
+  --font-size-md: calc(var(--font-size-body) + 1px);
+  /* 19px — subtitle nhỏ */
+  --font-size-lg: calc(var(--font-size-body) + 2px);
+  /* 20px — alias cho heading-sm */
+  --font-size-xl: var(--font-size-heading-md);
+  /* 22px */
+  --font-size-heading: var(--font-size-heading-lg);
+  /* 26px — max page title */
+  --font-size-title: var(--font-size-heading-md);
+  /* 22px */
+  --font-size-subtitle: var(--font-size-heading-sm);
+  /* 20px */
+  --font-size-subtitle-sm: var(--font-size-label);
+  /* 16px */
+
   /* ▌ TYPOGRAPHY WEIGHTS ▌ */
   --font-weight-heavy: 800;
   --font-weight-strong: 700;
   --font-weight-medium: 600;
   --font-weight-regular: 500;
-  
+
   /* ▌ DYNAMIC SPACING SYSTEM ▌
      Base unit scales from 4px. User adjusts in Settings → spacing scale changes.
      All padding/margin then recalculates using multiplication/division.
   */
-  --spacing-scale-base: 4px;          /* Base unit — default 4px (1 × base) */
-  --spacing-1: calc(var(--spacing-scale-base) * 1);    /* 4px */
-  --spacing-2: calc(var(--spacing-scale-base) * 2);    /* 8px */
-  --spacing-2.5: calc(var(--spacing-scale-base) * 2.5);  /* 10px */
-  --spacing-3: calc(var(--spacing-scale-base) * 3);    /* 12px */
-  --spacing-4: calc(var(--spacing-scale-base) * 4);    /* 16px — default padding */
-  --spacing-5: calc(var(--spacing-scale-base) * 5);    /* 20px */
-  --spacing-6: calc(var(--spacing-scale-base) * 6);    /* 24px — card padding */
-  --spacing-7: calc(var(--spacing-scale-base) * 7);    /* 28px */
-  --spacing-8: calc(var(--spacing-scale-base) * 8);    /* 32px — section gap */
-  --spacing-10: calc(var(--spacing-scale-base) * 10);  /* 40px */
-  --spacing-12: calc(var(--spacing-scale-base) * 12);  /* 48px */
-  --spacing-16: calc(var(--spacing-scale-base) * 16);  /* 64px — large section */
-  --spacing-20: calc(var(--spacing-scale-base) * 20);  /* 80px */
-  --spacing-24: calc(var(--spacing-scale-base) * 24);  /* 96px */
-  
+  --spacing-scale-base: 4.4px;
+  /* Base unit — default 4px (1 × base) */
+  --spacing-1: calc(var(--spacing-scale-base) * 1);
+  /* 4px */
+  --spacing-2: calc(var(--spacing-scale-base) * 2);
+  /* 8px */
+  --spacing-2-5: calc(var(--spacing-scale-base) * 2.5);
+  /* 10px */
+  --spacing-3: calc(var(--spacing-scale-base) * 3);
+  /* 12px */
+  --spacing-4: calc(var(--spacing-scale-base) * 4);
+  /* 16px — default padding */
+  --spacing-5: calc(var(--spacing-scale-base) * 5);
+  /* 20px */
+  --spacing-6: calc(var(--spacing-scale-base) * 6);
+  /* 24px — card padding */
+  --spacing-7: calc(var(--spacing-scale-base) * 7);
+  /* 28px */
+  --spacing-8: calc(var(--spacing-scale-base) * 8);
+  /* 32px — section gap */
+  --spacing-10: calc(var(--spacing-scale-base) * 10);
+  /* 40px */
+  --spacing-12: calc(var(--spacing-scale-base) * 12);
+  /* 48px */
+  --spacing-16: calc(var(--spacing-scale-base) * 16);
+  /* 64px — large section */
+  --spacing-20: calc(var(--spacing-scale-base) * 20);
+  /* 80px */
+  --spacing-24: calc(var(--spacing-scale-base) * 24);
+  /* 96px */
+
   /* ▌ CARD & BORDER STYLING ▌ */
   --card-border-radius: 12px;
-  --card-padding: var(--spacing-6);   /* 24px or scaled */
-  
+  --card-padding: var(--spacing-6);
+  /* 24px or scaled */
+
   /* ─── Page Shell Layout Tokens ───────────────────────────────
      Single source-of-truth for all page layout dimensions.
      Changing these propagates to Home, Profile, and Settings.
+     All layout sizes are now fully dynamic and depend on user scaling.
   ─────────────────────────────────────────────────────────── */
-  --page-sidebar-width: 280px;      /* Left nav — full labels */
-  --page-sidebar-collapsed: 88px;   /* Left nav — icons only */
-  --page-main-width: 680px;         /* Main feed width */
-  --page-rightbar-width: 320px;     /* Right sidebar */
-  --page-rightbar-width-full: 320px;/* Right sidebar — full */
-  --page-content-max-width: 1340px; /* Page max width */
-  --header-height: 72px;            /* ui-shared-header */
+  --page-sidebar-width: calc(var(--spacing-scale-base) * 70);
+  /* Left nav — full labels */
+  --page-sidebar-collapsed: calc(var(--spacing-scale-base) * 22);
+  /* Left nav — icons only */
+  --page-main-width: calc(var(--spacing-scale-base) * 170);
+  /* Main feed width */
+  --page-rightbar-width: calc(var(--spacing-scale-base) * 80);
+  /* Right sidebar */
+  --page-rightbar-width-full: calc(var(--spacing-scale-base) * 80);
+  /* Right sidebar — full */
+  --page-content-max-width: calc(var(--spacing-scale-base) * 335);
+  /* Page max width */
+  --header-height: calc(var(--spacing-scale-base) * 18);
+  /* ui-shared-header */
 }
 
 
@@ -97,7 +141,9 @@
 }
 
 html {
-  font-size: 120%;
+  /* KHÔNG dùng font-size % ở html để tránh khuếch đại calc() trong design system.
+     Tất cả kích thước dùng px tuyệt đối qua CSS custom properties. */
+  font-size: 100%;
   line-height: var(--line-height, 1.5);
 }
 
@@ -112,7 +158,12 @@ body {
 }
 
 /* Global Font Override for custom font switching */
-body, button, input, select, textarea, .tiktok-btn {
+body,
+button,
+input,
+select,
+textarea,
+.tiktok-btn {
   font-family: var(--font-family), sans-serif !important;
 }
 
@@ -449,11 +500,11 @@ input[type="submit"] svg,
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
-.std-toggle input:checked ~ .std-toggle-track {
+.std-toggle input:checked~.std-toggle-track {
   background: #0f172a;
 }
 
-.std-toggle input:checked ~ .std-toggle-track::after {
+.std-toggle input:checked~.std-toggle-track::after {
   transform: translateX(20px);
 }
 

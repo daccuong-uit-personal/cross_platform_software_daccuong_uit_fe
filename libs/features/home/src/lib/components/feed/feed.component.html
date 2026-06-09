@@ -1,17 +1,18 @@
 <div class="feed-container">
+  <!-- Feed Tabs (Sticky Main Navigation) -->
+  <div class="feed-tabs">
+    <button
+      *ngFor="let tab of tabs"
+      class="tab"
+      [class.active]="activeTab() === tab.id"
+      (click)="selectTab(tab.id)"
+    >
+      {{ tab.label }}
+    </button>
+  </div>
+
   <!-- Feed Header -->
   <div class="feed-header">
-    <div class="feed-tabs">
-      <button
-        *ngFor="let tab of tabs"
-        class="tab"
-        [class.active]="activeTab() === tab.id"
-        (click)="selectTab(tab.id)"
-      >
-        {{ tab.label }}
-      </button>
-    </div>
-
     <div class="compose-card">
       <div class="compose-top">
         <button type="button" class="compose-input" (click)="onCreatePost()">

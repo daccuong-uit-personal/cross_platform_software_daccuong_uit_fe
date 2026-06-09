@@ -14,10 +14,10 @@ export interface UiSettings {
   fontFamily: 'ui' | 'body' | 'heading' | 'display';
   fontSize: 'compact' | 'normal' | 'large' | 'xlarge';    // Scale multiplier
   lineHeight: 'tight' | 'normal' | 'relaxed' | 'loose';
-  
+
   // Spacing
   paddingScale: 'compact' | 'normal' | 'comfortable' | 'spacious'; // Scale multiplier
-  
+
   // Appearance
   theme: 'light' | 'dark' | 'ocean' | 'forest';
   highContrast: boolean;
@@ -28,8 +28,7 @@ export const DEFAULT_UI_SETTINGS: UiSettings = {
   fontFamily: 'ui',
   fontSize: 'normal',
   lineHeight: 'normal',
-  // default back to compact (original default)
-  paddingScale: 'compact',
+  paddingScale: 'normal',
   theme: 'light',
   highContrast: false,
   reducedMotion: false,
@@ -37,18 +36,18 @@ export const DEFAULT_UI_SETTINGS: UiSettings = {
 
 // Font size multipliers (relative to base)
 const FONT_SIZE_SCALES: Record<UiSettings['fontSize'], number> = {
-  compact: 0.64,
-  normal: 0.8,
-  large: 0.96,
-  xlarge: 1.12,
+  compact: 0.8,
+  normal: 1,
+  large: 1.2,
+  xlarge: 1.4,
 };
 
 // Padding scale multipliers (relative to base)
 const PADDING_SCALES: Record<UiSettings['paddingScale'], number> = {
-  compact: 0.63,
-  normal: 0.9,
-  comfortable: 1.08,
-  spacious: 1.35,
+  compact: 0.8,
+  normal: 1,
+  comfortable: 1.2,
+  spacious: 1.5,
 };
 
 @Injectable({ providedIn: 'root' })
@@ -198,7 +197,7 @@ export class UiSettingsService {
     // 2. TYPOGRAPHY SCALING
     // ══════════════════════════════════════════════════════════════
     const fontScale = FONT_SIZE_SCALES[settings.fontSize];
-    const BASE_FONT_SIZE = 15; // pixels (from design tokens)
+    const BASE_FONT_SIZE = 18; // pixels (from user requirements, new normal)
     const scaledFontSizeBody = BASE_FONT_SIZE * fontScale;
 
     // Set legacy scaling factor (for backward compatibility with existing calc() expressions)
@@ -206,7 +205,7 @@ export class UiSettingsService {
 
     // Set the DYNAMIC base font size (this cascades to all other font sizes)
     root.style.setProperty('--font-size-body', `${scaledFontSizeBody}px`);
-    
+
     // All other font sizes (--font-size-sm, --font-size-heading-lg, etc.)
     // will automatically scale because they use calc() with --font-size-body
     // Example: --font-size-sm: calc(var(--font-size-body) - 2px)
@@ -217,7 +216,7 @@ export class UiSettingsService {
     // 3. SPACING SCALING
     // ══════════════════════════════════════════════════════════════
     const paddingScale = PADDING_SCALES[settings.paddingScale];
-    const BASE_SPACING = 4; // pixels (from design tokens — base unit)
+    const BASE_SPACING = 4.4; // pixels (base unit scaled up)
     const scaledSpacingBase = BASE_SPACING * paddingScale;
 
     // Set legacy scaling factor (for backward compatibility)

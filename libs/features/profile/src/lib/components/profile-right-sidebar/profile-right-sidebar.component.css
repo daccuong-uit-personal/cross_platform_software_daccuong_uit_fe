@@ -4,19 +4,21 @@
 .sidebar-right {
   display: flex;
   flex-direction: column;
-  gap: calc(16px * var(--padding-scale, 1));
+  gap: 0;
   width: 100%;
-  position: sticky;
-  top: 0;
-  max-height: 100vh;
-  overflow: hidden;
-  z-index: 1;
+  /* Chiều cao tự điều chỉnh theo phần chứa (.page-rightbar) */
+  min-height: 100%;
+  background: transparent;
 }
 
 .sidebar-scroll-container {
-  display: block;
+  display: flex;
+  flex-direction: column;
   width: 100%;
-  overflow: hidden;
+  /* Cho phép cột phải cuộn — scrollbar đã ẩn ở cấp .page-rightbar */
+  overflow-y: visible;
+  overflow-x: hidden;
+  flex: 1;
 }
 
 .sidebar-scroll-form {
@@ -24,8 +26,7 @@
   flex-direction: column;
   gap: calc(16px * var(--padding-scale, 1));
   width: 100%;
-  overflow: hidden;
-  padding: calc(16px * var(--padding-scale, 1));
+  padding: calc(16px * var(--padding-scale, 1)) calc(8px * var(--padding-scale, 1));
   box-sizing: border-box;
 }
 

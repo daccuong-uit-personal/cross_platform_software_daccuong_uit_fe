@@ -49,9 +49,7 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  padding: calc(8px * var(--padding-scale, 1))
-           calc(16px * var(--padding-scale, 1))
-           0;
+  padding: calc(8px * var(--padding-scale, 1)) calc(16px * var(--padding-scale, 1)) 0;
   overflow-y: auto;
   overflow-x: hidden;
   scrollbar-width: none;
@@ -95,7 +93,7 @@
 }
 
 .page-brand-title {
-  font-size: 22px;
+  font-size: var(--font-size-heading-md);
   font-weight: 900;
   color: var(--color-text-base);
   line-height: 1;
@@ -113,8 +111,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: calc(8px * var(--padding-scale, 1))
-           calc(12px * var(--padding-scale, 1));
+  padding: calc(8px * var(--padding-scale, 1)) calc(12px * var(--padding-scale, 1));
   min-height: calc(44px * var(--padding-scale, 1));
   border-radius: 12px;
   background: transparent;
@@ -174,7 +171,7 @@
   min-height: 100vh;
   display: flex;
   justify-content: center;
-  overflow-x: hidden;
+  /* Bỏ overflow-x: hidden; vì nó phá vỡ position: sticky của các header con */
   background: transparent;
   flex: 0 0 var(--page-main-width);
 }
@@ -186,19 +183,25 @@
   border-left: 1px solid var(--color-border-default);
   border-right: 1px solid var(--color-border-default);
   min-height: 100vh;
-  padding: 24px 0;
+  padding: 0 0 var(--spacing-6) 0;
   box-sizing: border-box;
   flex-shrink: 0;
 }
 
-/* ─── Right Sidebar ─────────────────────────────────────────── */
+/* ─── Right Sidebar — Smart Sticky Scroll (X.com pattern) ──── */
 .page-rightbar {
   width: var(--page-rightbar-width);
   min-width: var(--page-rightbar-width);
+  /* Sticky top: dính đỉnh viewport, cuộn nội dung bên trong độc lập */
   position: sticky;
   top: 0;
-  height: 100vh;
-  overflow: hidden;
+  /* Chiều cao động: toàn viewport trừ 1 đơn vị spacing để tránh thiếu píxel */
+  height: calc(100vh - var(--spacing-1, 4.4px));
+  /* Cuộn nội dung dài độc lập với cột giữa */
+  overflow-y: auto;
+  overflow-x: hidden;
+  /* Ẩn scrollbar vật lý — giữ giao diện sạch */
+  scrollbar-width: none;
   display: flex;
   flex-direction: column;
   background: transparent;
@@ -206,6 +209,10 @@
   flex-shrink: 0;
   margin-right: -8px;
   padding-right: 8px;
+}
+
+.page-rightbar::-webkit-scrollbar {
+  display: none;
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -252,4 +259,3 @@
     padding: 24px 16px;
   }
 }
-

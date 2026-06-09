@@ -102,16 +102,13 @@
       "mono": { "$value": "'JetBrains Mono', 'Fira Code', monospace", "$description": "Font code" }
     },
     "font_size": {
-      "xs": { "$value": "11px" },
-      "sm": { "$value": "13px" },
-      "base": { "$value": "15px", "$description": "Body text" },
-      "md": { "$value": "16px" },
-      "lg": { "$value": "18px" },
-      "xl": { "$value": "20px" },
-      "2xl": { "$value": "24px", "$description": "Section headers" },
-      "3xl": { "$value": "30px" },
-      "4xl": { "$value": "36px", "$description": "Page titles" },
-      "5xl": { "$value": "48px" }
+      "$description": "Hệ thống cỡ chữ cascade từ gốc 18px (--font-size-body). KHÔNG hardcode px trực tiếp.",
+      "body": { "$value": "18px", "$description": "★ Gốc cascade — body text, nav items, row labels" },
+      "label": { "$value": "calc(body - 2px) = 16px", "$description": "Labels, username phụ → --font-size-label" },
+      "caption": { "$value": "calc(body - 4px) = 14px", "$description": "Timestamp, mô tả nhỏ, meta → --font-size-caption" },
+      "heading_sm": { "$value": "calc(body + 2px) = 20px", "$description": "Tiêu đề widget sidebar, setting name → --font-size-heading-sm" },
+      "heading_md": { "$value": "calc(body + 4px) = 22px", "$description": "Tiêu đề card, xu hướng, brand logo → --font-size-heading-md" },
+      "heading_lg": { "$value": "calc(body + 8px) = 26px", "$description": "Tên profile, tiêu đề Cài đặt → --font-size-heading-lg" }
     },
     "font_weight": {
       "normal": { "$value": "400" },

@@ -24,7 +24,7 @@
 .sidebar-brand {
   display: flex;
   align-items: center;
-  gap: var(--spacing-2.5);
+  gap: var(--spacing-2-5);
   padding: var(--home-brand-padding-vertical, calc(var(--spacing-scale-base) * 1.5)) var(--home-brand-padding-horizontal, var(--spacing-3));
   margin-left: var(--home-brand-offset-left, -16px);
   border-radius: 12px;
@@ -86,7 +86,7 @@
   margin-bottom: 0;
   display: flex;
   align-items: center;
-  gap: var(--spacing-2.5);
+  gap: var(--spacing-2-5);
   padding: calc(var(--spacing-scale-base) * 2) var(--spacing-3);
   min-height: var(--home-menu-item-height, 44px);
   border-radius: 12px;

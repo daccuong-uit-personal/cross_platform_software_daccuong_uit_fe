@@ -1,19 +1,19 @@
 .sidebar-right {
   display: flex;
   flex-direction: column;
-  gap: calc(24px * var(--padding-scale, 1));
+  gap: 0;
   width: 100%;
-  position: sticky;
-  top: 0;
-  max-height: 100vh;
-  overflow: hidden;
-  z-index: 1;
+  min-height: 100%;
+  background: transparent;
 }
 
 .sidebar-scroll-container {
-  display: block;
+  display: flex;
+  flex-direction: column;
   width: 100%;
-  overflow: hidden;
+  overflow-y: visible;
+  overflow-x: hidden;
+  flex: 1;
 }
 
 .sidebar-scroll-form {
@@ -21,7 +21,8 @@
   flex-direction: column;
   gap: calc(24px * var(--padding-scale, 1));
   width: 100%;
-  overflow: hidden;
+  padding: calc(16px * var(--padding-scale, 1)) calc(8px * var(--padding-scale, 1));
+  box-sizing: border-box;
 }
 
 .profile-card {
