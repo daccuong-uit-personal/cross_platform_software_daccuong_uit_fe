@@ -4,13 +4,13 @@
 
 import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Comment } from '@libs/domain/social';
-import { LikeButtonComponent } from '../like-button/like-button.component';
+import { FormsModule } from '@angular/forms';
+import { Comment } from '@fe/domain/social';
 
 @Component({
   selector: 'app-comment-section',
   standalone: true,
-  imports: [CommonModule, LikeButtonComponent],
+  imports: [CommonModule, FormsModule],
   template: `
     <div class="comment-section">
       <!-- Add Comment Input -->

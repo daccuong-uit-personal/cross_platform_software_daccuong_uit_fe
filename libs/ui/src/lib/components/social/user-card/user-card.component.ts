@@ -4,7 +4,7 @@
 
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { User } from '@libs/domain/social';
+import { User } from '@fe/domain/social';
 import { FollowButtonComponent } from '../follow-button/follow-button.component';
 
 @Component({

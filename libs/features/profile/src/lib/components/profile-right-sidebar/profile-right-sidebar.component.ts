@@ -36,6 +36,19 @@ export class ProfileRightSidebarComponent {
   videoCount = signal(5);
   viewsCount = signal(120);
 
+  // New mock statistics
+  weeklyVisits = signal(1254);
+  weeklyVisitsTrend = signal(12.5);
+
+  storiesViewsIncrease = signal(450);
+  reelsViewsIncrease = signal(1200);
+  videosViewsIncrease = signal(320);
+  postsViewsIncrease = signal(890);
+
+  commentsIncrease = signal(156);
+  reactionsIncrease = signal(842);
+  sharesIncrease = signal(45);
+
   toggleMenu(event?: Event) {
     if (event) {
       event.stopPropagation();

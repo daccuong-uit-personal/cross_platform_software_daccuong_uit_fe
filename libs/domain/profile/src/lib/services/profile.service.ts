@@ -16,17 +16,28 @@ export interface ProfileResponse {
   email?: string;
 }
 
+export interface ProfileTabsResponse {
+  tabs: {
+    id: string;
+    label: string;
+  }[];
+}
+
 @Injectable({
   providedIn: 'root',
 })
 export class ProfileService {
   private api = inject(ApiService);
 
-  getMyProfile() {
-    return this.api.get<ProfileResponse>('/profiles/me');
+  getProfile(userId: string) {
+    return this.api.get<ProfileResponse>(`/users/${userId}`);
+  }
+
+  getProfileTabs(userId: string) {
+    return this.api.get<ProfileTabsResponse>(`/users/${userId}/profile-tabs`);
   }
 
   updateProfile(userId: string, payload: ProfilePayload) {
-    return this.api.patch<ProfileResponse>(`/profiles/user/${userId}`, payload);
+    return this.api.put<ProfileResponse>(`/users/${userId}`, payload);
   }
 }

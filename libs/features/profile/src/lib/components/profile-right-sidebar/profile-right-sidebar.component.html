@@ -57,29 +57,44 @@
 
       <!-- ═══ Suggestion Cards ═══ -->
       <section class="suggestion-card">
-        <div class="section-title">Tối ưu hóa hồ sơ</div>
+        <div class="section-title">Thống kê truy cập tuần</div>
         <p class="profile-quick-text">
-          Cập nhật ảnh đại diện, viết tiểu sử hấp dẫn và liên kết đến kênh khác.
+          Lượt xem hồ sơ của bạn đang tăng đều đặn.
         </p>
+        <div class="stat-big-row">
+          <span class="stat-number">{{ weeklyVisits() | number }}</span>
+          <span class="stat-trend positive">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M23 6l-9.5 9.5-5-5L1 18"></path>
+              <path d="M17 6h6v6"></path>
+            </svg>
+            +{{ weeklyVisitsTrend() }}%
+          </span>
+        </div>
         <ul class="profile-quick-list">
-          <li><strong>Ảnh đại diện:</strong> Chọn ảnh chân dung rõ nét.</li>
-          <li><strong>Tiểu sử:</strong> Viết ngắn gọn, dễ nhớ về bạn.</li>
-          <li><strong>Liên kết:</strong> Thêm link đến website hoặc kênh.</li>
+          <li><strong>Lượt xem Truyện:</strong> +{{ storiesViewsIncrease() }}</li>
+          <li><strong>Lượt xem Reel:</strong> +{{ reelsViewsIncrease() }}</li>
+          <li><strong>Lượt xem Video:</strong> +{{ videosViewsIncrease() }}</li>
+          <li><strong>Lượt xem Bài đăng:</strong> +{{ postsViewsIncrease() }}</li>
         </ul>
-        <a class="show-more" routerLink="/profile/edit">Chỉnh sửa ngay</a>
+        <a class="show-more" routerLink="/stats">Xem chi tiết</a>
       </section>
 
       <section class="suggestion-card">
-        <div class="section-title">Tăng sự tương tác</div>
+        <div class="section-title">Tương tác tuần này</div>
         <p class="profile-quick-text">
-          Đăng nội dung đều đặn, trả lời bình luận và sử dụng hashtag phù hợp.
+          Khán giả đang tương tác rất tốt với nội dung của bạn.
         </p>
         <ul class="profile-quick-list">
-          <li><strong>Thường xuyên:</strong> Chia sẻ ít nhất 3 bài/tuần.</li>
-          <li><strong>Phản hồi:</strong> Trả lời bình luận trong 24 giờ.</li>
-          <li><strong>Hashtag:</strong> Dùng 5-10 hashtag phù hợp.</li>
+          <li><strong>Bình luận mới:</strong> +{{ commentsIncrease() }}</li>
+          <li><strong>Lượt React:</strong> +{{ reactionsIncrease() }}</li>
+          <li><strong>Lượt chia sẻ:</strong> +{{ sharesIncrease() }}</li>
         </ul>
-        <a class="show-more" routerLink="/media">Đăng bài ngay</a>
+        <div class="stat-summary-bar">
+          <div class="bar-fill" style="width: 78%"></div>
+        </div>
+        <p class="stat-footer-text">Tăng 24% so với tuần trước</p>
+        <a class="show-more" routerLink="/stats/engagement">Phân tích tương tác</a>
       </section>
 
     </form>

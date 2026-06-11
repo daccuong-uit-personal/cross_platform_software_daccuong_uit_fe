@@ -7,22 +7,28 @@ import { CommonModule } from '@angular/common';
   imports: [CommonModule],
   encapsulation: ViewEncapsulation.None,
   styles: [`
+    lib-button {
+      display: inline-block;
+      min-width: fit-content;
+    }
     lib-button button {
       position: relative;
       display: inline-flex;
-      height: 2.5rem;
+      height: 40px;
       width: 100%;
+      box-sizing: border-box;
       align-items: center;
       justify-content: center;
       overflow: hidden;
-      border-radius: 0.875rem;
-      padding: 0.75rem 1.5rem;
+      border-radius: 8px !important;
+      padding: 0 24px !important;
       font-family: 'Outfit', sans-serif;
-      font-size: 0.95rem;
+      font-size: var(--font-size-caption, 0.875rem);
       font-weight: 600;
       transition: all 0.2s ease;
       cursor: pointer;
       border: 1px solid transparent;
+      white-space: nowrap;
     }
 
     /* Variants */

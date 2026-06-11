@@ -419,6 +419,21 @@ paths:
               schema:
                 $ref: "#/components/schemas/UserResponse"
 
+  /users/{userId}/profile-tabs:
+    get:
+      tags: [users]
+      summary: "Lấy danh sách subtab profile người dùng"
+      operationId: "users.getProfileTabs"
+      parameters:
+        - $ref: "#/components/parameters/UserIdParam"
+      responses:
+        "200":
+          description: "Danh sách subtab profile"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProfileTabsResponse"
+
   /users/{userId}/follow:
     post:
       tags: [users]
@@ -1174,6 +1189,25 @@ components:
         message:
           type: string
           nullable: true
+
+    ProfileTab:
+      type: object
+      properties:
+        id:
+          type: string
+          enum: [posts, videos, reels, stories, friends, groups]
+        label:
+          type: string
+
+    ProfileTabsResponse:
+      allOf:
+        - $ref: "#/components/schemas/ApiWrapper"
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: "#/components/schemas/ProfileTab"
 
     ApiError:
       type: object

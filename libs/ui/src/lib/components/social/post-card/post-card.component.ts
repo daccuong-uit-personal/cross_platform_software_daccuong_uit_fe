@@ -4,376 +4,265 @@
 
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Post } from '@libs/domain/social';
-import { FollowButtonComponent } from '../follow-button/follow-button.component';
-import { LikeButtonComponent } from '../like-button/like-button.component';
+import { Post } from '@fe/domain/social';
 
 @Component({
   selector: 'app-post-card',
   standalone: true,
-  imports: [CommonModule, FollowButtonComponent, LikeButtonComponent],
+  imports: [CommonModule],
   template: `
-    <div class="post-card" *ngIf="post">
-      <!-- Post Header -->
-      <div class="post-header">
-        <div class="author-info">
-          <img [src]="post.author.avatar" [alt]="post.author.fullName" class="avatar" />
-          <div class="author-details">
-            <h4 class="author-name">{{ post.author.fullName }}</h4>
-            <p class="author-username">@{{ post.author.username }}</p>
-            <p class="post-time">{{ formatDate(post.createdAt) }}</p>
+    <article class="post-card" *ngIf="post">
+      <div class="post-card-header">
+        <div class="post-author">
+          <div class="avatar" [style.background-image]="'url(' + post.author.avatar + ')'" ></div>
+          <div class="author-info">
+            <div class="author-name-row">
+              <span class="author-name">{{ post.author.fullName || post.author.username }}</span>
+              <span class="author-handle">@{{ post.author.username }}</span>
+              <span class="post-bullet">·</span>
+              <span class="post-time">{{ formatDate(post.createdAt) }}</span>
+            </div>
+            <p class="author-secondary" *ngIf="post.author.bio">{{ post.author.bio }}</p>
           </div>
         </div>
-        <div class="post-actions">
-          <button class="menu-btn" (click)="onMoreOptions()" aria-label="More options">
-            ⋯
-          </button>
-        </div>
+
+        <button type="button" class="more-btn" aria-label="Thêm tùy chọn" (click)="onMoreOptions()">···</button>
       </div>
 
-      <!-- Post Content -->
-      <div class="post-content">
-        <p class="post-text">{{ post.content }}</p>
+      <p class="post-text">{{ post.content }}</p>
 
-        <!-- Hashtags & Mentions -->
-        <div class="tags" *ngIf="post.hashtags.length > 0 || post.mentions.length > 0">
-          <span class="tag hashtag" *ngFor="let tag of post.hashtags">
-            #{{ tag }}
+      <div class="post-tags" *ngIf="post.hashtags.length || post.mentions.length">
+        <span class="tag" *ngFor="let tag of post.hashtags">#{{ tag }}</span>
+        <span class="tag mention" *ngFor="let mention of post.mentions">@{{ mention }}</span>
+      </div>
+
+      <div class="post-media" *ngIf="post.images.length">
+        <img *ngFor="let image of post.images" [src]="image" alt="Post media" />
+      </div>
+
+      <div class="post-actions">
+        <button class="action-btn action-like" type="button" (click)="onToggleLike()">
+          <span class="icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.8 1-1a5.5 5.5 0 0 0 0-7.8z" />
+            </svg>
           </span>
-          <span class="tag mention" *ngFor="let mention of post.mentions">
-            @{{ mention }}
+          <span class="count" *ngIf="post.likesCount">{{ post.likesCount }}</span>
+        </button>
+        <button class="action-btn action-comment" type="button" (click)="onComment()">
+          <span class="icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+            </svg>
           </span>
-        </div>
-      </div>
-
-      <!-- Images -->
-      <div class="post-media" *ngIf="post.images.length > 0">
-        <div class="images-container" [class.multiple]="post.images.length > 1">
-          <img
-            *ngFor="let image of post.images"
-            [src]="image"
-            [alt]="post.content"
-            class="post-image"
-          />
-        </div>
-      </div>
-
-      <!-- Video -->
-      <div class="post-media" *ngIf="post.video">
-        <video [src]="post.video" controls class="post-video"></video>
-      </div>
-
-      <!-- Post Stats -->
-      <div class="post-stats">
-        <span class="stat" *ngIf="post.likesCount > 0">
-          <strong>{{ post.likesCount }}</strong> likes
-        </span>
-        <span class="stat" *ngIf="post.commentsCount > 0">
-          <strong>{{ post.commentsCount }}</strong> comments
-        </span>
-        <span class="stat" *ngIf="post.sharesCount > 0">
-          <strong>{{ post.sharesCount }}</strong> shares
-        </span>
-      </div>
-
-      <!-- Post Interactions -->
-      <div class="post-interactions">
-        <button class="interaction-btn" (click)="onComment()">
-          <span class="icon">💬</span>
-          <span class="label">Comment</span>
+          <span class="count" *ngIf="post.commentsCount">{{ post.commentsCount }}</span>
         </button>
-
-        <app-like-button
-          [isLiked]="post.isLiked"
-          [likesCount]="post.likesCount"
-          [showCount]="false"
-          (toggleLike)="onToggleLike()"
-        />
-
-        <button class="interaction-btn" (click)="onShare()">
-          <span class="icon">↗️</span>
-          <span class="label">Share</span>
+        <button class="action-btn action-retweet" type="button" (click)="onShare()">
+          <span class="icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="23 7 23 1 17 1" />
+              <path d="M20 14a9 9 0 0 0-9-9H1" />
+              <polyline points="1 17 1 23 7 23" />
+              <path d="M4 10a9 9 0 0 0 9 9h11" />
+            </svg>
+          </span>
+          <span class="count" *ngIf="post.sharesCount">{{ post.sharesCount }}</span>
         </button>
-
-        <button
-          class="interaction-btn"
-          [class.active]="post.isBookmarked"
-          (click)="onToggleBookmark()"
-        >
-          <span class="icon">{{ post.isBookmarked ? '🔖' : '📌' }}</span>
-          <span class="label">{{ post.isBookmarked ? 'Saved' : 'Save' }}</span>
+        <button class="action-btn action-stock" type="button">
+          <span class="icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
+            </svg>
+          </span>
+        </button>
+        <button class="action-btn action-views" type="button">
+          <span class="icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+              <circle cx="12" cy="12" r="3" />
+            </svg>
+          </span>
+          <span class="count">{{ post.viewsCount ?? 0 }}</span>
+        </button>
+        <button class="action-btn action-share" type="button" (click)="onToggleBookmark()">
+          <span class="icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 12v3a3 3 0 0 0 3 3h10" />
+              <polyline points="16 6 21 12 16 18" />
+              <line x1="21" y1="12" x2="9" y2="12" />
+            </svg>
+          </span>
         </button>
       </div>
-
-      <!-- Reply Input (placeholder) -->
-      <div class="reply-section" *ngIf="showReplyBox">
-        <img src="https://i.pravatar.cc/150?img=12" alt="You" class="reply-avatar" />
-        <div class="reply-input-wrapper">
-          <input
-            type="text"
-            class="reply-input"
-            placeholder="Share your thoughts..."
-            (keyup.enter)="onReply($event)"
-          />
-          <button class="reply-btn" (click)="onReply($event)">Reply</button>
-        </div>
-      </div>
-    </div>
+    </article>
   `,
   styles: [
     `
       .post-card {
-        background: var(--color-surface-base);
-        border: 1px solid var(--color-border-subtle);
-        border-radius: var(--card-border-radius, 12px);
-        padding: 16px;
-        margin-bottom: 16px;
-        transition: all 0.2s ease;
+        width: 100%;
+        padding: calc(16px * var(--padding-scale, 1));
+        display: flex;
+        flex-direction: column;
+        gap: calc(14px * var(--padding-scale, 1));
+        background: var(--color-surface-base, #ffffff);
+        border: 1px solid var(--color-border-subtle, rgba(148, 163, 184, 0.24));
+        border-radius: 8px;
+        transition: background 0.2s ease;
       }
-
       .post-card:hover {
-        border-color: var(--color-border-default);
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        background: var(--color-surface-subtle, rgba(29, 155, 240, 0.04));
       }
-
-      .post-header {
+      .post-card-header {
         display: flex;
         justify-content: space-between;
-        align-items: flex-start;
-        margin-bottom: 12px;
+        align-items: start;
+        gap: calc(12px * var(--padding-scale, 1));
       }
-
-      .author-info {
+      .post-author {
         display: flex;
-        gap: 12px;
-        flex: 1;
+        gap: calc(12px * var(--padding-scale, 1));
       }
-
       .avatar {
-        width: 40px;
-        height: 40px;
+        min-width: calc(48px * var(--padding-scale, 1));
+        width: calc(48px * var(--padding-scale, 1));
+        height: calc(48px * var(--padding-scale, 1));
         border-radius: 50%;
-        object-fit: cover;
+        background-color: var(--color-surface-subtle, #f3f4f6);
+        background-size: cover;
+        background-position: center;
         flex-shrink: 0;
       }
-
-      .author-details {
-        flex: 1;
+      .author-info {
+        display: flex;
+        flex-direction: column;
+        gap: calc(2px * var(--padding-scale, 1));
         min-width: 0;
       }
-
+      .author-name-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: calc(8px * var(--padding-scale, 1));
+        align-items: center;
+      }
       .author-name {
-        margin: 0;
         font-size: var(--font-size-body);
         font-weight: 700;
-        color: var(--color-text-base);
+        color: var(--color-text-base, #0f172a);
       }
-
-      .author-username {
-        margin: 2px 0 0 0;
-        font-size: var(--font-size-label);
-        color: var(--color-text-muted);
-      }
-
-      .post-time {
-        margin: 4px 0 0 0;
+      .author-handle,
+      .post-time,
+      .post-bullet {
         font-size: var(--font-size-caption);
-        color: var(--color-text-muted);
+        color: var(--color-text-muted, rgba(0, 0, 0, 0.6));
+        font-weight: 500;
       }
-
-      .menu-btn {
-        background: none;
+      .author-secondary {
+        margin: 0;
+        color: var(--color-text-muted, rgba(0, 0, 0, 0.68));
+        font-size: var(--font-size-caption);
+        line-height: 1.45;
+      }
+      .more-btn {
         border: none;
-        font-size: 18px;
+        background: transparent;
+        color: var(--color-text-muted, rgba(0, 0, 0, 0.55));
+        font-size: var(--font-size-caption);
         cursor: pointer;
-        padding: 4px 8px;
-        color: #666;
-        transition: color 0.2s ease;
-
-        &:hover {
-          color: #0066cc;
-        }
+        padding: calc(6px * var(--padding-scale, 1));
+        border-radius: 9999px;
+        transition: background 0.2s ease, color 0.2s ease;
       }
-
-      .post-content {
-        margin-bottom: 12px;
+      .more-btn:hover {
+        background: rgba(15, 23, 42, 0.04);
       }
-
       .post-text {
         margin: 0;
         font-size: var(--font-size-body);
-        line-height: 1.5;
-        color: var(--color-text-base);
+        line-height: 1.75;
+        color: var(--color-text-base, #0f172a);
+        word-break: break-word;
       }
-
-      .tags {
+      .post-tags {
         display: flex;
         flex-wrap: wrap;
-        gap: 8px;
-        margin-top: 8px;
+        gap: calc(10px * var(--padding-scale, 1));
       }
-
       .tag {
-        font-size: 13px;
-        padding: 4px 8px;
-        border-radius: 4px;
-        background: #f0f0f0;
-        transition: all 0.2s ease;
+        font-size: var(--font-size-caption);
+        color: var(--color-brand-primary, #1d9bf0);
         cursor: pointer;
-
-        &:hover {
-          background: #e0e0e0;
-        }
-
-        &.hashtag {
-          color: #0066cc;
-
-          &:hover {
-            background: #e6f2ff;
-          }
-        }
-
-        &.mention {
-          color: #0066cc;
-
-          &:hover {
-            background: #e6f2ff;
-          }
-        }
+        transition: opacity 0.2s ease;
       }
-
+      .tag:hover {
+        opacity: 0.85;
+      }
       .post-media {
-        margin: 12px 0;
-        border-radius: var(--card-border-radius, 12px);
-        overflow: hidden;
-        max-height: 500px;
-      }
-
-      .images-container {
         display: grid;
-        gap: 4px;
-        border-radius: var(--card-border-radius, 12px);
-        overflow: hidden;
+        gap: calc(10px * var(--padding-scale, 1));
+        margin-top: calc(6px * var(--padding-scale, 1));
         width: 100%;
-        max-height: 500px;
       }
-
-      .images-container.multiple {
-        grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
-      }
-
-      .post-image,
-      .post-video {
+      .post-media img {
         width: 100%;
-        height: 100%;
-        min-height: 240px;
+        height: auto;
+        max-height: calc(450px * var(--padding-scale, 1));
+        border-radius: calc(20px * var(--padding-scale, 1));
         object-fit: cover;
-        display: block;
       }
-
-      .post-stats {
+      .post-actions {
         display: flex;
-        gap: 16px;
-        padding: 8px 0;
-        font-size: 13px;
-        color: #666;
-        border-bottom: 1px solid #f0f0f0;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+        gap: calc(10px * var(--padding-scale, 1));
+        padding-top: calc(4px * var(--padding-scale, 1));
       }
-
-      .stat {
-        strong {
-          color: #000;
-        }
+      .post-actions .action-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: calc(6px * var(--padding-scale, 1));
+        border: none;
+        background: transparent;
+        color: var(--color-text-muted, rgba(107, 114, 128, 0.85));
+        cursor: pointer;
+        font-size: var(--font-size-caption);
+        padding: calc(8px * var(--padding-scale, 1)) calc(12px * var(--padding-scale, 1));
+        border-radius: 9999px;
+        white-space: nowrap;
+        transition: background 0.2s ease, color 0.2s ease;
       }
-
-      .post-interactions {
-        display: flex;
-        justify-content: space-around;
-        margin-top: 12px;
-        padding-top: 8px;
+      .post-actions .action-btn:hover {
+        background: rgba(29, 155, 240, 0.08);
+        color: var(--color-text-base, #0f172a);
       }
-
-      .interaction-btn {
-        flex: 1;
-        display: flex;
+      .post-actions .action-btn .icon {
+        display: inline-flex;
         align-items: center;
         justify-content: center;
-        gap: 6px;
-        background: none;
-        border: none;
-        color: #666;
-        cursor: pointer;
-        font-size: 13px;
-        font-weight: 600;
-        padding: 8px 4px;
-        border-radius: 6px;
-        transition: all 0.2s ease;
-
-        .icon {
-          font-size: 16px;
-        }
-
-        &:hover {
-          background: #f0f0f0;
-          color: #0066cc;
-        }
-
-        &.active {
-          color: #0066cc;
-        }
+        width: calc(18px * var(--padding-scale, 1));
+        height: calc(18px * var(--padding-scale, 1));
       }
-
-      .reply-section {
-        display: flex;
-        gap: 12px;
-        margin-top: 12px;
-        padding-top: 12px;
-        border-top: 1px solid #f0f0f0;
+      .post-actions .action-btn .icon svg {
+        width: 100%;
+        height: 100%;
+        display: block;
       }
-
-      .reply-avatar {
-        width: 32px;
-        height: 32px;
-        border-radius: 50%;
-        object-fit: cover;
-        flex-shrink: 0;
+      .post-actions .action-btn .count {
+        color: var(--color-text-muted, rgba(107, 114, 128, 0.72));
+        font-size: var(--font-size-caption);
       }
-
-      .reply-input-wrapper {
-        flex: 1;
-        display: flex;
-        gap: 8px;
+      .post-actions .action-like:hover {
+        background: rgba(249, 24, 128, 0.12);
       }
-
-      .reply-input {
-        flex: 1;
-        border: 1px solid #e0e0e0;
-        border-radius: 20px;
-        padding: 8px 16px;
-        font-size: 14px;
-        transition: border-color 0.2s ease;
-
-        &:focus {
-          outline: none;
-          border-color: #0066cc;
-        }
+      .post-actions .action-retweet:hover {
+        background: rgba(23, 191, 99, 0.12);
       }
-
-      .reply-btn {
-        padding: 8px 20px;
-        background: #0066cc;
-        color: white;
-        border: none;
-        border-radius: 20px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: background 0.2s ease;
-
-        &:hover {
-          background: #0052a3;
-        }
+      .post-actions .action-share:hover,
+      .post-actions .action-stock:hover,
+      .post-actions .action-views:hover,
+      .post-actions .action-comment:hover {
+        background: rgba(15, 23, 42, 0.06);
       }
-    `,
+    `
   ],
 })
 export class PostCardComponent {

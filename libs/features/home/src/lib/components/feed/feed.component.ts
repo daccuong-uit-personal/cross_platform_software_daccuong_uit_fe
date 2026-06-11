@@ -1,10 +1,11 @@
 import { Component, OnInit, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MOCK_POSTS } from '@fe/domain/social';
+import { PostCardComponent } from '@fe/ui';
 
 @Component({
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, PostCardComponent],
   selector: 'fe-feed',
   templateUrl: './feed.component.html',
   styleUrls: ['./feed.component.css'],
