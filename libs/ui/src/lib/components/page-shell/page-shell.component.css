@@ -14,9 +14,11 @@
   padding: 0 8px;
   box-sizing: border-box;
   background: var(--color-surface-base);
+  /* Block viewport from ever going below the feed's min-width */
+  min-width: calc(var(--page-sidebar-collapsed) + 380px + 16px);
 }
 
-/* ─── 3-column layout spread across the viewport ─────────────────────────────────────────── */
+/* ─── 3-column layout spread across the viewport ───────────── */
 .page-shell {
   display: flex;
   justify-content: space-between;
@@ -100,6 +102,13 @@
   white-space: nowrap;
 }
 
+/* ─── Separator ─────────────────────────────────────────────── */
+.page-nav-separator {
+  border: none;
+  border-top: 1px solid var(--color-border-subtle);
+  margin: 16px 12px;
+}
+
 /* ─── Settings footer ───────────────────────────────────────── */
 .page-sidebar-footer {
   margin-top: auto;
@@ -166,12 +175,123 @@
   text-overflow: ellipsis;
 }
 
+/* ─── Mobile Topbar (hidden on desktop) ─────────────────────── */
+.mobile-topbar {
+  display: none;
+}
+
+/* ─── Hamburger Button ───────────────────────────────────────── */
+.hamburger-btn {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 10px;
+  padding: 8px;
+  transition: background 0.2s ease;
+  flex-shrink: 0;
+}
+
+.hamburger-btn:hover {
+  background: var(--color-surface-subtle);
+}
+
+.hamburger-bar {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: var(--color-text-base);
+  border-radius: 2px;
+  transition: transform 0.3s ease, opacity 0.3s ease, width 0.3s ease;
+  transform-origin: center;
+}
+
+.hamburger-btn.open .hamburger-bar:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.hamburger-btn.open .hamburger-bar:nth-child(2) {
+  opacity: 0;
+  transform: scaleX(0);
+}
+
+.hamburger-btn.open .hamburger-bar:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+/* ─── Mobile Drawer Overlay ──────────────────────────────────── */
+.mobile-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 90;
+  backdrop-filter: blur(2px);
+  animation: overlayFadeIn 0.25s ease;
+}
+
+@keyframes overlayFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ─── Mobile Drawer ──────────────────────────────────────────── */
+.mobile-drawer {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 280px;
+  height: 100vh;
+  background: var(--color-surface-base);
+  border-right: 1px solid var(--color-border-subtle);
+  z-index: 100;
+  transform: translateX(-100%);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+}
+
+.mobile-drawer.open {
+  transform: translateX(0);
+  animation: drawerSlideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes drawerSlideIn {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(0); }
+}
+
+.mobile-drawer-inner {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 24px 8px 16px;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.mobile-drawer-inner::-webkit-scrollbar {
+  display: none;
+}
+
+.mobile-drawer-footer {
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid var(--color-border-subtle);
+}
+
 /* ─── Main Content ──────────────────────────────────────────── */
 .page-main {
   min-height: 100vh;
   display: flex;
   justify-content: center;
-  /* Bỏ overflow-x: hidden; vì nó phá vỡ position: sticky của các header con */
   background: transparent;
   flex: 0 0 var(--page-main-width);
 }
@@ -188,19 +308,15 @@
   flex-shrink: 0;
 }
 
-/* ─── Right Sidebar — Smart Sticky Scroll (X.com pattern) ──── */
+/* ─── Right Sidebar ─────────────────────────────────────────── */
 .page-rightbar {
   width: var(--page-rightbar-width);
   min-width: var(--page-rightbar-width);
-  /* Sticky top: dính đỉnh viewport, cuộn nội dung bên trong độc lập */
   position: sticky;
   top: 0;
-  /* Chiều cao động: toàn viewport trừ 1 đơn vị spacing để tránh thiếu píxel */
   height: calc(100vh - var(--spacing-1, 4.4px));
-  /* Cuộn nội dung dài độc lập với cột giữa */
   overflow-y: auto;
   overflow-x: hidden;
-  /* Ẩn scrollbar vật lý — giữ giao diện sạch */
   scrollbar-width: none;
   display: flex;
   flex-direction: column;
@@ -219,8 +335,8 @@
    RESPONSIVE BREAKPOINTS
    ═══════════════════════════════════════════════════════════════ */
 
-/* 1280px: hide right sidebar entirely on tablet and keep fixed left + main widths */
-@media (max-width: 1279.98px) {
+/* 1. < 1440px: Hide right sidebar. Keep left menu full. */
+@media (max-width: 1439.98px) {
   .page-rightbar {
     display: none;
   }
@@ -230,32 +346,105 @@
   }
 }
 
-/* 768px: stack vertically and make main content take full width */
-@media (max-width: 767.98px) {
-  .page-shell {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-  }
-
+/* 2. < 1100px: Collapse left sidebar to icons + short brand name. */
+@media (max-width: 1099.98px) {
   .page-sidebar {
-    position: relative;
-    width: 100%;
-    min-width: auto;
-    height: auto;
-    border-right: none;
-    border-bottom: 1px solid var(--color-border-default);
+    width: var(--page-sidebar-collapsed);
+    min-width: var(--page-sidebar-collapsed);
   }
 
+  .page-brand {
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 4px;
+  }
+
+  .page-brand-title {
+    font-size: var(--font-size-caption);
+    font-weight: 800;
+  }
+
+  .page-settings-link {
+    justify-content: center;
+    padding: 12px;
+  }
+
+  .page-settings-meta {
+    display: none;
+  }
+
+  .page-nav-separator {
+    margin: 16px 8px;
+  }
+}
+
+/* 3. < 860px: Hide left sidebar entirely, show mobile topbar + hamburger drawer. */
+@media (max-width: 859.98px) {
+  /* Override :host min-width to lock viewport at the feed width */
+  :host {
+    min-width: 380px;
+    padding: 0;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .page-shell {
+    flex-direction: column;
+  }
+
+  /* Hide the desktop sidebar completely */
+  .page-sidebar {
+    display: none;
+  }
+
+  /* Show mobile topbar */
+  .mobile-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 16px;
+    height: 56px;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: color-mix(in srgb, var(--color-surface-base) 90%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--color-border-subtle);
+    flex-shrink: 0;
+  }
+
+  .mobile-brand {
+    margin: 0;
+    padding: 4px 8px;
+  }
+
+  /* Show overlay and drawer */
+  .mobile-overlay {
+    display: block;
+  }
+
+  .mobile-drawer {
+    display: block;
+  }
+
+  /* Main takes full width */
   .page-main {
     padding: 0;
+    flex: 1 1 auto;
+    width: 100%;
+    max-width: 100%;
+    min-height: calc(100vh - 56px);
   }
 
   .page-main-content {
     width: 100%;
     max-width: 100%;
+    margin: 0;
     border-left: none;
     border-right: none;
-    padding: 24px 16px;
+    padding: 0 0 var(--spacing-6) 0;
+    min-width: 380px;
   }
 }

@@ -14,10 +14,13 @@ export const DesignTokens = {
   // ═══════════════════════════════════════════════════════════════
   typography: {
     fontFamily: {
-      ui: "'Outfit', sans-serif",           // Default UI font (buttons, inputs, body)
-      heading: "'Syne', sans-serif",        // Headlines, titles (h1-h2)
-      body: "'Inter', sans-serif",          // Article body, long text
+      ui: "'Outfit', 'Roboto', 'Nunito', sans-serif",           // Default UI font (buttons, inputs, body)
+      heading: "'Syne', 'Montserrat', sans-serif",        // Headlines, titles (h1-h2)
+      body: "'Inter', 'Roboto', 'Nunito', sans-serif",          // Article body, long text
       display: "'Playfair Display', serif", // Large display text
+      roboto: "'Roboto', sans-serif",
+      nunito: "'Nunito', sans-serif",
+      montserrat: "'Montserrat', sans-serif",
     },
   },
 

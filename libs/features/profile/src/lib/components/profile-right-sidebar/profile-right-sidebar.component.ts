@@ -4,7 +4,8 @@ import {
   signal,
   HostListener,
   ElementRef,
-  ViewChild
+  ViewChild,
+  computed,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
@@ -12,6 +13,7 @@ import {
   Router
 } from '@angular/router';
 import { AuthService } from '@fe/core';
+import { ProfileFacade } from '../../data-access/profile.facade';
 
 @Component({
   standalone: true,
@@ -24,6 +26,7 @@ export class ProfileRightSidebarComponent {
   private authService = inject(AuthService);
   private router = inject(Router);
   private elementRef = inject(ElementRef);
+  private profileFacade = inject(ProfileFacade);
 
   @ViewChild('menuDropdown')
   menuDropdown: any;
@@ -36,18 +39,16 @@ export class ProfileRightSidebarComponent {
   videoCount = signal(5);
   viewsCount = signal(120);
 
-  // New mock statistics
-  weeklyVisits = signal(1254);
-  weeklyVisitsTrend = signal(12.5);
-
-  storiesViewsIncrease = signal(450);
-  reelsViewsIncrease = signal(1200);
-  videosViewsIncrease = signal(320);
-  postsViewsIncrease = signal(890);
-
-  commentsIncrease = signal(156);
-  reactionsIncrease = signal(842);
-  sharesIncrease = signal(45);
+  readonly insights = computed(() => this.profileFacade.insights());
+  weeklyVisits = computed(() => this.insights()?.access?.weeklyVisits ?? 0);
+  weeklyVisitsTrend = computed(() => this.insights()?.access?.growthRate ?? 0);
+  storiesViewsIncrease = computed(() => this.insights()?.access?.storiesViewsIncrease ?? 0);
+  reelsViewsIncrease = computed(() => this.insights()?.access?.reelsViewsIncrease ?? 0);
+  videosViewsIncrease = computed(() => this.insights()?.access?.videosViewsIncrease ?? 0);
+  postsViewsIncrease = computed(() => this.insights()?.access?.postsViewsIncrease ?? 0);
+  commentsIncrease = computed(() => this.insights()?.interactions?.commentsIncrease ?? 0);
+  reactionsIncrease = computed(() => this.insights()?.interactions?.reactionsIncrease ?? 0);
+  sharesIncrease = computed(() => this.insights()?.interactions?.sharesIncrease ?? 0);
 
   toggleMenu(event?: Event) {
     if (event) {

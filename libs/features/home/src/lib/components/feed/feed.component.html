@@ -51,6 +51,6 @@
 
   <!-- Posts List -->
   <div class="feed-posts">
-    <app-post-card *ngFor="let post of filteredPosts()" [post]="post"></app-post-card>
+    <app-post-card *ngFor="let post of filteredPosts()" [post]="post" (toggleLike)="onToggleLike(post.id)"></app-post-card>
   </div>
 </div>

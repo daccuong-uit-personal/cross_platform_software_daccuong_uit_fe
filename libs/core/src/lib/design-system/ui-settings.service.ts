@@ -11,7 +11,7 @@ import { DesignTokens } from './design-tokens';
 
 export interface UiSettings {
   // Typography
-  fontFamily: 'ui' | 'body' | 'heading' | 'display';
+  fontFamily: 'ui' | 'body' | 'heading' | 'display' | 'roboto' | 'nunito' | 'montserrat';
   fontSize: 'compact' | 'normal' | 'large' | 'xlarge';    // Scale multiplier
   lineHeight: 'tight' | 'normal' | 'relaxed' | 'loose';
 

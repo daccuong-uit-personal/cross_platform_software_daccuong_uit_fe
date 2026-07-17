@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal, untracked } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '@fe/core';
@@ -18,12 +18,7 @@ import {
   ProfileFriend,
   ProfileGroup,
 } from '@fe/domain/profile';
-import {
-  MOCK_PROFILE_TABS,
-  MOCK_PROFILE_POSTS,
-  MOCK_PROFILE_FRIENDS,
-  MOCK_PROFILE_GROUPS,
-} from '@fe/domain/profile';
+import { ProfileFacade } from '../data-access/profile.facade';
 
 @Component({
   standalone: true,
@@ -35,18 +30,45 @@ import {
 })
 export class ProfileComponent {
   private authService = inject(AuthService);
+  private profileFacade = inject(ProfileFacade);
 
-  displayName = '';
-  username = '';
-  friendsCount = '1.2K';
+  profileData = this.profileFacade.profile;
 
-  tabs = signal<ProfileTab[]>([...MOCK_PROFILE_TABS]);
+  displayName = computed(() => this.profileData()?.displayName ?? '');
+  username = computed(() => this.profileData()?.username ?? '');
+  bio = computed(() => this.profileData()?.bio ?? '');
+  avatarUrl = computed(() => this.profileData()?.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(this.displayName() || this.username() || 'User')}&background=333&color=fff`);
+  coverUrl = computed(() => this.profileData()?.coverUrl || 'https://images.unsplash.com/photo-1511632765486-a01980e01a18');
+  isVerified = computed(() => this.profileData()?.isVerified ?? false);
+  profileHandle = computed(() => this.username() ? `@${this.username()}` : '@người_dùng');
+
+  stats = this.profileFacade.stats;
+  followingCount = computed(() => this.stats()?.followingCount ?? 0);
+  followersCount = computed(() => this.stats()?.followersCount ?? 0);
+  postsCount = computed(() => this.stats()?.postsCount ?? 0);
+
+  tabs = computed<ProfileTab[]>(() =>
+    this.profileFacade.tabs().map((tab) => ({
+      id: tab.id as ProfileTabId,
+      label: tab.label,
+    }))
+  );
   activeTab = signal<ProfileTabId>('posts');
   activeTabLabel = computed(() => this.tabs().find((tab) => tab.id === this.activeTab())?.label ?? '');
+  visibleTabs = computed(() => this.tabs().slice(0, 4));
+  hiddenTabs = computed(() => this.tabs().slice(4));
 
-  posts = signal<ProfilePost[]>(MOCK_PROFILE_POSTS);
-  friends = signal<ProfileFriend[]>(MOCK_PROFILE_FRIENDS);
-  groups = signal<ProfileGroup[]>(MOCK_PROFILE_GROUPS);
+  posts = this.profileFacade.posts;
+  friends = this.profileFacade.friends;
+  groups = this.profileFacade.groups;
+  
+  // Expose tab data to check if empty
+  tabData = this.profileFacade.tabData;
+  isTabEmpty = computed(() => {
+    const data = this.tabData();
+    if (!data) return false;
+    return !data.data || data.data.length === 0;
+  });
 
   mockReels = signal([
     { id: 1, title: 'Bí kíp quay video triệu view', views: '1.2M', cover: 'https://picsum.photos/300/500?random=11' },
@@ -128,19 +150,26 @@ export class ProfileComponent {
   constructor() {
     effect(() => {
       const user = this.authService.user();
-      if (user) {
-        this.displayName = user.displayName ?? '';
-        this.username = user.username ?? '';
+      const userId = user?.userId;
+      if (userId) {
+        untracked(() => {
+          this.profileFacade.loadProfile(userId);
+          this.profileFacade.loadProfileTabData(userId, this.activeTab());
+        });
       }
-    });
+    }, { allowSignalWrites: true });
   }
 
   selectTab(tabId: ProfileTabId) {
     this.activeTab.set(tabId);
+    const user = this.authService.user();
+    const userId = user?.userId;
+    if (userId) {
+      this.profileFacade.loadProfileTabData(userId, tabId);
+    }
   }
 
   trackByTabId(index: number, tab: ProfileTab) {
     return tab.id;
   }
 }
-

@@ -1,10 +1,11 @@
 import type { Post } from '@fe/domain/social';
 
-export type ProfileTabId = 'posts' | 'videos' | 'reels' | 'stories' | 'friends' | 'groups';
+export type ProfileTabId = 'posts' | 'videos' | 'reels' | 'stories' | 'novels' | 'friends' | 'groups';
 
 export interface ProfileTab {
   id: ProfileTabId;
   label: string;
+  count?: number;
 }
 
 export type ProfilePost = Post;

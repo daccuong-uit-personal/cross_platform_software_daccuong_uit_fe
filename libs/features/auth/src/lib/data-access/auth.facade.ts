@@ -129,6 +129,30 @@ export class AuthFacade {
   }
 
   /**
+   * Change Password
+   */
+  changePassword(data: Record<string, unknown>): Observable<any> {
+    this._isSubmitting.set(true);
+    this._error.set(null);
+    this.loadingService.startButtonLoading('change-pwd-btn');
+
+    return this.authService.changePassword(data).pipe(
+      tap(() => {
+        this._error.set(null);
+      }),
+      catchError((err) => {
+        const message = err instanceof AppError ? err.message : 'Đổi mật khẩu thất bại.';
+        this._error.set(message);
+        throw err;
+      }),
+      finalize(() => {
+        this._isSubmitting.set(false);
+        this.loadingService.stopButtonLoading('change-pwd-btn');
+      })
+    );
+  }
+
+  /**
    * Logout user
    * - Clear cache
    * - Clear state

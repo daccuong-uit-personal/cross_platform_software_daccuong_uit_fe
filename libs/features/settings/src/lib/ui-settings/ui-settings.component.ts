@@ -358,6 +358,9 @@ export class UiSettingsComponent {
     { value: 'heading' as const, label: 'Syne', style: "'Syne', sans-serif" },
     { value: 'body' as const, label: 'Inter', style: "'Inter', sans-serif" },
     { value: 'display' as const, label: 'Playfair', style: "'Playfair Display', serif" },
+    { value: 'roboto' as const, label: 'Roboto', style: "'Roboto', sans-serif" },
+    { value: 'nunito' as const, label: 'Nunito', style: "'Nunito', sans-serif" },
+    { value: 'montserrat' as const, label: 'Montserrat', style: "'Montserrat', sans-serif" },
   ];
 
   fontSizeOptions = [

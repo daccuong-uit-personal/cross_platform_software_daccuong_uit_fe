@@ -141,3 +141,59 @@ export interface CreateCommentPayload {
   mentionedUsers?: string[];
   replyToCommentId?: string;
 }
+
+export interface Reel {
+  id: string;
+  author: User;
+  title: string;
+  videoUrl: string;
+  coverUrl?: string;
+  description?: string;
+  likesCount: number;
+  commentsCount: number;
+  sharesCount: number;
+  viewsCount: number;
+  isLiked: boolean;
+  hashtags: string[];
+  createdAt: Date;
+}
+
+export interface Video {
+  id: string;
+  author: User;
+  title: string;
+  description: string;
+  videoUrl: string;
+  thumbnailUrl: string;
+  durationSeconds: number;
+  viewsCount: number;
+  likesCount: number;
+  commentsCount: number;
+  createdAt: Date;
+  isLiked: boolean;
+}
+
+export interface Novel {
+  id: string;
+  author: User;
+  title: string;
+  description: string;
+  coverUrl: string;
+  status: 'ongoing' | 'completed';
+  genres: string[];
+  viewsCount: number;
+  likesCount: number;
+  chaptersCount: number;
+  createdAt: Date;
+}
+
+export interface Group {
+  id: string;
+  name: string;
+  description: string;
+  coverUrl?: string;
+  membersCount: number;
+  privacy: 'public' | 'private';
+  role: 'admin' | 'moderator' | 'member' | 'none';
+  createdAt: Date;
+}

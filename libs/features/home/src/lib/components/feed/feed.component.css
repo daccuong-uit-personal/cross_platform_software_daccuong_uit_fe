@@ -10,6 +10,7 @@
   font-family: inherit;
   border-left: 1px solid var(--color-border-subtle, rgba(148, 163, 184, 0.24));
   border-right: 1px solid var(--color-border-subtle, rgba(148, 163, 184, 0.24));
+  min-width: 380px;
 }
 
 /* ═════════════════════════════════════════════════════════════ */
@@ -233,7 +234,13 @@
 .action-buttons {
   display: flex;
   gap: calc(8px * var(--padding-scale, 1));
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.action-buttons::-webkit-scrollbar {
+  display: none;
 }
 
 .compose-actions .action-btn {
@@ -520,10 +527,6 @@
     padding: calc(12px * var(--padding-scale, 1)) calc(14px * var(--padding-scale, 1));
   }
 
-  .action-buttons {
-    display: none;
-  }
-
   .post-actions {
     justify-content: space-between;
   }
@@ -553,10 +556,6 @@
 @media (max-width: 640px) {
   .feed-header {
     padding: calc(12px * var(--padding-scale, 1)) calc(14px * var(--padding-scale, 1));
-  }
-
-  .action-buttons {
-    display: none;
   }
 
   .post-actions {

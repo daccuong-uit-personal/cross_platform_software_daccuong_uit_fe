@@ -10,8 +10,8 @@
         </svg>
       </button>
       <div class="nav-title-info">
-        <h2>{{ displayName || username || 'Người dùng Reals' }}</h2>
-        <span class="post-count">2 bài đăng</span>
+        <h2>{{ displayName() || username() || 'Người dùng Reals' }}</h2>
+        <span class="post-count">{{ postsCount() }} bài đăng</span>
       </div>
       <button class="icon-control search-btn" aria-label="Tìm kiếm">
       </button>
@@ -20,14 +20,14 @@
     <section class="profile-layout-container">
       <!-- Banner -->
       <div class="profile-banner">
-        <img src="https://images.unsplash.com/photo-1511632765486-a01980e01a18" alt="Banner" class="banner-img">
+        <img [src]="coverUrl()" alt="Banner" class="banner-img">
       </div>
 
       <!-- Profile Header Detail -->
       <div class="profile-header-details">
         <div class="profile-top-row">
           <div class="profile-avatar-large">
-            <img src="https://ui-avatars.com/api/?name=User&background=333&color=fff" alt="Avatar">
+            <img [src]="avatarUrl()" alt="Avatar">
           </div>
           <div class="profile-actions">
             <lib-button variant="outline" class="profile-edit-btn">Chỉnh sửa hồ sơ</lib-button>
@@ -36,23 +36,18 @@
 
         <div class="profile-info-content">
           <div class="profile-name-row">
-            <h1>{{ displayName || username || 'Người dùng Reals' }}</h1>
-            <span class="verified-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                stroke-linecap="round" stroke-linejoin="round">
+            <h1>{{ displayName() || username() || 'Người dùng Reals' }}</h1>
+            <span class="verified-badge" *ngIf="isVerified()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
                 <polyline points="22 4 12 14.01 9 11.01"></polyline>
               </svg> Xác nhận tài khoản</span>
           </div>
-          <p class="profile-handle">{{ username ? '@' + username : '@người_dùng' }}</p>
+          <p class="profile-handle">{{ profileHandle() }}</p>
 
           <div class="profile-meta-links">
-            <span class="meta-item link-item">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                stroke-linejoin="round">
-                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
-                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
-              </svg>
-              <a href="#">facebook.com/nguyendac.cuon...</a>
+            <span class="meta-item link-item" *ngIf="bio()">
+              {{ bio() }}
             </span>
             <span class="meta-item">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -62,16 +57,19 @@
                 <line x1="8" y1="2" x2="8" y2="6"></line>
                 <line x1="3" y1="10" x2="21" y2="10"></line>
               </svg>
-              Tham gia tháng 12 năm 2021
+              Tham gia gần đây
             </span>
           </div>
 
           <div class="profile-stats-row">
             <div class="stat-item">
-              <strong>98</strong> <span>Đang theo dõi</span>
+              <strong>{{ followingCount() }}</strong> <span> Đang theo dõi</span>
             </div>
             <div class="stat-item">
-              <strong>{{ friendsCount }}</strong> <span>Người theo dõi</span>
+              <strong>{{ followersCount() }}</strong> <span> Người theo dõi</span>
+            </div>
+            <div class="stat-item">
+              <strong>{{ postsCount() }}</strong> <span> Bài đăng</span>
             </div>
           </div>
         </div>
@@ -81,13 +79,26 @@
       <div class="profile-tabs">
         <button *ngFor="let tab of tabs(); trackBy: trackByTabId" class="tab" [class.active]="activeTab() === tab.id"
           (click)="selectTab(tab.id)">
-          {{ tab.label }}
+          <strong class="tab-count" *ngIf="tab.count !== undefined" style="margin-right: 4px;">{{ tab.count }}</strong>
+          <span>{{ tab.label }}</span>
         </button>
       </div>
 
       <section class="profile-tab-panel">
         <div class="profile-tab-content">
-          <ng-container [ngSwitch]="activeTab()">
+          <div *ngIf="isTabEmpty()" class="empty-state"
+            style="padding: 40px; text-align: center; color: var(--text-secondary);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+              stroke-linejoin="round" style="width: 48px; height: 48px; margin-bottom: 16px; opacity: 0.5;">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="8" x2="12" y2="12"></line>
+              <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+            <h3>Không có gì</h3>
+            <p>Chưa có dữ liệu nào để hiển thị ở đây.</p>
+          </div>
+
+          <ng-container *ngIf="!isTabEmpty()" [ngSwitch]="activeTab()">
             <div *ngSwitchCase="'posts'" class="content-list">
               <app-post-card *ngFor="let post of posts()" [post]="post"></app-post-card>
             </div>
@@ -114,8 +125,8 @@
                     </div>
                     <div class="author-info">
                       <div class="author-name-row">
-                        <span class="author-name">{{ displayName || username || 'Người dùng Reals' }}</span>
-                        <span class="author-handle">{{ username ? '@' + username : '@nguoi_dung' }}</span>
+                        <span class="author-name">{{ displayName() || username() || 'Người dùng Reals' }}</span>
+                        <span class="author-handle">{{ username() ? '@' + username() : '@nguoi_dung' }}</span>
                         <span class="post-bullet">·</span>
                         <span class="post-time">2 giờ trước</span>
                       </div>

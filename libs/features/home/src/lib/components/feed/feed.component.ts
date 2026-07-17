@@ -1,7 +1,7 @@
-import { Component, OnInit, computed, signal } from '@angular/core';
+import { Component, OnInit, computed, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MOCK_POSTS } from '@fe/domain/social';
 import { PostCardComponent } from '@fe/ui';
+import { HomeFacade } from '../../data-access/home.facade';
 
 @Component({
   standalone: true,
@@ -11,17 +11,20 @@ import { PostCardComponent } from '@fe/ui';
   styleUrls: ['./feed.component.css'],
 })
 export class FeedComponent implements OnInit {
-  posts = MOCK_POSTS;
+  private homeFacade = inject(HomeFacade);
+
+  posts = this.homeFacade.posts;
   activeTab = signal<'posts' | 'videos' | 'shop' | 'stories'>('posts');
   searchQuery = signal('');
 
   filteredPosts = computed(() => {
     const query = this.searchQuery().trim().toLowerCase();
+    const currentPosts = this.posts();
     if (!query) {
-      return this.posts;
+      return currentPosts;
     }
 
-    return this.posts.filter((post) => {
+    return currentPosts.filter((post) => {
       const content = post.content?.toLowerCase() ?? '';
       const author = post.author.fullName?.toLowerCase() ?? post.author.username?.toLowerCase() ?? '';
       const hashtags = post.hashtags?.join(' ').toLowerCase() ?? '';
@@ -34,29 +37,31 @@ export class FeedComponent implements OnInit {
   feedTitle = computed(() => {
     switch (this.activeTab()) {
       case 'videos':
-        return 'Feed video';
+        return 'Video';
       case 'shop':
-        return 'Feed shop';
+        return 'Shop';
       case 'stories':
-        return 'Đọc truyện';
+        return 'Truyện';
       default:
-        return 'Feed bài viết';
+        return 'Bài đăng';
     }
   });
   feedMeta = computed(() =>
     this.searchQuery().trim()
       ? `Kết quả tìm kiếm cho "${this.searchQuery()}"`
-      : 'Tất cả bài đăng'
+      : ''
   );
 
   tabs = [
-    { id: 'posts', label: 'Feed bài viết' },
-    { id: 'videos', label: 'Feed video' },
+    { id: 'posts', label: 'Bài đăng' },
+    { id: 'videos', label: 'Video' },
     { id: 'shop', label: 'Shop' },
-    { id: 'stories', label: 'Đọc truyện' },
+    { id: 'stories', label: 'Truyện' },
   ] as const;
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.homeFacade.loadFeed();
+  }
 
   selectTab(tabId: 'posts' | 'videos' | 'shop' | 'stories') {
     this.activeTab.set(tabId);
@@ -69,5 +74,9 @@ export class FeedComponent implements OnInit {
   onCreatePost(): void {
     // Placeholder for future create-post flow.
     console.log('Open create post drawer or modal');
+  }
+
+  onToggleLike(postId: string): void {
+    this.homeFacade.toggleLike(postId);
   }
 }

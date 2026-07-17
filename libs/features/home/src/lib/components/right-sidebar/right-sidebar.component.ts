@@ -14,10 +14,12 @@ import {
 } from '@angular/router';
 import { AuthService } from '@fe/core';
 import { filter } from 'rxjs/operators';
+import { SocialFacade } from '@fe/domain/social';
+import { UserCardComponent } from '@fe/ui';
 
 @Component({
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, UserCardComponent],
   selector: 'fe-right-sidebar',
   templateUrl: './right-sidebar.component.html',
   styleUrls: ['./right-sidebar.component.css'],
@@ -26,17 +28,20 @@ export class RightSidebarComponent {
   private authService = inject(AuthService);
   private router = inject(Router);
   private elementRef = inject(ElementRef);
+  private socialFacade = inject(SocialFacade);
 
   @ViewChild('menuDropdown')
   menuDropdown: any;
 
   user = this.authService.user;
+  suggestedUsers = this.socialFacade.suggestedUsers;
 
   showMenu = signal(false);
   isHome = signal(true);
   isProfile = signal(false);
 
   constructor() {
+    this.socialFacade.loadSuggestedUsers();
     this.router.events
       .pipe(
         filter(
@@ -88,5 +93,9 @@ export class RightSidebarComponent {
     this.router.navigate([
       '/auth/login',
     ]);
+  }
+
+  onToggleFollow(user: any) {
+    this.socialFacade.toggleFollow(user);
   }
 }

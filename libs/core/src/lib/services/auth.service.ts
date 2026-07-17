@@ -7,6 +7,7 @@ import { showGlobalLoading } from '../interceptors/loading.interceptor';
 
 export interface User {
   id: string;
+  userId?: string;
   email: string;
   username?: string;
   displayName?: string;
@@ -49,6 +50,11 @@ export class AuthService {
 
   sendOtp(phoneNumber: string) {
     return this.api.post<{ message: string }>(urlConfig.auth.sendOtp, { phoneNumber });
+  }
+
+  changePassword(data: Record<string, unknown>) {
+    const context = new HttpContext().set(showGlobalLoading, true);
+    return this.api.post<{ message: string }>(urlConfig.auth.changePassword, data, { context });
   }
 
   logout() {

@@ -52,6 +52,7 @@ export class PageShellComponent {
   @Input() showSettingsFooter = true;
 
   showUserMenu = signal(false);
+  mobileMenuOpen = signal(false);
 
   toggleUserMenu(e: Event) {
     e.stopPropagation();
@@ -60,6 +61,15 @@ export class PageShellComponent {
 
   closeUserMenu() {
     this.showUserMenu.set(false);
+  }
+
+  toggleMobileMenu(e: Event) {
+    e.stopPropagation();
+    this.mobileMenuOpen.update(v => !v);
+  }
+
+  closeMobileMenu() {
+    this.mobileMenuOpen.set(false);
   }
 
   @HostListener('document:click', ['$event'])

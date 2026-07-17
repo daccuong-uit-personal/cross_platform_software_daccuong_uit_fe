@@ -172,7 +172,24 @@
           </a>
         </section>
 
-        <!-- Suggestions removed as requested -->
+        <section class="trending-card">
+          <div class="section-title">
+            Gợi ý kết bạn
+          </div>
+          
+          <div class="suggestions-list" style="display: flex; flex-direction: column; gap: 12px; margin-top: 12px;">
+            <app-user-card 
+              *ngFor="let u of suggestedUsers()" 
+              [user]="u" 
+              [showActions]="false"
+              (toggleFollow)="onToggleFollow(u)">
+            </app-user-card>
+          </div>
+
+          <a class="show-more" style="margin-top: 12px;">
+            Xem tất cả
+          </a>
+        </section>
 
       </ng-container>
 

@@ -495,6 +495,7 @@
 @media (max-width: 920px) {
   .profile-tabs {
     gap: var(--spacing-2);
+    top: 0; /* When sidebar is gone, tabs sticky from the very top */
   }
 
   .tab {
@@ -505,7 +506,21 @@
 
 @media (max-width: 640px) {
   .profile-tabs {
-    padding: 0 var(--spacing-3);
+    padding: 0 var(--spacing-2);
+    gap: 0;
+    /* Each tab shrinks but never disappears */
+    justify-content: space-between;
+    min-height: calc(var(--spacing-scale-base) * 10);
+  }
+
+  .tab {
+    padding: 0 var(--spacing-2);
+    font-size: var(--font-size-xs);
+    height: 36px;
+    /* Fit text, don't wrap */
+    white-space: nowrap;
+    flex: 1 1 0;
+    justify-content: center;
   }
 
   .profile-header-details {
@@ -514,5 +529,18 @@
 
   .profile-avatar-large {
     width: 36%;
+  }
+
+  /* Stack content-grid to 1 col on very small screens */
+  .content-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .content-grid-2 {
+    grid-template-columns: 1fr;
+  }
+
+  .content-grid-3 {
+    grid-template-columns: repeat(2, 1fr);
   }
 }

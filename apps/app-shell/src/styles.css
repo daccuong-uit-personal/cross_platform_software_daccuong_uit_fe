@@ -1,5 +1,5 @@
 @import 'tailwindcss';
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Syne:wght@800&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Syne:wght@800&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Roboto:wght@300;400;500;700&family=Nunito:wght@400;600;700&family=Montserrat:wght@400;500;600;700&display=swap');
 
 /* 
   NOTE: Manual CSS variables as fallback for Tailwind v4 
@@ -189,70 +189,73 @@ textarea,
   --color-brand-secondary: #5dc8f5;
 }
 
-/* Dark Theme — Telegram Dark */
+/* Dark Theme — Telegram Dark / Smooth Gray */
 .dark {
-  /* Telegram dark: navy-blue surfaces, not pure black */
-  --color-surface-base: #17212b;
-  --color-surface-subtle: #232e3c;
-  --color-border-subtle: #303d4b;
-  --color-text-base: #f5f5f5;
-  --color-text-muted: #708499;
-  --color-text-inverse: #17212b;
-  --color-error: #df3f40;
-  --color-btn-bg: #232e3c;
-  --color-btn-hover: #2b5278;
+  /* Soothing dark gray surfaces */
+  --color-surface-base: #18181b;
+  --color-surface-subtle: #27272a;
+  --color-border-subtle: #3f3f46;
+  --color-border-default: #3f3f46;
+  --color-text-base: #e4e4e7;
+  --color-text-muted: #a1a1aa;
+  --color-text-inverse: #18181b;
+  --color-error: #f87171;
+  --color-btn-bg: #27272a;
+  --color-btn-hover: #3f3f46;
   --color-btn-border: rgba(42, 171, 238, 0.2);
   --color-btn-border-hover: rgba(42, 171, 238, 0.4);
   /* Telegram brand: Sky Blue #2AABEE */
-  --color-brand-primary: #2aabee;
-  --color-brand-primary-hover: #1c93e3;
-  --color-brand-gradient: linear-gradient(135deg, #2aabee, #1c93e3);
-  --color-brand-accent: #1c93e3;
-  --color-brand-secondary: #5dc8f5;
+  --color-brand-primary: #38bdf8;
+  --color-brand-primary-hover: #0ea5e9;
+  --color-brand-gradient: linear-gradient(135deg, #38bdf8, #0ea5e9);
+  --color-brand-accent: #0ea5e9;
+  --color-brand-secondary: #7dd3fc;
 }
 
 /* Ocean Theme — Threads (Meta) */
 .ocean {
   /* Threads: ultra-minimal black-and-white with warm near-black surfaces */
-  --color-surface-base: #101010;
-  --color-surface-subtle: #1a1a1a;
-  --color-border-subtle: #2f2f2f;
-  --color-text-base: #f5f5f5;
-  --color-text-muted: #777777;
-  --color-text-inverse: #101010;
-  --color-error: #ff4d4d;
-  --color-btn-bg: #1f1f1f;
-  --color-btn-hover: #2d2d2d;
+  --color-surface-base: #0a0a0a;
+  --color-surface-subtle: #171717;
+  --color-border-subtle: #262626;
+  --color-border-default: #262626;
+  --color-text-base: #fafafa;
+  --color-text-muted: #a3a3a3;
+  --color-text-inverse: #0a0a0a;
+  --color-error: #ef4444;
+  --color-btn-bg: #171717;
+  --color-btn-hover: #262626;
   --color-btn-border: rgba(255, 255, 255, 0.1);
   --color-btn-border-hover: rgba(255, 255, 255, 0.18);
   /* Threads brand: pure black/white, no hue accent */
   --color-brand-primary: #ffffff;
-  --color-brand-primary-hover: #d0d0d0;
-  --color-brand-gradient: linear-gradient(135deg, #ffffff, #a0a0a0);
+  --color-brand-primary-hover: #d4d4d4;
+  --color-brand-gradient: linear-gradient(135deg, #ffffff, #a3a3a3);
   --color-brand-accent: #ffffff;
-  --color-brand-secondary: #555555;
+  --color-brand-secondary: #737373;
 }
 
 /* Forest Theme — TikTok */
 .forest {
   /* TikTok: near-black background, Razzmatazz red + Splash cyan accents */
-  --color-surface-base: #010101;
+  --color-surface-base: #000000;
   --color-surface-subtle: #121212;
-  --color-border-subtle: #2b2b2b;
+  --color-border-subtle: #27272a;
+  --color-border-default: #27272a;
   --color-text-base: #ffffff;
-  --color-text-muted: #8a8a8a;
-  --color-text-inverse: #010101;
-  --color-error: #fe2c55;
-  --color-btn-bg: #1a1a1a;
-  --color-btn-hover: #2a2a2a;
+  --color-text-muted: #a1a1aa;
+  --color-text-inverse: #000000;
+  --color-error: #f43f5e;
+  --color-btn-bg: #18181b;
+  --color-btn-hover: #27272a;
   --color-btn-border: rgba(254, 44, 85, 0.25);
   --color-btn-border-hover: rgba(254, 44, 85, 0.45);
   /* TikTok brand: Razzmatazz #FE2C55 & Splash #25F4EE */
   --color-brand-primary: #fe2c55;
-  --color-brand-primary-hover: #e0284d;
-  --color-brand-gradient: linear-gradient(135deg, #fe2c55, #25f4ee);
-  --color-brand-accent: #25f4ee;
-  --color-brand-secondary: #25f4ee;
+  --color-brand-primary-hover: #e11d48;
+  --color-brand-gradient: linear-gradient(135deg, #fe2c55, #2dd4bf);
+  --color-brand-accent: #2dd4bf;
+  --color-brand-secondary: #2dd4bf;
 }
 
 /* Brand reference tokens — shared across themes */
@@ -746,14 +749,42 @@ input[type="submit"] svg,
   opacity: 0.5;
 }
 
-@media (min-width: 768px) {
-  .md\:px-10 {
-    padding-left: 2.5rem;
-    padding-right: 2.5rem;
-  }
+}
 
-  .md\:py-5 {
-    padding-top: 1.25rem;
-    padding-bottom: 1.25rem;
-  }
+/* ─── Mobile Drawer: always show full vertical sidebar menu ──── */
+/* Override the icon-only collapse when sidebar is inside the drawer */
+.mobile-drawer .sidebar-menu {
+  flex-direction: column !important;
+  align-items: stretch !important;
+  padding: 0 12px !important;
+  height: auto !important;
+}
+
+.mobile-drawer .sidebar-menu a {
+  justify-content: flex-start !important;
+  padding: 12px 16px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.mobile-drawer ui-sidebar-menu,
+.mobile-drawer .sidebar-menu {
+  width: 100% !important;
+}
+
+.mobile-drawer .nav-text,
+.mobile-drawer .badge {
+  display: flex !important;
+}
+
+/* Show settings label inside drawer (overrides the icon-only state) */
+.mobile-drawer-footer .page-settings-meta {
+  display: flex !important;
+}
+
+.mobile-drawer-footer .page-settings-link {
+  justify-content: flex-start !important;
+  padding: 12px 16px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
 }

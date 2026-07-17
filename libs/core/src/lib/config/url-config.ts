@@ -7,6 +7,7 @@ export const urlConfig = {
     refresh: '/auth/refresh',
     sendOtp: '/auth/send-otp',
     verifyOtp: '/auth/verify-otp',
+    changePassword: '/auth/change-password',
   },
   profile: {
     me: '/profiles/me',

@@ -41,7 +41,7 @@ import { Post } from '@fe/domain/social';
       </div>
 
       <div class="post-actions">
-        <button class="action-btn action-like" type="button" (click)="onToggleLike()">
+        <button class="action-btn action-like" [class.liked]="post.isLiked" type="button" (click)="onToggleLike()">
           <span class="icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.8 1-1a5.5 5.5 0 0 0 0-7.8z" />
@@ -252,6 +252,13 @@ import { Post } from '@fe/domain/social';
       }
       .post-actions .action-like:hover {
         background: rgba(249, 24, 128, 0.12);
+      }
+      .post-actions .action-like.liked {
+        color: rgb(249, 24, 128);
+      }
+      .post-actions .action-like.liked .icon svg {
+        fill: rgb(249, 24, 128);
+        stroke: rgb(249, 24, 128);
       }
       .post-actions .action-retweet:hover {
         background: rgba(23, 191, 99, 0.12);

@@ -55,8 +55,8 @@
 
 /* SVG inside nav-icon fills the wrapper exactly */
 .nav-icon ::ng-deep svg {
-  width: 1.15em;
-  height: 1.15em;
+  width: 1.5em;
+  height: 1.5em;
   display: block;
 }
 
@@ -102,8 +102,8 @@
   flex-shrink: 0;
 }
 
-/* Responsive: collapse to icons only */
-@media (max-width: 1280px) {
+/* Responsive: collapse to icons only (< 1100px) — desktop sidebar */
+@media (max-width: 1099.98px) {
   .sidebar-menu {
     align-items: center;
     padding: 8px 4px;

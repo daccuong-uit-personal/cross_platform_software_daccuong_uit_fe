@@ -11,5 +11,5 @@ declare global {
 const runtimeConfig = window.__APP_CONFIG__ ?? {};
 
 export const appConfig: AppConfig = {
-  apiUrl: runtimeConfig.apiUrl ?? 'http://localhost:3000/v1',
+  apiUrl: runtimeConfig.apiUrl ?? 'http://localhost:3000/api/v1',
 };

@@ -9,7 +9,14 @@ import { UiActionButton } from '@fe/ui';
   template: `
     <div class="w-full max-w-[480px] fade-in">
       <div class="text-center mb-10">
-        <h1 class="text-h1 mb-3 text-text-base font-bold" style="font-size:2rem;">Đăng ký Reels</h1>
+        <div class="flex justify-center mb-4">
+          <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="24" cy="24" r="22" fill="var(--color-brand-primary, #1d9bf0)" opacity="0.12"/>
+            <circle cx="24" cy="24" r="22" stroke="var(--color-brand-primary, #1d9bf0)" stroke-width="2.5"/>
+            <text x="24" y="31" text-anchor="middle" font-size="22" font-weight="800" font-family="inherit" fill="var(--color-brand-primary, #1d9bf0)">C</text>
+          </svg>
+        </div>
+        <h1 class="text-h1 mb-3 text-text-base font-bold" style="font-size:2rem;">Đăng ký Reals</h1>
         <p class="text-muted text-sm leading-relaxed">Tạo hồ sơ, follow các tài khoản khác, quay video<br>của chính bạn, v.v.</p>
       </div>
 
