@@ -154,7 +154,7 @@
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  padding: calc(var(--spacing-scale-base) * 3.5) 0;
+  padding: calc(var(--spacing-scale-base) * 2.8) 0;
   border-bottom: 1px solid var(--color-border-subtle, rgba(226, 232, 240, 0.75));
   gap: var(--spacing-3);
 }
@@ -182,7 +182,7 @@
   flex-direction: column;
   flex: 1;
   min-width: 0;
-  gap: calc(var(--spacing-scale-base) * 1.5);
+  gap: calc(var(--spacing-scale-base) * 1.2);
 }
 
 .settings-row-action,
@@ -202,7 +202,11 @@
 .settings-row-desc {
   font-size: var(--font-size-body);
   color: var(--color-text-muted, #64748b);
-  line-height: 1.6;
+  line-height: 1.45;
+}
+
+.settings-passkey-btn {
+  min-width: 110px !important;
 }
 
 /* Level 5: Row value */

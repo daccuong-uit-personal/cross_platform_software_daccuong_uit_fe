@@ -23,6 +23,7 @@ export interface ProfileResponse {
   avatarUrl?: string;
   coverUrl?: string;
   email?: string;
+  location?: string;
   isVerified?: boolean;
   isPrivate?: boolean;
   stats?: ProfileStats;

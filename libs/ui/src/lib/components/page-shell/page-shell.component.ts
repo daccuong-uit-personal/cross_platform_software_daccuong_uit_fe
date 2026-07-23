@@ -1,6 +1,7 @@
 import {
   Component,
   Input,
+  HostBinding,
   inject,
   signal,
   HostListener,
@@ -50,6 +51,15 @@ export class PageShellComponent {
 
   /** Show the bottom settings footer in the left sidebar. */
   @Input() showSettingsFooter = true;
+
+  /**
+   * Force the global left sidebar into icon-only (collapsed) mode.
+   * Use [collapsed]="true" on pages that have their own sub-navigation
+   * (e.g. the Bạn bè page), so the global sidebar stays out of the way.
+   */
+  @Input() collapsed = false;
+
+  @HostBinding('class.sidebar-collapsed') get isCollapsed() { return this.collapsed; }
 
   showUserMenu = signal(false);
   mobileMenuOpen = signal(false);

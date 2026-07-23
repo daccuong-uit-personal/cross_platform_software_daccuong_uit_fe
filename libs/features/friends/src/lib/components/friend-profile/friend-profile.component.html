@@ -1,0 +1,60 @@
+<div class="friend-profile">
+  <ng-container *ngIf="friend; else emptyPlaceholder">
+    <div class="profile-top-nav">
+      <div class="nav-title-info">
+        <h2>{{ friend?.displayName || friend?.name || friend?.username || 'Người dùng Reals' }}</h2>
+        <span class="post-count">{{ friend?.postsCount || 0 }} bài đăng</span>
+      </div>
+    </div>
+
+    <section class="profile-layout-container">
+      <div class="profile-banner">
+        <img [src]="coverUrl()" alt="Banner" class="banner-img">
+      </div>
+
+      <div class="profile-header-details">
+        <div class="profile-top-row">
+          <div class="profile-avatar-large">
+            <img [src]="avatarUrl()" alt="Avatar">
+          </div>
+          <div class="profile-actions">
+            <lib-button variant="outline" class="profile-edit-btn">Xem hồ sơ</lib-button>
+          </div>
+        </div>
+
+        <div class="profile-info-content">
+          <div class="profile-name-row">
+            <h1>{{ friend?.displayName || friend?.name || friend?.username || 'Người dùng Reals' }}</h1>
+          </div>
+          <p class="profile-handle">{{ profileHandle() }}</p>
+
+          <div class="profile-meta-links">
+            <span class="meta-item link-item" *ngIf="friend?.bio">
+              {{ friend?.bio }}
+            </span>
+          </div>
+
+          <div class="profile-stats-row">
+            <div class="stat-item">
+              <strong>{{ friend?.followingCount || 0 }}</strong> <span> Đang theo dõi</span>
+            </div>
+            <div class="stat-item">
+              <strong>{{ friend?.followersCount || 0 }}</strong> <span> Người theo dõi</span>
+            </div>
+            <div class="stat-item">
+              <strong>{{ friend?.postsCount || 0 }}</strong> <span> Bài đăng</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </ng-container>
+
+  <ng-template #emptyPlaceholder>
+    <div class="empty-placeholder">
+      <div class="empty-box">
+        <!-- clean empty area: keep the column visible but no profile content -->
+      </div>
+    </div>
+  </ng-template>
+</div>

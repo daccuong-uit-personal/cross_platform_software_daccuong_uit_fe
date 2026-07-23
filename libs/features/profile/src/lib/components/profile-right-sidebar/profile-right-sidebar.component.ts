@@ -39,16 +39,17 @@ export class ProfileRightSidebarComponent {
   videoCount = signal(5);
   viewsCount = signal(120);
 
-  readonly insights = computed(() => this.profileFacade.insights());
-  weeklyVisits = computed(() => this.insights()?.access?.weeklyVisits ?? 0);
-  weeklyVisitsTrend = computed(() => this.insights()?.access?.growthRate ?? 0);
-  storiesViewsIncrease = computed(() => this.insights()?.access?.storiesViewsIncrease ?? 0);
-  reelsViewsIncrease = computed(() => this.insights()?.access?.reelsViewsIncrease ?? 0);
-  videosViewsIncrease = computed(() => this.insights()?.access?.videosViewsIncrease ?? 0);
-  postsViewsIncrease = computed(() => this.insights()?.access?.postsViewsIncrease ?? 0);
-  commentsIncrease = computed(() => this.insights()?.interactions?.commentsIncrease ?? 0);
-  reactionsIncrease = computed(() => this.insights()?.interactions?.reactionsIncrease ?? 0);
-  sharesIncrease = computed(() => this.insights()?.interactions?.sharesIncrease ?? 0);
+  profileData = this.profileFacade.profile;
+  location = computed(() => this.profileData()?.location || 'Hồ Chí Minh, Việt Nam');
+  from = computed(() => 'Hà Nội, Việt Nam');
+  birthday = computed(() => '01/01/1995');
+  family = computed(() => 'Độc thân');
+  gender = computed(() => 'Nam');
+
+  mockReels = signal([
+    { id: 1, title: 'Bí kíp quay video triệu view', views: '1.2M', cover: 'https://picsum.photos/300/500?random=11' },
+    { id: 2, title: 'Cách edit video siêu nhanh', views: '850K', cover: 'https://picsum.photos/300/500?random=12' }
+  ]);
 
   toggleMenu(event?: Event) {
     if (event) {

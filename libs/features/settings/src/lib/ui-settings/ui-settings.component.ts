@@ -162,7 +162,7 @@ import { UiSettingsService, type UiSettings } from '@fe/core';
 
     .settings-title {
       font-size: var(--font-size-subtitle);
-      font-weight: 700;
+      font-weight: var(--button-font-weight, 500);
       margin: 0 0 0.5rem 0;
       color: var(--color-text-base);
     }
@@ -182,7 +182,7 @@ import { UiSettingsService, type UiSettings } from '@fe/core';
 
     .section-title {
       font-size: var(--font-size-subtitle);
-      font-weight: 600;
+      font-weight: var(--font-weight-medium, 600);
       margin: 0 0 1.5rem 0;
       color: var(--color-text-base);
     }
@@ -198,7 +198,7 @@ import { UiSettingsService, type UiSettings } from '@fe/core';
     .setting-label {
       display: block;
       font-size: calc(var(--font-size-scale, 1) * 0.875rem);
-      font-weight: 600;
+      font-weight: var(--font-weight-medium, 600);
       margin-bottom: 0.75rem;
       color: var(--color-text-base);
     }
@@ -210,14 +210,19 @@ import { UiSettingsService, type UiSettings } from '@fe/core';
     }
 
     .option-btn {
-      padding: calc(var(--padding-scale, 1) * 0.5rem) calc(var(--padding-scale, 1) * 1rem);
+      height: var(--button-height, calc(var(--padding-scale, 1) * 1.625rem));
+      min-height: var(--button-height, calc(var(--padding-scale, 1) * 1.625rem));
+      padding: var(--button-padding-y, calc(var(--padding-scale, 1) * 0.15rem)) var(--button-padding-x, calc(var(--padding-scale, 1) * 0.5rem));
       border: 1px solid var(--color-border-subtle);
-      border-radius: 0.5rem;
+      border-radius: var(--button-radius, calc(var(--padding-scale, 1) * 0.375rem));
       background-color: var(--color-surface-base);
       color: var(--color-text-base);
-      font-size: calc(var(--font-size-scale, 1) * 0.875rem);
+      font-family: var(--font-family-ui, 'Inter', system-ui, sans-serif);
+      font-size: var(--button-font-size, calc(var(--font-size-scale, 1) * 0.8125rem));
+      font-weight: var(--button-font-weight, 400);
       cursor: pointer;
       transition: all 0.15s ease-in-out;
+      box-shadow: none;
     }
 
     .option-btn:hover {
@@ -230,7 +235,26 @@ import { UiSettingsService, type UiSettings } from '@fe/core';
       color: var(--color-text-inverse, #ffffff);
       border-color: var(--color-brand-primary);
     }
+    .reset-btn,
+    .preview-btn {
+      height: var(--button-height, calc(var(--padding-scale, 1) * 1.625rem));
+      min-height: var(--button-height, calc(var(--padding-scale, 1) * 1.625rem));
+      padding: var(--button-padding-y, calc(var(--padding-scale, 1) * 0.15rem)) var(--button-padding-x, calc(var(--padding-scale, 1) * 0.5rem));
+      border: 1px solid var(--color-border-subtle);
+      border-radius: var(--button-radius, calc(var(--padding-scale, 1) * 0.375rem));
+      background-color: var(--color-surface-base);
+      color: var(--color-text-base);
+      font-family: var(--font-family-ui, 'Inter', system-ui, sans-serif);
+      font-size: var(--button-font-size, calc(var(--font-size-scale, 1) * 0.8125rem));
+      font-weight: var(--button-font-weight, 400);
+      cursor: pointer;
+      box-shadow: none;
+    }
 
+    .reset-btn:hover,
+    .preview-btn:hover {
+      background-color: var(--color-surface-subtle);
+    }
     .theme-btn {
       display: flex;
       align-items: center;
@@ -273,13 +297,13 @@ import { UiSettingsService, type UiSettings } from '@fe/core';
     }
 
     .reset-btn {
-      padding: calc(var(--padding-scale, 1) * 0.75rem) calc(var(--padding-scale, 1) * 1.5rem);
-      background-color: var(--color-btn-bg);
-      color: var(--color-text-base);
-      border: 1px solid var(--color-btn-border);
-      border-radius: 0.5rem;
-      font-size: calc(var(--font-size-scale, 1) * 0.875rem);
-      font-weight: 600;
+      padding: var(--button-padding-y, calc(var(--padding-scale, 1) * 0.15rem)) var(--button-padding-x, calc(var(--padding-scale, 1) * 0.5rem));
+      background-color: transparent;
+      color: var(--color-brand-primary);
+      border: 1px solid currentColor;
+      border-radius: var(--button-radius, calc(var(--padding-scale, 1) * 0.375rem));
+      font-size: var(--button-font-size, calc(var(--font-size-scale, 1) * 0.8125rem));
+      font-weight: var(--button-font-weight, 400);
       cursor: pointer;
       transition: all 0.15s ease-in-out;
     }
@@ -302,7 +326,7 @@ import { UiSettingsService, type UiSettings } from '@fe/core';
 
     .preview-text-lg {
       font-size: calc(var(--font-size-scale, 1) * 1.5rem);
-      font-weight: 600;
+      font-weight: var(--font-weight-medium, 600);
       margin: 0 0 1rem 0;
     }
 
@@ -320,13 +344,13 @@ import { UiSettingsService, type UiSettings } from '@fe/core';
     }
 
     .preview-btn {
-      padding: calc(var(--padding-scale, 1) * 0.75rem) calc(var(--padding-scale, 1) * 1.5rem);
+      padding: var(--button-padding-y, calc(var(--padding-scale, 1) * 0.15rem)) var(--button-padding-x, calc(var(--padding-scale, 1) * 0.5rem));
       background-color: var(--color-brand-primary);
       color: var(--color-text-inverse, #ffffff);
-      border: none;
-      border-radius: 0.5rem;
-      font-size: calc(var(--font-size-scale, 1) * 1rem);
-      font-weight: 600;
+      border: 1px solid var(--color-brand-primary);
+      border-radius: var(--button-radius, calc(var(--padding-scale, 1) * 0.375rem));
+      font-size: var(--button-font-size, calc(var(--font-size-scale, 1) * 0.8125rem));
+      font-weight: var(--button-font-weight, 400);
       cursor: pointer;
       transition: all 0.15s ease-in-out;
     }

@@ -70,7 +70,7 @@ import { CommonModule } from '@angular/common';
       .like-count {
         font-size: 14px;
         color: #666;
-        font-weight: 500;
+        font-weight: var(--font-weight-regular, 500);
       }
 
       @keyframes heartBeat {

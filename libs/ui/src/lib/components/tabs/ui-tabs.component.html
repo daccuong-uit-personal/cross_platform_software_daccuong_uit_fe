@@ -1,0 +1,60 @@
+<div class="ui-tabs-container" #container>
+  <div class="ui-tabs-wrapper" #tabsWrapper>
+    <!-- Visible Tabs -->
+    @for (tab of visibleTabs(); track tab.id) {
+      <ng-container *ngTemplateOutlet="tabTemplate; context: { $implicit: tab }"></ng-container>
+    }
+
+    <!-- More Dropdown -->
+    @if (hiddenTabs().length > 0) {
+      <div class="more-dropdown-container">
+        <button class="tab more-btn" (click)="toggleDropdown()" [class.active]="dropdownOpen()">
+          <span>Xem thêm</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="chevron" [class.open]="dropdownOpen()">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </button>
+
+        @if (dropdownOpen()) {
+          <div class="dropdown-menu">
+            @for (tab of hiddenTabs(); track tab.id) {
+              <ng-container *ngTemplateOutlet="dropdownTabTemplate; context: { $implicit: tab }"></ng-container>
+            }
+          </div>
+          <!-- Backdrop to close dropdown -->
+          <div class="dropdown-backdrop" (click)="closeDropdown()"></div>
+        }
+      </div>
+    }
+  </div>
+</div>
+
+<!-- Reusable Tab Template for Main Bar -->
+<ng-template #tabTemplate let-tab>
+  @if (tab.link) {
+    <a [routerLink]="tab.link" class="tab" routerLinkActive="active" (click)="onTabClick(tab, $event)">
+      <strong class="tab-count" *ngIf="tab.count !== undefined">{{ tab.count }}</strong>
+      <span>{{ tab.label }}</span>
+    </a>
+  } @else {
+    <button class="tab" [class.active]="activeTabId === tab.id" (click)="onTabClick(tab, $event)">
+      <strong class="tab-count" *ngIf="tab.count !== undefined">{{ tab.count }}</strong>
+      <span>{{ tab.label }}</span>
+    </button>
+  }
+</ng-template>
+
+<!-- Reusable Tab Template for Dropdown -->
+<ng-template #dropdownTabTemplate let-tab>
+  @if (tab.link) {
+    <a [routerLink]="tab.link" class="dropdown-item" routerLinkActive="active-item" (click)="onTabClick(tab, $event)">
+      <span>{{ tab.label }}</span>
+      <strong class="dropdown-count" *ngIf="tab.count !== undefined">{{ tab.count }}</strong>
+    </a>
+  } @else {
+    <button class="dropdown-item" [class.active-item]="activeTabId === tab.id" (click)="onTabClick(tab, $event)">
+      <span>{{ tab.label }}</span>
+      <strong class="dropdown-count" *ngIf="tab.count !== undefined">{{ tab.count }}</strong>
+    </button>
+  }
+</ng-template>

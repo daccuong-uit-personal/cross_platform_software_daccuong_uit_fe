@@ -1,0 +1,19 @@
+<div class="friends-container">
+  <ui-page-shell [menuItems]="menuItems" [showRightbar]="true">
+    <div slot="main" class="friends-main-wrapper">
+      <div class="friends-main-area">
+        <div class="friends-top-nav-container">
+          <h2 class="friends-page-title">Bạn bè</h2>
+          <ui-tabs [tabs]="uiTabs()" [activeTabId]="activeTabId()"></ui-tabs>
+        </div>
+        <section class="friends-content">
+          <router-outlet></router-outlet>
+        </section>
+      </div>
+    </div>
+
+    <div slot="rightbar" class="friends-profile-area">
+      <feat-friend-profile [friend]="selectedFriend"></feat-friend-profile>
+    </div>
+  </ui-page-shell>
+</div>

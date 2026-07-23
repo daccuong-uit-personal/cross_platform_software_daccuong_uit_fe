@@ -200,48 +200,6 @@
   gap: calc(12px * var(--padding-scale, 1));
 }
 
-.profile-actions button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: calc(8px * var(--padding-scale, 1));
-  border: 1px solid var(--color-border-subtle, rgba(255, 255, 255, 0.12));
-  border-radius: calc(8px * var(--padding-scale, 1));
-  background: var(--color-surface-base, #ffffff);
-  color: var(--color-text-base, #0f172a);
-  font-size: var(--font-size-caption);
-  font-weight: var(--font-weight-medium);
-  cursor: pointer;
-  transition: none;
-  height: calc(40px * var(--padding-scale, 1));
-}
-
-.profile-actions button svg {
-  width: calc(20px * var(--padding-scale, 1));
-  height: calc(20px * var(--padding-scale, 1));
-}
-
-.profile-actions button:hover {
-  background: var(--color-surface-base, #ffffff);
-  color: var(--color-text-base, #0f172a);
-  transform: none;
-  border-color: var(--color-border-subtle, rgba(255, 255, 255, 0.12));
-}
-
-.profile-actions button.primary-action {
-  background: var(--color-brand-primary, #fe2c55);
-  color: var(--color-text-inverse, #fff);
-  border: none;
-  border-radius: calc(8px * var(--padding-scale, 1));
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-}
-
-.profile-actions button.primary-action:hover {
-  background: var(--color-brand-primary, #fe2c55);
-  transform: none;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-}
-
 /* Promo Card */
 .promo-card {
   background: var(--color-surface-subtle, #f3f4f6);
@@ -293,29 +251,7 @@
   position: relative;
 }
 
-.promo-card button {
-  width: 100%;
-  background: var(--color-brand-primary, #fe2c55);
-  color: var(--color-text-inverse, #fff);
-  border: none;
-  border-radius: calc(8px * var(--padding-scale, 1));
-  padding: calc(12px * var(--padding-scale, 1));
-  height: calc(40px * var(--padding-scale, 1));
-  font-size: var(--font-size-caption);
-  font-weight: var(--font-weight-strong);
-  cursor: pointer;
-  transition: all 0.2s ease;
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
 
-.promo-card button:hover {
-  background: var(--color-brand-primary, #fe2c55);
-  transform: none;
-  box-shadow: none;
-}
 
 /* Trending & Suggestions */
 .section-title {

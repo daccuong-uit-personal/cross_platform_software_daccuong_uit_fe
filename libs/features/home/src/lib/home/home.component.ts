@@ -21,7 +21,7 @@ import { UiButton, UiCard } from '@fe/ui';
                 <p class="text-text-muted">Hello, <span class="font-bold text-brand-primary">{{ userDisplayName }}</span></p>
              </div>
           </div>
-          <lib-button type="button" routerLink="/profile" class="!w-auto !px-6 !h-12 !rounded-xl !bg-brand-primary !text-white hover:!bg-brand-primary/90 transition-all">
+          <lib-button type="button" routerLink="/profile" class="!w-auto !rounded-xl !bg-brand-primary !text-white hover:!bg-brand-primary/90 transition-all">
             Hồ sơ của bạn
           </lib-button>
         </div>

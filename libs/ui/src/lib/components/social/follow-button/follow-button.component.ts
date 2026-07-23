@@ -22,38 +22,41 @@ import { CommonModule } from '@angular/common';
   styles: [
     `
       .follow-button {
-        padding: 8px 20px;
-        border: 1px solid #e0e0e0;
-        border-radius: 20px;
-        background-color: #fff;
-        color: #000;
-        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        height: var(--button-height, 1.75rem);
+        min-height: var(--button-height, 1.75rem);
+        padding: var(--button-padding-y, 0.2rem) var(--button-padding-x, 0.5rem);
+        border: 1px solid var(--color-border-subtle, #d0d7de);
+        border-radius: var(--button-radius, 0.375rem);
+        background-color: transparent;
+        color: var(--color-text-base, #0f172a);
+        font-family: var(--font-family-ui, 'Inter', system-ui, sans-serif);
+        font-weight: var(--button-font-weight, 400);
         cursor: pointer;
-        transition: all 0.2s ease;
-        font-size: 14px;
+        transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+        font-size: var(--button-font-size, 0.8125rem);
+        line-height: 1;
+      }
 
-        &:hover:not(:disabled) {
-          border-color: #0066cc;
-          color: #0066cc;
-          background-color: #f0f7ff;
-        }
+      .follow-button:hover:not(:disabled) {
+        background-color: var(--color-surface-subtle, #f3f4f6);
+      }
 
-        &.following {
-          border-color: #0066cc;
-          color: #0066cc;
-          background-color: #0066cc;
-          color: #fff;
+      .follow-button.following {
+        border-color: var(--color-brand-primary, #1d9bf0);
+        color: var(--color-brand-primary, #1d9bf0);
+        background-color: transparent;
+      }
 
-          &:hover:not(:disabled) {
-            background-color: #0052a3;
-            border-color: #0052a3;
-          }
-        }
+      .follow-button.following:hover:not(:disabled) {
+        background-color: rgba(29, 155, 240, 0.06);
+      }
 
-        &:disabled {
-          opacity: 0.6;
-          cursor: not-allowed;
-        }
+      .follow-button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
       }
 
       .button-text {

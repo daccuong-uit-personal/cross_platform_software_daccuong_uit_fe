@@ -125,7 +125,7 @@
 
 .user-meta-name {
   font-size: var(--font-size-subtitle);
-  font-weight: 700;
+  font-weight: var(--font-weight-strong, 700);
   color: var(--color-text-base, #0f172a);
 }
 

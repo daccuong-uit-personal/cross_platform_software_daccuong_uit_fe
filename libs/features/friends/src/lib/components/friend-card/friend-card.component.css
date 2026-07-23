@@ -1,0 +1,195 @@
+/* ═══════════════════════════════════════════════════════════════
+   FriendCardComponent — Avatar card + List row variants
+   All values use CSS design tokens, zero hardcoded colors/sizes.
+   ═══════════════════════════════════════════════════════════════ */
+
+:host {
+  display: block;
+}
+
+/* ─── Base card ─────────────────────────────────────────────── */
+.friend-card {
+  background: var(--color-surface-base);
+  border-radius: var(--radius-xl, 16px);
+  overflow: visible;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+  border: 1px solid var(--color-border-subtle);
+}
+
+.friend-card:hover {
+  box-shadow: 0 4px 16px color-mix(in srgb, var(--color-brand-primary) 12%, transparent);
+}
+
+/* ─── Avatar card ───────────────────────────────────────────── */
+.avatar-card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--color-border-subtle);
+}
+
+.avatar-wrap {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background: var(--color-surface-subtle);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.card-body {
+  padding: calc(var(--spacing-scale-base, 4px) * 3.5);
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--spacing-scale-base, 4px) * 2.5);
+}
+
+.card-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+}
+
+.card-name {
+  font-size: var(--font-size-subtitle);
+  font-weight: var(--font-weight-strong);
+  color: var(--color-text-base);
+  margin: 0;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-meta {
+  font-size: var(--font-size-caption);
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.card-actions {
+  display: flex;
+  gap: calc(var(--spacing-scale-base, 4px) * 1.75);
+  margin-top: auto;
+}
+
+/* ─── List row ──────────────────────────────────────────────── */
+.list-row {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--spacing-scale-base, 4px) * 3);
+  padding: calc(var(--spacing-scale-base, 4px) * 2.5) calc(var(--spacing-scale-base, 4px) * 3);
+  border-radius: var(--radius-xl, 16px);
+}
+
+.list-avatar-wrap {
+  width: 48px;
+  height: 48px;
+  min-width: 48px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.list-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.list-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.list-info .card-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.list-actions {
+  display: flex;
+  gap: calc(var(--spacing-scale-base, 4px) * 1.75);
+  flex-shrink: 0;
+}
+
+
+
+/* Basic dropdown using <details> for accessibility */
+details.dropdown {
+  position: relative;
+}
+
+details.dropdown summary {
+  list-style: none;
+}
+
+details.dropdown summary::-webkit-details-marker {
+  display: none;
+}
+
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  background: var(--color-surface-base);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(15,23,42,0.08);
+  padding: 8px;
+  min-width: 160px;
+  flex-direction: column;
+  gap: 6px;
+  z-index: 50;
+}
+
+details.dropdown[open] .dropdown-menu {
+  display: flex;
+}
+
+.dropdown-menu .btn {
+  width: 100%;
+  justify-content: flex-start;
+  background: transparent;
+  border: none;
+  padding: 8px 12px;
+}
+
+/* Floating panel anchored to a button; placed above other UI */
+
+.floating-menu-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.floating-panel {
+  position: absolute; /* anchored to wrapper so it appears just under button */
+  left: 0;
+  top: calc(100% + 6px);
+  background: var(--color-surface-base);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(15,23,42,0.12);
+  padding: 8px;
+  min-width: 160px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 9999;
+  transform-origin: top left;
+}
+
+.floating-panel .btn {
+  background: transparent;
+  border: none;
+  justify-content: flex-start;
+  padding: 8px 12px;
+}

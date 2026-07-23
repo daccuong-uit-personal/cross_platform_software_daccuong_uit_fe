@@ -4,8 +4,15 @@
 */
 
 :root {
-  --std-font-scale: calc(var(--font-size-scale, 0.667));
-  --std-padding-scale: calc(var(--padding-scale, 0.7));
+  --std-font-scale: calc(var(--font-size-scale, 1));
+  --std-padding-scale: calc(var(--padding-scale, 1));
+  --button-font-family: var(--font-family, system-ui, sans-serif);
+  --button-height: calc(var(--padding-scale, 1) * 1.625rem);
+  --button-padding-y: calc(var(--padding-scale, 1) * 0.15rem);
+  --button-padding-x: calc(var(--padding-scale, 1) * 0.5rem);
+  --button-font-size: calc(var(--font-size-scale, 1) * 0.8125rem);
+  --button-font-weight: 400;
+  --button-radius: calc(var(--padding-scale, 1) * 0.375rem);
   --std-section-title-size: calc(var(--std-font-scale) * 2rem);
   --std-section-title-weight: 700;
   --std-group-label-size: calc(var(--std-font-scale) * 0.75rem);
@@ -20,9 +27,9 @@
   --std-icon-size-md: calc(var(--std-font-scale) * 1.25rem);
   --std-icon-size-lg: calc(var(--std-font-scale) * 1.5rem);
   --std-icon-size-xl: calc(var(--std-font-scale) * 2rem);
-  --std-button-padding-vertical: calc(var(--std-padding-scale) * 0.55rem);
-  --std-button-padding-horizontal: calc(var(--std-padding-scale) * 0.9rem);
-  --std-button-border-radius: 0.75rem;
+  --std-button-padding-vertical: var(--button-padding-y);
+  --std-button-padding-horizontal: var(--button-padding-x);
+  --std-button-border-radius: var(--button-radius);
 }
 
 .std-icon,
@@ -39,11 +46,22 @@ input[type="button"],
 input[type="submit"],
 button[type="button"],
 button[type="submit"] {
-  font-size: var(--std-row-name-size);
-  padding: var(--std-button-padding-vertical) var(--std-button-padding-horizontal);
-  border-radius: var(--std-button-border-radius);
+  font-family: var(--button-font-family);
+  height: var(--button-height, calc(var(--padding-scale, 1) * 1.75rem));
+  min-height: var(--button-height, calc(var(--padding-scale, 1) * 1.75rem));
+  font-size: var(--button-font-size, calc(var(--font-size-scale, 1) * 0.8125rem));
+  font-weight: var(--button-font-weight, 400);
+  padding: var(--button-padding-y, calc(var(--padding-scale, 1) * 0.2rem)) var(--button-padding-x, calc(var(--padding-scale, 1) * 0.5rem));
+  border-radius: var(--button-radius, calc(var(--padding-scale, 1) * 0.375rem));
+  box-sizing: border-box;
   line-height: 1;
-  min-height: calc(var(--std-button-padding-vertical) * 2 + var(--std-row-name-size));
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  white-space: nowrap;
 }
 
 /* Generic section title used in settings */

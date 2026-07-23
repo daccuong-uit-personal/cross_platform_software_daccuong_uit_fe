@@ -137,19 +137,22 @@
 }
 
 .header-title span {
-  font-weight: 700;
+  font-weight: var(--font-weight-strong, 700);
   color: #6366f1;
 }
 
 .logout-btn {
-  padding: 10px 20px;
+  padding: var(--button-padding-y, 0.2rem) var(--button-padding-x, 0.5rem);
+  height: var(--button-height, 1.75rem);
+  min-height: var(--button-height, 1.75rem);
   background: #fef2f2;
   color: #ef4444;
   border: 1px solid #fee2e2;
-  border-radius: 100px;
-  font-weight: 700;
+  border-radius: var(--button-radius, 0.375rem);
+  font-weight: var(--button-font-weight, 400);
+  font-size: var(--button-font-size, 0.8125rem);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .logout-btn:hover {

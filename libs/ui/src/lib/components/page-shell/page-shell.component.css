@@ -18,6 +18,48 @@
   min-width: calc(var(--page-sidebar-collapsed) + 380px + 16px);
 }
 
+/* ─── Programmatic sidebar collapse (e.g. Friends page) ───── */
+:host.sidebar-collapsed .page-sidebar {
+  width: var(--page-sidebar-collapsed);
+  min-width: var(--page-sidebar-collapsed);
+}
+
+:host.sidebar-collapsed .page-brand {
+  justify-content: center;
+  padding: 8px 4px;
+}
+
+:host.sidebar-collapsed .page-brand-title {
+  font-size: var(--font-size-caption);
+  font-weight: 800;
+}
+
+:host.sidebar-collapsed .page-settings-link {
+  justify-content: center;
+  padding: 12px;
+}
+
+:host.sidebar-collapsed .page-settings-meta {
+  display: none;
+}
+
+:host.sidebar-collapsed .page-nav-separator {
+  margin: 16px 8px;
+}
+
+/* When collapsed and no right sidebar: main fills all remaining width */
+:host.sidebar-collapsed .page-main {
+  flex: 1 1 auto;
+  width: auto;
+}
+
+:host.sidebar-collapsed .page-main-content {
+  width: 100%;
+  max-width: 100%;
+  border-right: none;
+}
+
+
 /* ─── 3-column layout spread across the viewport ───────────── */
 .page-shell {
   display: flex;

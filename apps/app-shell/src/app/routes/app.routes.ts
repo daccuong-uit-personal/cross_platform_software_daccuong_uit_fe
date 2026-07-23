@@ -20,6 +20,12 @@ export const appRoutes: Route[] = [
       import('@fe/features/profile').then((m) => m.profileRoutes),
   },
   {
+    path: 'friends',
+    canActivate: [authGuard],
+    loadChildren: () =>
+      import('@fe/features/friends').then((m) => m.friendsRoutes),
+  },
+  {
     path: 'media',
     canActivate: [authGuard],
     loadChildren: () => import('@fe/features/media').then((m) => m.mediaRoutes),

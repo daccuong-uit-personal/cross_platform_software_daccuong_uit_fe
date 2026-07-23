@@ -2,7 +2,6 @@ import { Injectable, signal, inject } from '@angular/core';
 import {
   ProfileService,
   ProfileResponse,
-  ProfileInsights,
   ProfileTabDataResponse,
   ProfileFriend,
   ProfileGroup,
@@ -24,7 +23,7 @@ export class ProfileFacade {
   private readonly _stats = signal<UserStatistics | null>(null);
   private readonly _friends = signal<ProfileFriend[]>([]);
   private readonly _tabs = signal<ProfileTab[]>([]);
-  private readonly _insights = signal<ProfileInsights | null>(null);
+
   private readonly _posts = signal<ProfilePost[]>([]);
   private readonly _groups = signal<ProfileGroup[]>([]);
   private readonly _tabData = signal<ProfileTabDataResponse | null>(null);
@@ -35,7 +34,7 @@ export class ProfileFacade {
   readonly stats = this._stats.asReadonly();
   readonly friends = this._friends.asReadonly();
   readonly tabs = this._tabs.asReadonly();
-  readonly insights = this._insights.asReadonly();
+
   readonly posts = this._posts.asReadonly();
   readonly groups = this._groups.asReadonly();
   readonly tabData = this._tabData.asReadonly();
@@ -60,7 +59,6 @@ export class ProfileFacade {
     forkJoin({
       profile: this.profileService.getProfile(userId).pipe(take(1), catchError(() => of(null))),
       stats: this.socialService.getUserStatistics(userId).pipe(take(1), catchError(() => of(null))),
-      insights: this.profileService.getProfileInsights(userId).pipe(take(1), catchError(() => of(null))),
     }).subscribe({
       next: (data) => {
         this._profile.set(data.profile);
@@ -72,7 +70,6 @@ export class ProfileFacade {
           likesReceivedCount: data.stats?.likesReceivedCount ?? 0,
           engagementRate: data.stats?.engagementRate ?? 0,
         });
-        this._insights.set(data.insights);
         this._isLoading.set(false);
       },
       error: (err) => {

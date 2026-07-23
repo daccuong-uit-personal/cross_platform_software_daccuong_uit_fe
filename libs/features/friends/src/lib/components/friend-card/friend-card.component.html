@@ -1,0 +1,85 @@
+<!-- Avatar card variant -->
+<!-- placeholder removed -->
+@if (variant === 'avatar-card') {
+  <div class="friend-card avatar-card" (click)="onSelect()">
+    <div class="avatar-wrap">
+      <img
+        [src]="user?.avatar || 'https://ui-avatars.com/api/?name=' + (user?.name || 'User') + '&background=0D8ABC&color=fff&size=200'"
+        [alt]="user?.name || 'Avatar'"
+        class="avatar-img"
+      />
+    </div>
+    <div class="card-body">
+      <div class="card-info">
+        <h3 class="card-name">{{ user?.name || 'Nguyễn Văn A' }}</h3>
+        <p class="card-meta">{{ user?.mutualFriends || 0 }} bạn chung</p>
+      </div>
+      <div class="card-actions">
+        <!-- Avatar-card actions vary by context -->
+        <ng-container *ngIf="context === 'sent'">
+          <button class="btn btn-accent">Huỷ lời mời</button>
+        </ng-container>
+        <ng-container *ngIf="context === 'suggestions'">
+          <button class="btn btn-primary">Kết bạn</button>
+          <button class="btn btn-outline">Nhắn tin</button>
+        </ng-container>
+        <ng-container *ngIf="context === 'relationships'">
+          <div class="floating-menu-wrapper">
+            <button class="btn btn-ghost" (click)="toggleMenu('relationships', $event)">Quan hệ</button>
+            <div class="floating-panel" *ngIf="openMenu === 'relationships'">
+              <button class="btn btn-ghost">Anh/Chị/Em</button>
+              <button class="btn btn-ghost">Thân thiết</button>
+              <button class="btn btn-ghost">Người yêu</button>
+              <button class="btn btn-ghost">Vợ/Chồng</button>
+            </div>
+          </div>
+        </ng-container>
+        <ng-container *ngIf="!context || (context !== 'sent' && context !== 'suggestions' && context !== 'relationships')">
+          <button class="btn btn-primary">Xác nhận</button>
+          <button class="btn btn-accent">Xoá</button>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- List row variant -->
+@else {
+  <div class="friend-card list-row" (click)="onSelect()">
+    <div class="list-avatar-wrap">
+      <img
+        [src]="user?.avatar || 'https://ui-avatars.com/api/?name=' + (user?.name || 'User') + '&background=0D8ABC&color=fff&size=100'"
+        [alt]="user?.name || 'Avatar'"
+        class="list-avatar-img"
+      />
+    </div>
+    <div class="list-info">
+      <h3 class="card-name">{{ user?.name || 'Nguyễn Văn A' }}</h3>
+      <p class="card-meta">{{ user?.subtitle || 'Theo dõi bạn từ tháng 10 năm 2023' }}</p>
+    </div>
+    <div class="list-actions">
+      <button class="btn btn-outline">Nhắn tin</button>
+      <!-- list actions depend on context -->
+      <ng-container [ngSwitch]="context">
+        <div *ngSwitchCase="'all'" class="floating-menu-wrapper">
+          <button class="btn btn-ghost" (click)="toggleMenu('friends', $event)">Bạn bè</button>
+          <div class="floating-panel" *ngIf="openMenu === 'friends'">
+            <button class="btn btn-ghost">Bỏ theo dõi</button>
+            <button class="btn btn-ghost">Huỷ kết bạn</button>
+            <button class="btn btn-ghost"> <svg viewBox="0 0 24 24" width="16" height="16" style="margin-right:8px;vertical-align:middle"><path d="M12 .587l3.668 7.431 8.2 1.192-5.934 5.788 1.402 8.175L12 18.897l-7.336 3.876 1.402-8.175L.132 9.21l8.2-1.192z" fill="currentColor"/></svg> Yêu thích</button>
+          </div>
+        </div>
+        <button *ngSwitchCase="'followers'" class="btn btn-ghost">Chặn</button>
+        <div *ngSwitchCase="'muted'" class="floating-menu-wrapper">
+          <button class="btn btn-ghost" (click)="toggleMenu('muted', $event)">Tuỳ chọn</button>
+          <div class="floating-panel" *ngIf="openMenu === 'muted'">
+            <button class="btn btn-ghost">Chặn</button>
+            <button class="btn btn-ghost">Mute</button>
+            <button class="btn btn-ghost">Bỏ chặn</button>
+          </div>
+        </div>
+        <button *ngSwitchDefault class="btn btn-ghost">Bỏ theo dõi</button>
+      </ng-container>
+    </div>
+  </div>
+}

@@ -108,6 +108,12 @@
   margin-top: 4px;
 }
 
+.profile-edit-btn {
+  min-width: 144px;
+}
+
+
+
 .profile-info-content {
   display: flex;
   flex-direction: column;
@@ -123,7 +129,7 @@
 .profile-name-row h1 {
   margin: 0;
   font-size: var(--font-size-heading-lg);
-  font-weight: 700;
+  font-weight: var(--font-weight-strong, 700);
   line-height: 1.2;
   color: var(--color-text-base);
 }
@@ -187,7 +193,7 @@
 }
 
 .stat-item strong {
-  font-weight: 700;
+  font-weight: var(--font-weight-strong, 700);
   color: var(--color-text-base, #0f172a);
 }
 
@@ -250,7 +256,7 @@
 
 .tab.active {
   color: var(--color-brand-primary, #1d9bf0);
-  font-weight: 700;
+  font-weight: var(--font-weight-strong, 700);
   border-bottom-color: var(--color-brand-primary, #1d9bf0);
 }
 
@@ -346,7 +352,7 @@
 .story-title {
   margin: 0;
   font-size: var(--font-size-md);
-  font-weight: 700;
+  font-weight: var(--font-weight-strong, 700);
   color: var(--color-text-base);
 }
 
@@ -372,7 +378,7 @@
   font-size: var(--font-size-sm);
   color: var(--color-brand-primary);
   cursor: pointer;
-  font-weight: 500;
+  font-weight: var(--font-weight-regular, 500);
 }
 
 /* Post Card Elements (Copied for Story Card) */
@@ -410,7 +416,7 @@
 }
 .story-card .author-name {
   font-size: var(--font-size-body);
-  font-weight: 700;
+  font-weight: var(--font-weight-strong, 700);
   color: var(--color-text-base, #0f172a);
 }
 .story-card .author-handle,
@@ -418,7 +424,7 @@
 .story-card .post-bullet {
   font-size: var(--font-size-caption);
   color: var(--color-text-muted, rgba(0, 0, 0, 0.6));
-  font-weight: 500;
+  font-weight: var(--font-weight-regular, 500);
 }
 .story-card .author-secondary {
   margin: 0;

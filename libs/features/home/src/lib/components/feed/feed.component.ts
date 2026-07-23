@@ -1,11 +1,11 @@
 import { Component, OnInit, computed, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { PostCardComponent } from '@fe/ui';
+import { PostCardComponent, UiButton } from '@fe/ui';
 import { HomeFacade } from '../../data-access/home.facade';
 
 @Component({
   standalone: true,
-  imports: [CommonModule, PostCardComponent],
+  imports: [CommonModule, PostCardComponent, UiButton],
   selector: 'fe-feed',
   templateUrl: './feed.component.html',
   styleUrls: ['./feed.component.css'],

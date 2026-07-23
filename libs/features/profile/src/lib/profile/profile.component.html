@@ -76,13 +76,7 @@
       </div>
 
       <!-- Tabs -->
-      <div class="profile-tabs">
-        <button *ngFor="let tab of tabs(); trackBy: trackByTabId" class="tab" [class.active]="activeTab() === tab.id"
-          (click)="selectTab(tab.id)">
-          <strong class="tab-count" *ngIf="tab.count !== undefined" style="margin-right: 4px;">{{ tab.count }}</strong>
-          <span>{{ tab.label }}</span>
-        </button>
-      </div>
+      <ui-tabs [tabs]="uiTabs()" [activeTabId]="activeTab()" (tabChange)="onTabChange($event)"></ui-tabs>
 
       <section class="profile-tab-panel">
         <div class="profile-tab-content">
