@@ -1,10 +1,9 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FriendCardComponent } from '../../components/friend-card/friend-card.component';
-
-const MOCK_NAMES = [
-  'Ngô Văn Chiến', 'Đặng Thị Thủy', 'Lưu Đình Hiệp', 'Đoàn Thị Ngọc Bích', 'Trần Tuấn Kiệt',
-];
+import { FriendCardComponent, FriendCardActionEvent } from '../../components/friend-card/friend-card.component';
+import { FriendsApiService, FriendUser } from '../../services/friends-api.service';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { BehaviorSubject, switchMap } from 'rxjs';
 
 @Component({
   selector: 'fe-friend-blocked',
@@ -15,10 +14,22 @@ const MOCK_NAMES = [
   styleUrls: ['./blocked.component.css'],
 })
 export class FriendBlockedComponent {
-  readonly mockUsers = MOCK_NAMES.map((name, i) => ({
-    id: i + 1,
-    name,
-    subtitle: 'Đã chặn · Không thể xem trang cá nhân của bạn',
-    avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=6B7280&color=fff&size=100`,
-  }));
+  private friendsApi = inject(FriendsApiService);
+  private readonly refreshTrigger = new BehaviorSubject<void>(undefined);
+
+  readonly users = toSignal(
+    this.refreshTrigger.pipe(switchMap(() => this.friendsApi.getBlockedUsers(1, 20))),
+    { initialValue: [] }
+  );
+
+  onAction(event: FriendCardActionEvent) {
+    const currentUser = event.user as FriendUser;
+    if (event.type === 'unblock') {
+      this.friendsApi.unblockUser(currentUser.id).subscribe(() => this.refresh());
+    }
+  }
+
+  private refresh() {
+    this.refreshTrigger.next();
+  }
 }

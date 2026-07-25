@@ -1,11 +1,9 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FriendCardComponent } from '../../components/friend-card/friend-card.component';
-
-const MOCK_NAMES = [
-  'Nguyễn Hoàng Nam', 'Trịnh Thị Bảo', 'Phùng Văn Đức', 'Vương Thị Hà', 'Mạc Đình Tuấn',
-  'Thái Thị Hồng', 'Đinh Văn Phát', 'Lê Thị Vy', 'Hà Quang Minh', 'Chu Thị Lan',
-];
+import { FriendCardComponent, FriendCardActionEvent } from '../../components/friend-card/friend-card.component';
+import { FriendsApiService, FriendUser } from '../../services/friends-api.service';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { BehaviorSubject, switchMap } from 'rxjs';
 
 @Component({
   selector: 'fe-friend-sent',
@@ -16,10 +14,22 @@ const MOCK_NAMES = [
   styleUrls: ['./sent.component.css'],
 })
 export class FriendSentComponent {
-  readonly mockUsers = MOCK_NAMES.map((name, i) => ({
-    id: i + 1,
-    name,
-    mutualFriends: Math.floor(Math.random() * 15) + 1,
-    avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=D97706&color=fff&size=200`,
-  }));
+  private friendsApi = inject(FriendsApiService);
+  private readonly refreshTrigger = new BehaviorSubject<void>(undefined);
+
+  readonly users = toSignal(
+    this.refreshTrigger.pipe(switchMap(() => this.friendsApi.getSentRequests(1, 20))),
+    { initialValue: [] }
+  );
+
+  onAction(event: FriendCardActionEvent) {
+    const currentUser = event.user as FriendUser;
+    if (event.type === 'cancel-request') {
+      this.friendsApi.cancelFriendRequest(currentUser.id).subscribe(() => this.refresh());
+    }
+  }
+
+  private refresh() {
+    this.refreshTrigger.next();
+  }
 }

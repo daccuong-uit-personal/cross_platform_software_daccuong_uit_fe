@@ -1,11 +1,9 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FriendCardComponent } from '../../components/friend-card/friend-card.component';
-
-const MOCK_NAMES = [
-  'Trần Anh Tuấn', 'Nguyễn Thị Lan', 'Lê Văn Hải', 'Phạm Thị Nhung', 'Hoàng Minh Khoa',
-  'Đỗ Thu Trang', 'Vũ Đình Sơn', 'Ngô Bích Phương', 'Bùi Thanh Tùng', 'Đinh Thị Hà',
-];
+import { FriendCardComponent, FriendCardActionEvent } from '../../components/friend-card/friend-card.component';
+import { FriendsApiService, FriendUser } from '../../services/friends-api.service';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { BehaviorSubject, switchMap } from 'rxjs';
 
 @Component({
   selector: 'fe-friend-following',
@@ -16,10 +14,22 @@ const MOCK_NAMES = [
   styleUrls: ['./following.component.css'],
 })
 export class FriendFollowingComponent {
-  readonly mockUsers = MOCK_NAMES.map((name, i) => ({
-    id: i + 1,
-    name,
-    subtitle: `Đang theo dõi · ${Math.floor(Math.random() * 500) + 10}K người theo dõi`,
-    avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=059669&color=fff&size=100`,
-  }));
+  private friendsApi = inject(FriendsApiService);
+  private readonly refreshTrigger = new BehaviorSubject<void>(undefined);
+
+  readonly users = toSignal(
+    this.refreshTrigger.pipe(switchMap(() => this.friendsApi.getFollowing(1, 20))),
+    { initialValue: [] }
+  );
+
+  onAction(event: FriendCardActionEvent) {
+    const currentUser = event.user as FriendUser;
+    if (event.type === 'unfollow') {
+      this.friendsApi.unfollowUser(currentUser.id).subscribe(() => this.refresh());
+    }
+  }
+
+  private refresh() {
+    this.refreshTrigger.next();
+  }
 }

@@ -1,10 +1,10 @@
 <div class="page-content">
   <h1 class="page-title">Tất cả bạn bè</h1>
-  <p class="page-subtitle">{{ mockUsers.length }} bạn bè</p>
+  <p class="page-subtitle">{{ users().length }} bạn bè</p>
 
   <div class="card-list">
-    @for (user of mockUsers; track user.id) {
-      <fe-friend-card variant="list-row" [user]="user" [context]="'all'"></fe-friend-card>
+    @for (user of users(); track user.id) {
+      <fe-friend-card variant="list-row" [user]="user" [context]="'all'" (actionRequested)="onAction($event)"></fe-friend-card>
     }
   </div>
 </div>

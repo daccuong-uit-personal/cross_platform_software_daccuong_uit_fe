@@ -3,8 +3,8 @@
   <p class="page-subtitle">Quản lý các mối quan hệ của bạn</p>
 
   <div class="card-grid">
-    @for (user of mockUsers; track user.id) {
-      <fe-friend-card variant="avatar-card" [user]="user" [context]="'relationships'"></fe-friend-card>
+    @for (user of users(); track user.id) {
+      <fe-friend-card variant="avatar-card" [user]="user" [context]="'relationships'" (actionRequested)="onAction($event)"></fe-friend-card>
     }
   </div>
 </div>
