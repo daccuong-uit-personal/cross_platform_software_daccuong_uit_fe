@@ -25,7 +25,7 @@ export class FriendSentComponent {
   onAction(event: FriendCardActionEvent) {
     const currentUser = event.user as FriendUser;
     if (event.type === 'cancel-request') {
-      this.friendsApi.cancelFriendRequest(currentUser.id).subscribe(() => this.refresh());
+      this.friendsApi.cancelFriendRequest(currentUser.id).subscribe();
     }
   }
 

@@ -21,14 +21,15 @@
         </ng-container>
         <ng-container *ngIf="context === 'suggestions'">
           <button
-            *ngIf="user.status === 'pending'; else sendRequestButton"
-            class="btn btn-outline"
+            *ngIf="getVisibleSuggestionState() === 'pending'; else sendRequestButton"
+            class="btn"
+            [ngClass]="getSuggestionButtonClass()"
             (click)="emitAction('cancel-request', $event)"
           >
             {{ getPrimaryActionLabel() }}
           </button>
           <ng-template #sendRequestButton>
-            <button class="btn btn-primary" (click)="emitAction('send-request', $event)">{{ getPrimaryActionLabel() }}</button>
+            <button class="btn" [ngClass]="getSuggestionButtonClass()" (click)="emitAction('send-request', $event)">{{ getPrimaryActionLabel() }}</button>
           </ng-template>
           <button class="btn btn-outline" (click)="emitAction('message', $event)">Nhắn tin</button>
         </ng-container>
@@ -73,8 +74,8 @@
         <div *ngSwitchCase="'all'" class="floating-menu-wrapper">
           <button class="btn btn-ghost" (click)="toggleMenu('friends', $event)">{{ getPrimaryActionLabel() }}</button>
           <div class="floating-panel" *ngIf="openMenu === 'friends'">
-            <button class="btn btn-ghost" (click)="emitAction('unfollow', $event)">Bỏ theo dõi</button>
-            <button class="btn btn-ghost" (click)="emitAction('unfriend', $event)">Huỷ kết bạn</button>
+            <button class="btn btn-ghost" (click)="emitAction(getVisibleFollowState() === 'following' ? 'unfollow' : 'follow', $event)">{{ getFollowMenuLabel() }}</button>
+            <button class="btn btn-ghost" (click)="emitAction(getVisibleFriendState() === 'friend' ? 'unfriend' : 'send-request', $event)">{{ getFriendMenuLabel() }}</button>
             <button class="btn btn-ghost" (click)="emitAction('update-relationship', $event, 'FAVORITE')"> <svg viewBox="0 0 24 24" width="16" height="16" style="margin-right:8px;vertical-align:middle"><path d="M12 .587l3.668 7.431 8.2 1.192-5.934 5.788 1.402 8.175L12 18.897l-7.336 3.876 1.402-8.175L.132 9.21l8.2-1.192z" fill="currentColor"/></svg> Yêu thích</button>
           </div>
         </div>
@@ -87,7 +88,8 @@
             <button class="btn btn-ghost" (click)="emitAction('unblock', $event)">Bỏ chặn</button>
           </div>
         </div>
-        <button *ngSwitchCase="'blocked'" class="btn btn-ghost" (click)="emitAction('unblock', $event)">{{ getPrimaryActionLabel() }}</button>
+        <button *ngSwitchCase="'blocked'" class="btn btn-ghost" [ngClass]="getBlockButtonClass()" (click)="emitAction('unblock', $event)">{{ getPrimaryActionLabel() }}</button>
+        <button *ngSwitchCase="'following'" class="btn btn-ghost" [ngClass]="getFollowButtonClass()" (click)="emitAction(getVisibleFollowState() === 'following' ? 'unfollow' : 'follow', $event)">{{ getPrimaryActionLabel() }}</button>
         <button *ngSwitchDefault class="btn btn-ghost" (click)="emitAction('unfollow', $event)">{{ getPrimaryActionLabel() }}</button>
       </ng-container>
     </div>

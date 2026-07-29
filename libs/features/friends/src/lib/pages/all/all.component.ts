@@ -31,13 +31,19 @@ export class FriendAllComponent {
   onAction(event: FriendCardActionEvent) {
     const currentUser = event.user as FriendUser;
     if (event.type === 'unfriend') {
-      this.friendsApi.unfriend(currentUser.id).subscribe(() => this.refresh());
+      this.friendsApi.unfriend(currentUser.id).subscribe();
+    }
+    if (event.type === 'send-request') {
+      this.friendsApi.sendFriendRequest(currentUser.id).subscribe();
+    }
+    if (event.type === 'follow') {
+      this.friendsApi.followUser(currentUser.id).subscribe();
     }
     if (event.type === 'unfollow') {
-      this.friendsApi.unfollowUser(currentUser.id).subscribe(() => this.refresh());
+      this.friendsApi.unfollowUser(currentUser.id).subscribe();
     }
     if (event.type === 'update-relationship') {
-      this.friendsApi.updateRelationship(currentUser.id, event.relationshipType ?? 'NORMAL').subscribe(() => this.refresh());
+      this.friendsApi.updateRelationship(currentUser.id, event.relationshipType ?? 'NORMAL').subscribe();
     }
   }
 

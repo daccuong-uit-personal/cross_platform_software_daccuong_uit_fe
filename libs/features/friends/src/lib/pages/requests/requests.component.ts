@@ -25,10 +25,10 @@ export class FriendRequestsComponent {
   onAction(event: FriendCardActionEvent) {
     const currentUser = event.user as FriendUser;
     if (event.type === 'accept-request') {
-      this.friendsApi.acceptFriendRequest(currentUser.id).subscribe(() => this.refresh());
+      this.friendsApi.acceptFriendRequest(currentUser.id).subscribe();
     }
     if (event.type === 'reject-request') {
-      this.friendsApi.rejectFriendRequest(currentUser.id).subscribe(() => this.refresh());
+      this.friendsApi.rejectFriendRequest(currentUser.id).subscribe();
     }
   }
 

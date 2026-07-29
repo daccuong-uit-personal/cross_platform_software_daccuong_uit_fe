@@ -25,11 +25,11 @@ export class FriendSuggestionsComponent {
   onAction(event: FriendCardActionEvent) {
     const currentUser = event.user as FriendUser;
     if (event.type === 'send-request') {
-      this.friendsApi.sendFriendRequest(currentUser.id).subscribe(() => this.refresh());
+      this.friendsApi.sendFriendRequest(currentUser.id).subscribe();
     }
 
     if (event.type === 'cancel-request') {
-      this.friendsApi.cancelFriendRequest(currentUser.id).subscribe(() => this.refresh());
+      this.friendsApi.cancelFriendRequest(currentUser.id).subscribe();
     }
   }
 

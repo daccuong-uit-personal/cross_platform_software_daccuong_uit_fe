@@ -25,13 +25,13 @@ export class FriendMutedComponent {
   onAction(event: FriendCardActionEvent) {
     const currentUser = event.user as FriendUser;
     if (event.type === 'block') {
-      this.friendsApi.blockUser(currentUser.id).subscribe(() => this.refresh());
+      this.friendsApi.blockUser(currentUser.id).subscribe();
     }
     if (event.type === 'mute') {
-      this.friendsApi.muteUser(currentUser.id).subscribe(() => this.refresh());
+      this.friendsApi.muteUser(currentUser.id).subscribe();
     }
     if (event.type === 'unblock') {
-      this.friendsApi.unblockUser(currentUser.id).subscribe(() => this.refresh());
+      this.friendsApi.unblockUser(currentUser.id).subscribe();
     }
   }
 

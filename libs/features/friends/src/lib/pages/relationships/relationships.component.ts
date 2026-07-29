@@ -25,7 +25,7 @@ export class FriendRelationshipsComponent {
   onAction(event: FriendCardActionEvent) {
     const currentUser = event.user as FriendUser;
     if (event.type === 'update-relationship') {
-      this.friendsApi.updateRelationship(currentUser.id, event.relationshipType ?? 'NORMAL').subscribe(() => this.refresh());
+      this.friendsApi.updateRelationship(currentUser.id, event.relationshipType ?? 'NORMAL').subscribe();
     }
   }
 

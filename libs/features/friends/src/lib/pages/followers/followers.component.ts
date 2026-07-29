@@ -25,7 +25,7 @@ export class FriendFollowersComponent {
   onAction(event: FriendCardActionEvent) {
     const currentUser = event.user as FriendUser;
     if (event.type === 'block') {
-      this.friendsApi.blockUser(currentUser.id).subscribe(() => this.refresh());
+      this.friendsApi.blockUser(currentUser.id).subscribe();
     }
   }
 

@@ -20,6 +20,40 @@
   box-shadow: 0 4px 16px color-mix(in srgb, var(--color-brand-primary) 12%, transparent);
 }
 
+.btn {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+.btn.state-pending,
+.btn.state-following,
+.btn.state-blocked,
+.btn.state-suggested {
+  box-shadow: 0 6px 16px rgba(13, 138, 188, 0.16);
+}
+
+.btn.state-pending {
+  background: var(--color-surface-subtle);
+  color: var(--color-text-base);
+  border-color: var(--color-border-strong);
+}
+
+.btn.state-suggested,
+.btn.state-following {
+  background: var(--color-brand-primary);
+  color: var(--color-text-inverse);
+  border-color: var(--color-brand-primary);
+}
+
+.btn.state-blocked {
+  background: var(--color-danger-strong);
+  color: var(--color-text-inverse);
+  border-color: var(--color-danger-strong);
+}
+
 /* ─── Avatar card ───────────────────────────────────────────── */
 .avatar-card {
   display: flex;

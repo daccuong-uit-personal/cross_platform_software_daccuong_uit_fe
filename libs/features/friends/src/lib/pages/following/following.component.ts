@@ -24,8 +24,11 @@ export class FriendFollowingComponent {
 
   onAction(event: FriendCardActionEvent) {
     const currentUser = event.user as FriendUser;
+    if (event.type === 'follow') {
+      this.friendsApi.followUser(currentUser.id).subscribe();
+    }
     if (event.type === 'unfollow') {
-      this.friendsApi.unfollowUser(currentUser.id).subscribe(() => this.refresh());
+      this.friendsApi.unfollowUser(currentUser.id).subscribe();
     }
   }
 

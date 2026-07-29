@@ -25,7 +25,7 @@ export class FriendBlockedComponent {
   onAction(event: FriendCardActionEvent) {
     const currentUser = event.user as FriendUser;
     if (event.type === 'unblock') {
-      this.friendsApi.unblockUser(currentUser.id).subscribe(() => this.refresh());
+      this.friendsApi.unblockUser(currentUser.id).subscribe();
     }
   }
 

@@ -25,13 +25,15 @@ export class FriendCardComponent {
   private layoutService = inject(FriendsLayoutService);
   // control which floating menu is open for this card (by name)
   openMenu?: string;
+  private localState: 'pending' | 'suggested' | 'following' | 'blocked' | 'muted' | 'friends' | 'default' = 'default';
+  private localFriendState: 'friend' | 'not-friend' | 'default' = 'default';
 
   getStateLabel(): string {
     switch (this.context) {
       case 'sent':
-        return this.user?.status === 'pending' ? 'Đã gửi lời mời' : 'Chưa gửi lời mời';
+        return this.getVisibleSuggestionState() === 'pending' ? 'Đã gửi lời mời' : 'Chưa gửi lời mời';
       case 'suggestions':
-        return this.user?.status === 'pending' ? 'Đã gửi lời mời' : 'Gợi ý kết bạn';
+        return this.getVisibleSuggestionState() === 'pending' ? 'Đã gửi lời mời' : 'Gợi ý kết bạn';
       case 'requests':
         return 'Đang chờ xác nhận';
       case 'all':
@@ -41,9 +43,9 @@ export class FriendCardComponent {
       case 'followers':
         return 'Theo dõi bạn';
       case 'following':
-        return 'Đang theo dõi';
+        return this.getVisibleFollowState() === 'following' ? 'Đang theo dõi' : 'Chưa theo dõi';
       case 'blocked':
-        return 'Đã chặn';
+        return this.getVisibleBlockState() === 'blocked' ? 'Đã chặn' : 'Chưa chặn';
       case 'muted':
         return 'Đã mute';
       default:
@@ -52,26 +54,84 @@ export class FriendCardComponent {
   }
 
   getPrimaryActionLabel(): string {
+    if (this.context === 'suggestions') {
+      return this.getVisibleSuggestionState() === 'pending' ? 'Đã gửi kết bạn' : 'Kết bạn';
+    }
+
+    if (this.context === 'following') {
+      return this.getVisibleFollowState() === 'following' ? 'Bỏ theo dõi' : 'Theo dõi';
+    }
+
+    if (this.context === 'blocked') {
+      return this.getVisibleBlockState() === 'blocked' ? 'Bỏ chặn' : 'Chặn';
+    }
+
     switch (this.context) {
       case 'sent':
         return 'Huỷ lời mời';
-      case 'suggestions':
-        return this.user?.status === 'pending' ? 'Đã gửi kết bạn' : 'Kết bạn';
       case 'requests':
         return 'Xác nhận';
       case 'all':
         return 'Bạn bè';
       case 'relationships':
         return 'Quan hệ';
-      case 'following':
-        return 'Đang theo dõi';
-      case 'blocked':
-        return 'Đã chặn';
       case 'muted':
         return 'Đã mute';
       default:
         return 'Thao tác';
     }
+  }
+
+  getVisibleSuggestionState(): 'pending' | 'suggested' {
+    if (this.localState === 'pending' || this.localState === 'suggested') {
+      return this.localState;
+    }
+
+    return this.user?.status === 'pending' ? 'pending' : 'suggested';
+  }
+
+  getVisibleFollowState(): 'following' | 'not-following' {
+    if (this.localState === 'following') {
+      return 'following';
+    }
+
+    return this.user?.status === 'following' ? 'following' : 'not-following';
+  }
+
+  getVisibleBlockState(): 'blocked' | 'not-blocked' {
+    if (this.localState === 'blocked') {
+      return 'blocked';
+    }
+
+    return this.user?.status === 'blocked' ? 'blocked' : 'not-blocked';
+  }
+
+  getVisibleFriendState(): 'friend' | 'not-friend' {
+    if (this.localFriendState === 'friend' || this.localFriendState === 'not-friend') {
+      return this.localFriendState;
+    }
+
+    return this.user?.status === 'friend' ? 'friend' : 'not-friend';
+  }
+
+  getSuggestionButtonClass(): string {
+    return this.getVisibleSuggestionState() === 'pending' ? 'btn-outline state-pending' : 'btn-primary state-suggested';
+  }
+
+  getFollowButtonClass(): string {
+    return this.getVisibleFollowState() === 'following' ? 'state-following' : 'state-default';
+  }
+
+  getFriendMenuLabel(): string {
+    return this.getVisibleFriendState() === 'friend' ? 'Huỷ kết bạn' : 'Kết bạn';
+  }
+
+  getFollowMenuLabel(): string {
+    return this.getVisibleFollowState() === 'following' ? 'Bỏ theo dõi' : 'Theo dõi';
+  }
+
+  getBlockButtonClass(): string {
+    return this.getVisibleBlockState() === 'blocked' ? 'state-blocked' : 'state-default';
   }
 
   private getRelationshipLabel(): string {
@@ -99,6 +159,43 @@ export class FriendCardComponent {
 
   emitAction(type: string, ev?: Event, relationshipType?: string) {
     ev?.stopPropagation();
+
+    if (type === 'send-request') {
+      this.localState = 'pending';
+      this.localFriendState = 'not-friend';
+      this.user.status = 'pending';
+    }
+
+    if (type === 'cancel-request') {
+      this.localState = 'suggested';
+      this.user.status = 'suggested';
+    }
+
+    if (type === 'unfollow') {
+      this.localState = 'default';
+      this.user.status = 'not-following';
+    }
+
+    if (type === 'follow') {
+      this.localState = 'following';
+      this.user.status = 'following';
+    }
+
+    if (type === 'unfriend') {
+      this.localFriendState = 'not-friend';
+      this.user.status = 'not-friend';
+    }
+
+    if (type === 'block') {
+      this.localState = 'blocked';
+      this.user.status = 'blocked';
+    }
+
+    if (type === 'unblock') {
+      this.localState = 'default';
+      this.user.status = 'not-blocked';
+    }
+
     this.actionRequested.emit({ type, user: this.user, relationshipType });
   }
 
