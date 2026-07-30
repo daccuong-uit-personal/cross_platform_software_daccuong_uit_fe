@@ -1,137 +1,152 @@
-import { Component, Input, Output, EventEmitter, ElementRef, ViewChild, AfterViewInit, OnDestroy, ChangeDetectorRef, ChangeDetectionStrategy, signal } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  ElementRef,
+  ViewChild,
+  ViewChildren,
+  QueryList,
+  signal,
+  AfterViewInit,
+  OnChanges,
+  SimpleChanges
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 
 export interface UiTab {
   id: string;
   label: string;
   count?: number;
-  icon?: string;
   link?: string;
 }
+
+export type TabItem = UiTab;
 
 @Component({
   selector: 'ui-tabs',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterLink, RouterLinkActive],
   templateUrl: './ui-tabs.component.html',
-  styleUrls: ['./ui-tabs.component.css'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  styleUrls: ['./ui-tabs.component.css']
 })
-export class UiTabsComponent implements AfterViewInit, OnDestroy {
+export class UiTabsComponent implements AfterViewInit, OnChanges {
   @Input() tabs: UiTab[] = [];
-  @Input() activeTabId: string | null = null;
-  @Output() tabChange = new EventEmitter<UiTab>();
+  @Input() activeTabId: string | null = '';
+  @Output() tabChange = new EventEmitter<any>();
 
-  @ViewChild('container', { static: true }) container!: ElementRef<HTMLDivElement>;
-  @ViewChild('tabsWrapper', { static: true }) tabsWrapper!: ElementRef<HTMLDivElement>;
+  @ViewChild('track') trackRef!: ElementRef<HTMLDivElement>;
+  @ViewChildren('tabRef') tabElements!: QueryList<ElementRef<HTMLElement>>;
 
-  visibleTabs = signal<UiTab[]>([]);
-  hiddenTabs = signal<UiTab[]>([]);
-  dropdownOpen = signal(false);
+  canScrollLeft = signal<boolean>(false);
+  canScrollRight = signal<boolean>(false);
+  indicator = signal<{ left: number; width: number; visible: boolean }>({
+    left: 0,
+    width: 0,
+    visible: false
+  });
 
-  private resizeObserver: ResizeObserver | null = null;
-
-  constructor(private cdr: ChangeDetectorRef) {}
-
-  ngAfterViewInit() {
-    this.calculateTabs();
-    
-    // Listen to container resize
-    if (typeof ResizeObserver !== 'undefined') {
-      this.resizeObserver = new ResizeObserver(() => {
-        this.calculateTabs();
-      });
-      this.resizeObserver.observe(this.container.nativeElement);
-    } else {
-      // Fallback for older browsers
-      window.addEventListener('resize', this.onWindowResize);
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['tabs'] && this.tabs?.length > 0 && !this.activeTabId) {
+      this.activeTabId = this.tabs[0].id;
     }
+    this.updateIndicator();
   }
 
-  ngOnDestroy() {
-    if (this.resizeObserver) {
-      this.resizeObserver.disconnect();
+  ngAfterViewInit(): void {
+    if (this.tabs?.length > 0 && !this.activeTabId) {
+      this.activeTabId = this.tabs[0].id;
     }
-    window.removeEventListener('resize', this.onWindowResize);
+    setTimeout(() => {
+      this.checkScroll();
+      this.updateIndicator();
+    }, 0);
   }
 
-  private onWindowResize = () => {
-    this.calculateTabs();
-  };
+  onTabActivate(tab: UiTab, event?: Event): void {
+    this.activeTabId = tab.id;
+    this.tabChange.emit(tab);
 
-  private calculateTabs() {
-    if (!this.tabs || this.tabs.length === 0) return;
-
-    const containerWidth = this.container.nativeElement.offsetWidth;
-    // Approximation: 120px per tab, plus 100px for the "More" button
-    // A better approach is measuring actual DOM elements, but for simplicity
-    // and performance, we'll estimate based on average char width or a fixed min-width.
-    // Let's use a conservative estimate: 
-    // "Xem thêm" button = 120px
-    const moreBtnWidth = 140;
-    
-    // If we have plenty of space (e.g., desktop)
-    let availableWidth = containerWidth;
-    let currentWidth = 0;
-    let visibleCount = 0;
-    
-    // Average width per character + padding
-    const getEstimatedTabWidth = (tab: UiTab) => {
-      const charWidth = 8; // approx 8px per char
-      const padding = 40; // 20px padding each side
-      const countWidth = tab.count !== undefined ? 30 : 0;
-      return (tab.label.length * charWidth) + padding + countWidth;
-    };
-
-    let totalEstimatedWidth = 0;
-    for (const tab of this.tabs) {
-      totalEstimatedWidth += getEstimatedTabWidth(tab);
+    if (this.tabs.length > 0 && tab.id === this.tabs[0].id && this.trackRef?.nativeElement) {
+      this.trackRef.nativeElement.scrollTo({ left: 0, behavior: 'smooth' });
     }
 
-    if (totalEstimatedWidth <= containerWidth) {
-      // All fit perfectly
-      this.visibleTabs.set([...this.tabs]);
-      this.hiddenTabs.set([]);
-    } else {
-      // Need dropdown
-      availableWidth = containerWidth - moreBtnWidth;
-      
-      for (const tab of this.tabs) {
-        const w = getEstimatedTabWidth(tab);
-        if (currentWidth + w <= availableWidth) {
-          currentWidth += w;
-          visibleCount++;
-        } else {
-          break;
-        }
-      }
-      
-      // Ensure at least 1 tab is visible if possible
-      if (visibleCount === 0 && this.tabs.length > 0) {
-        visibleCount = 1;
-      }
-      
-      this.visibleTabs.set(this.tabs.slice(0, visibleCount));
-      this.hiddenTabs.set(this.tabs.slice(visibleCount));
-    }
-    
-    this.cdr.detectChanges();
+    this.updateIndicator();
   }
 
-  onTabClick(tab: UiTab, event: Event) {
-    if (!tab.link) {
+  onTabKeydown(event: KeyboardEvent, index: number): void {
+    const tabList = this.tabElements.toArray();
+    let targetIndex = -1;
+
+    if (event.key === 'ArrowRight') {
+      targetIndex = (index + 1) % tabList.length;
+    } else if (event.key === 'ArrowLeft') {
+      targetIndex = (index - 1 + tabList.length) % tabList.length;
+    } else if (event.key === 'Home') {
+      targetIndex = 0;
+    } else if (event.key === 'End') {
+      targetIndex = tabList.length - 1;
+    }
+
+    if (targetIndex !== -1) {
       event.preventDefault();
-      this.tabChange.emit(tab);
+      const targetElement = tabList[targetIndex].nativeElement;
+      targetElement.focus();
+      const tabObj = this.tabs[targetIndex];
+      if (tabObj) {
+        this.onTabActivate(tabObj);
+      }
     }
-    this.dropdownOpen.set(false);
   }
 
-  toggleDropdown() {
-    this.dropdownOpen.update(v => !v);
+  scrollBy(direction: 'left' | 'right'): void {
+    if (!this.trackRef?.nativeElement) return;
+    const container = this.trackRef.nativeElement;
+    const scrollAmount = container.clientWidth * 0.75;
+    container.scrollBy({
+      left: direction === 'left' ? -scrollAmount : scrollAmount,
+      behavior: 'smooth'
+    });
   }
 
-  closeDropdown() {
-    this.dropdownOpen.set(false);
+  onTrackScroll(): void {
+    this.checkScroll();
+    this.updateIndicator();
+  }
+
+  checkScroll(): void {
+    if (!this.trackRef?.nativeElement) return;
+    const el = this.trackRef.nativeElement;
+    this.canScrollLeft.set(el.scrollLeft > 2);
+    this.canScrollRight.set(el.scrollLeft + el.clientWidth < el.scrollWidth - 2);
+  }
+
+  updateIndicator(): void {
+    if (!this.tabElements || !this.trackRef?.nativeElement) return;
+    const activeIndex = this.tabs.findIndex((t) => t.id === this.activeTabId);
+    if (activeIndex === -1) {
+      this.indicator.set({ left: 0, width: 0, visible: false });
+      return;
+    }
+
+    const activeEl = this.tabElements.toArray()[activeIndex]?.nativeElement;
+    if (!activeEl) {
+      this.indicator.set({ left: 0, width: 0, visible: false });
+      return;
+    }
+
+    const trackEl = this.trackRef.nativeElement;
+    const activeRect = activeEl.getBoundingClientRect();
+    const trackRect = trackEl.getBoundingClientRect();
+
+    const left = activeRect.left - trackRect.left + trackEl.scrollLeft;
+    const width = activeRect.width;
+
+    this.indicator.set({
+      left,
+      width,
+      visible: true
+    });
   }
 }

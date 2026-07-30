@@ -1,60 +1,48 @@
-<div class="ui-tabs-container" #container>
-  <div class="ui-tabs-wrapper" #tabsWrapper>
-    <!-- Visible Tabs -->
-    @for (tab of visibleTabs(); track tab.id) {
-      <ng-container *ngTemplateOutlet="tabTemplate; context: { $implicit: tab }"></ng-container>
-    }
+<div class="ui-tabs" [class.can-scroll-left]="canScrollLeft()" [class.can-scroll-right]="canScrollRight()">
+  <button type="button" class="ui-tabs__nav ui-tabs__nav--left" [class.is-visible]="canScrollLeft()"
+    [disabled]="!canScrollLeft()" (click)="scrollBy('left')" aria-label="Cuộn sang trái">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+      stroke-linejoin="round">
+      <polyline points="15 18 9 12 15 6"></polyline>
+    </svg>
+  </button>
 
-    <!-- More Dropdown -->
-    @if (hiddenTabs().length > 0) {
-      <div class="more-dropdown-container">
-        <button class="tab more-btn" (click)="toggleDropdown()" [class.active]="dropdownOpen()">
-          <span>Xem thêm</span>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="chevron" [class.open]="dropdownOpen()">
-            <polyline points="6 9 12 15 18 9"></polyline>
-          </svg>
-        </button>
-
-        @if (dropdownOpen()) {
-          <div class="dropdown-menu">
-            @for (tab of hiddenTabs(); track tab.id) {
-              <ng-container *ngTemplateOutlet="dropdownTabTemplate; context: { $implicit: tab }"></ng-container>
-            }
-          </div>
-          <!-- Backdrop to close dropdown -->
-          <div class="dropdown-backdrop" (click)="closeDropdown()"></div>
+  <div class="ui-tabs__viewport">
+    <div class="ui-tabs__track" #track role="tablist" (scroll)="onTrackScroll()">
+      @for (tab of tabs; track tab.id; let i = $index) {
+      @if (tab.link) {
+      <a #tabRef class="ui-tabs__tab" role="tab" [id]="'ui-tab-' + tab.id" [attr.data-tab-id]="tab.id"
+        [attr.aria-selected]="activeTabId === tab.id" [attr.tabindex]="activeTabId === tab.id ? 0 : -1"
+        [class.is-active]="activeTabId === tab.id" [routerLink]="tab.link" routerLinkActive="is-active"
+        (click)="onTabActivate(tab, $event)" (keydown)="onTabKeydown($event, i)">
+        <span class="ui-tabs__label">{{ tab.label }}</span>
+        @if (tab.count !== undefined) {
+        <span class="ui-tabs__count">{{ tab.count }}</span>
         }
-      </div>
-    }
+      </a>
+      } @else {
+      <button #tabRef type="button" class="ui-tabs__tab" role="tab" [id]="'ui-tab-' + tab.id"
+        [attr.data-tab-id]="tab.id" [attr.aria-selected]="activeTabId === tab.id"
+        [attr.tabindex]="activeTabId === tab.id ? 0 : -1" [class.is-active]="activeTabId === tab.id"
+        (click)="onTabActivate(tab, $event)" (keydown)="onTabKeydown($event, i)">
+        <span class="ui-tabs__label">{{ tab.label }}</span>
+        @if (tab.count !== undefined) {
+        <span class="ui-tabs__count">{{ tab.count }}</span>
+        }
+      </button>
+      }
+      }
+
+      <span class="ui-tabs__indicator" [class.is-visible]="indicator().visible" [style.width.px]="indicator().width"
+        [style.transform]="'translateX(' + indicator().left + 'px)'"></span>
+    </div>
   </div>
+
+  <button type="button" class="ui-tabs__nav ui-tabs__nav--right" [class.is-visible]="canScrollRight()"
+    [disabled]="!canScrollRight()" (click)="scrollBy('right')" aria-label="Cuộn sang phải">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+      stroke-linejoin="round">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </button>
 </div>
-
-<!-- Reusable Tab Template for Main Bar -->
-<ng-template #tabTemplate let-tab>
-  @if (tab.link) {
-    <a [routerLink]="tab.link" class="tab" routerLinkActive="active" (click)="onTabClick(tab, $event)">
-      <strong class="tab-count" *ngIf="tab.count !== undefined">{{ tab.count }}</strong>
-      <span>{{ tab.label }}</span>
-    </a>
-  } @else {
-    <button class="tab" [class.active]="activeTabId === tab.id" (click)="onTabClick(tab, $event)">
-      <strong class="tab-count" *ngIf="tab.count !== undefined">{{ tab.count }}</strong>
-      <span>{{ tab.label }}</span>
-    </button>
-  }
-</ng-template>
-
-<!-- Reusable Tab Template for Dropdown -->
-<ng-template #dropdownTabTemplate let-tab>
-  @if (tab.link) {
-    <a [routerLink]="tab.link" class="dropdown-item" routerLinkActive="active-item" (click)="onTabClick(tab, $event)">
-      <span>{{ tab.label }}</span>
-      <strong class="dropdown-count" *ngIf="tab.count !== undefined">{{ tab.count }}</strong>
-    </a>
-  } @else {
-    <button class="dropdown-item" [class.active-item]="activeTabId === tab.id" (click)="onTabClick(tab, $event)">
-      <span>{{ tab.label }}</span>
-      <strong class="dropdown-count" *ngIf="tab.count !== undefined">{{ tab.count }}</strong>
-    </button>
-  }
-</ng-template>

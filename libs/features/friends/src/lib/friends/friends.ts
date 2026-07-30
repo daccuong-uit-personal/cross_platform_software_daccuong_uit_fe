@@ -78,11 +78,11 @@ export class FriendsComponent {
     },
   ];
 
-  uiTabs = computed<UiTab[]>(() => 
+  uiTabs = computed<UiTab[]>(() =>
     this.friendsMenuItems.map(item => ({
       id: item.id,
       label: item.label,
-      icon: item.svgIcon, // Optional if we want to support it, but we already have text
+      icon: item.svgIcon,
       link: item.link
     }))
   );
@@ -110,7 +110,6 @@ export class FriendsComponent {
     });
   }
 
-  // Note: mobile nav is now handled by UiTabsComponent
   // Note: mobile nav is now handled by UiTabsComponent
   isActive(link: string | undefined): boolean {
     if (!link) return false;

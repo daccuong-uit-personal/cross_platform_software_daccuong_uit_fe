@@ -2,6 +2,7 @@ import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FriendCardComponent, FriendCardActionEvent } from '../../components/friend-card/friend-card.component';
 import { FriendsApiService, FriendUser } from '../../services/friends-api.service';
+import { FriendsActionService } from '../../services/friends-action.service';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { BehaviorSubject, switchMap } from 'rxjs';
 
@@ -15,6 +16,7 @@ import { BehaviorSubject, switchMap } from 'rxjs';
 })
 export class FriendFollowersComponent {
   private friendsApi = inject(FriendsApiService);
+  private actions = inject(FriendsActionService);
   private readonly refreshTrigger = new BehaviorSubject<void>(undefined);
 
   readonly users = toSignal(
@@ -23,10 +25,12 @@ export class FriendFollowersComponent {
   );
 
   onAction(event: FriendCardActionEvent) {
-    const currentUser = event.user as FriendUser;
-    if (event.type === 'block') {
-      this.friendsApi.blockUser(currentUser.id).subscribe();
-    }
+    this.actions.dispatch(event);
+    // "Theo dõi lại" doesn't remove from list; "Nhắn tin" is navigation
+  }
+
+  onMenuItemClick(itemId: string, user: FriendUser) {
+    this.actions.dispatch({ type: itemId, user });
   }
 
   private refresh() {

@@ -1,97 +1,176 @@
-<!-- Avatar card variant -->
-<!-- placeholder removed -->
-@if (variant === 'avatar-card') {
-  <div class="friend-card avatar-card" (click)="onSelect()" (keydown.enter)="onSelect()" tabindex="0" role="button">
-    <div class="avatar-wrap">
-      <img
-        [src]="user.avatar || 'https://ui-avatars.com/api/?name=' + (user.name || 'User') + '&background=0D8ABC&color=fff&size=200'"
-        [alt]="user.name || 'Avatar'"
-        class="avatar-img"
-      />
-    </div>
-    <div class="card-body">
-      <div class="card-info">
-        <h3 class="card-name">{{ user.name || 'Nguyễn Văn A' }}</h3>
-        <p class="card-meta">{{ getStateLabel() }} · {{ user.mutualFriends || 0 }} bạn chung</p>
+<!-- ═══════════════════════════════════════════════════════════
+     Backend-Driven Menu Template (Recursive)
+     ═══════════════════════════════════════════════════════════ -->
+<ng-template #menuItemTemplate let-items="items">
+  <ng-container *ngFor="let item of items">
+    <div class="menu-item-wrapper">
+      <button class="btn btn-ghost menu-btn" [class.is-danger]="item.isDanger"
+        (click)="item.submenuItems?.length ? null : onMenuItemClick(item.id, $event)">
+        <span class="menu-label">{{ item.label }}</span>
+        <span *ngIf="item.submenuItems?.length" class="submenu-indicator">➔</span>
+      </button>
+      <div class="submenu-panel" *ngIf="item.submenuItems?.length">
+        <ng-container *ngTemplateOutlet="menuItemTemplate; context: { items: item.submenuItems }"></ng-container>
       </div>
-      <div class="card-actions">
-        <!-- Avatar-card actions vary by context -->
-        <ng-container *ngIf="context === 'sent'">
-          <button class="btn btn-accent" (click)="emitAction('cancel-request', $event)">{{ getPrimaryActionLabel() }}</button>
-        </ng-container>
-        <ng-container *ngIf="context === 'suggestions'">
-          <button
-            *ngIf="getVisibleSuggestionState() === 'pending'; else sendRequestButton"
-            class="btn"
-            [ngClass]="getSuggestionButtonClass()"
-            (click)="emitAction('cancel-request', $event)"
-          >
+    </div>
+  </ng-container>
+</ng-template>
+
+<!-- ═══════════════════════════════════════════════════════════
+     AVATAR-CARD variant  (requests / sent / suggestions tabs)
+     Layout: Avatar (full-width) → Name → Subtext → Actions
+     ═══════════════════════════════════════════════════════════ -->
+@if (variant === 'avatar-card') {
+<div class="friend-card avatar-card" [class.is-menu-open]="isMenuOpen" (click)="onSelect()" (keydown.enter)="onSelect()"
+  tabindex="0" role="button">
+  <!-- Row 1: Avatar (1:1 full-width) -->
+  <div class="avatar-wrap">
+    <img
+      [src]="user.avatar || 'https://ui-avatars.com/api/?name=' + (user.name || 'User') + '&background=0D8ABC&color=fff&size=200'"
+      [alt]="user.name || 'Avatar'" class="avatar-img" />
+  </div>
+
+  <!-- Row 2-4: Info + Actions -->
+  <div class="card-body">
+    <div class="card-info">
+      <!-- Row 2: Name -->
+      <h3 class="card-name">{{ user.name || 'Nguyễn Văn A' }}</h3>
+      <!-- Row 3: Subtext (mutual friends) -->
+      <p class="card-meta">{{ user.mutualFriends || 0 }} bạn chung</p>
+    </div>
+
+    <!-- Row 4: Action buttons -->
+    <div class="card-actions">
+
+      <!-- context: requests (Lời mời kết bạn) -->
+      <ng-container *ngIf="context === 'requests'">
+        <button class="btn btn-primary" (click)="emitAction('accept-request', $event)">Xác nhận</button>
+        <button class="btn btn-outline" (click)="emitAction('reject-request', $event)">Xóa</button>
+      </ng-container>
+
+      <!-- context: sent (Đã gửi kết bạn) -->
+      <ng-container *ngIf="context === 'sent'">
+        <button class="btn btn-outline" (click)="emitAction('cancel-request', $event)">
+          Hủy yêu cầu
+        </button>
+      </ng-container>
+
+      <!-- context: suggestions (Gợi ý kết bạn) -->
+      <ng-container *ngIf="context === 'suggestions'">
+        <button *ngIf="getVisibleSuggestionState() === 'pending'; else sendRequestBtn" class="btn btn-outline"
+          (click)="emitAction('cancel-request', $event)">Hủy yêu cầu</button>
+        <ng-template #sendRequestBtn>
+          <button class="btn btn-primary" (click)="emitAction('send-request', $event)">Thêm bạn bè</button>
+        </ng-template>
+      </ng-container>
+
+      <!-- context: relationships (floating panel) -->
+      <ng-container *ngIf="context === 'relationships'">
+        <div class="floating-menu-wrapper">
+          <button class="btn btn-ghost" (click)="toggleMenu('relationships', $event)">
             {{ getPrimaryActionLabel() }}
           </button>
-          <ng-template #sendRequestButton>
-            <button class="btn" [ngClass]="getSuggestionButtonClass()" (click)="emitAction('send-request', $event)">{{ getPrimaryActionLabel() }}</button>
-          </ng-template>
-          <button class="btn btn-outline" (click)="emitAction('message', $event)">Nhắn tin</button>
-        </ng-container>
-        <ng-container *ngIf="context === 'relationships'">
-          <div class="floating-menu-wrapper">
-            <button class="btn btn-ghost" (click)="toggleMenu('relationships', $event)">{{ getPrimaryActionLabel() }}</button>
-            <div class="floating-panel" *ngIf="openMenu === 'relationships'">
-              <button class="btn btn-ghost" (click)="emitAction('update-relationship', $event, 'SIBLING')">Anh/Chị/Em</button>
-              <button class="btn btn-ghost" (click)="emitAction('update-relationship', $event, 'CLOSE_FRIEND')">Thân thiết</button>
-              <button class="btn btn-ghost" (click)="emitAction('update-relationship', $event, 'LOVER')">Người yêu</button>
-              <button class="btn btn-ghost" (click)="emitAction('update-relationship', $event, 'MARRIED')">Vợ/Chồng</button>
-            </div>
+          <div class="floating-panel" *ngIf="openMenu === 'relationships'">
+            <ng-container *ngTemplateOutlet="menuItemTemplate; context: { items: menuItems }"></ng-container>
           </div>
-        </ng-container>
-        <ng-container *ngIf="!context || (context !== 'sent' && context !== 'suggestions' && context !== 'relationships')">
-          <button class="btn btn-primary" (click)="emitAction('accept-request', $event)">Xác nhận</button>
-          <button class="btn btn-accent" (click)="emitAction('reject-request', $event)">Xoá</button>
-        </ng-container>
-      </div>
-    </div>
-  </div>
+        </div>
+      </ng-container>
+
+      <!-- default fallback -->
+      <ng-container
+        *ngIf="!context || (context !== 'sent' && context !== 'suggestions' && context !== 'relationships' && context !== 'requests')">
+        <button class="btn btn-primary" (click)="emitAction('default-action', $event)">Thao tác</button>
+      </ng-container>
+
+    </div><!-- /card-actions -->
+  </div><!-- /card-body -->
+</div>
 }
 
-<!-- List row variant -->
+<!-- ═══════════════════════════════════════════════════════════
+     LIST-ROW variant  (all / close-friends / following / followers / blocked / muted)
+     Multi-row grid layout:
+       Row 1: [Avatar + Name]   [Primary action btn] [3-dot btn]
+       Row 2: [Bio / subtext — spans full width]
+     ═══════════════════════════════════════════════════════════ -->
 @else {
-  <div class="friend-card list-row" (click)="onSelect()" (keydown.enter)="onSelect()" tabindex="0" role="button">
-    <div class="list-avatar-wrap">
-      <img
-        [src]="user.avatar || 'https://ui-avatars.com/api/?name=' + (user.name || 'User') + '&background=0D8ABC&color=fff&size=100'"
-        [alt]="user.name || 'Avatar'"
-        class="list-avatar-img"
-      />
-    </div>
-    <div class="list-info">
+<div class="friend-card list-row" [class.is-menu-open]="isMenuOpen" (click)="onSelect()" (keydown.enter)="onSelect()"
+  tabindex="0" role="button">
+  <!-- ── Row 1: Avatar + Name ── primary action ── 3-dot ── -->
+  <div class="list-row-top">
+
+    <!-- Left: Avatar + Name -->
+    <div class="list-identity">
+      <div class="list-avatar-wrap">
+        <img
+          [src]="user.avatar || 'https://ui-avatars.com/api/?name=' + (user.name || 'User') + '&background=0D8ABC&color=fff&size=100'"
+          [alt]="user.name || 'Avatar'" class="list-avatar-img" />
+      </div>
       <h3 class="card-name">{{ user.name || 'Nguyễn Văn A' }}</h3>
-      <p class="card-meta">{{ user.subtitle || 'Theo dõi bạn từ tháng 10 năm 2023' }}</p>
     </div>
-    <div class="list-actions">
-      <button class="btn btn-outline">Nhắn tin</button>
-      <!-- list actions depend on context -->
+
+    <!-- Right: Top-right actions (primary btn + 3-dot) -->
+    <div class="list-top-actions">
+
+      <!-- Primary action button (context-dependent) -->
       <ng-container [ngSwitch]="context">
-        <div *ngSwitchCase="'all'" class="floating-menu-wrapper">
-          <button class="btn btn-ghost" (click)="toggleMenu('friends', $event)">{{ getPrimaryActionLabel() }}</button>
-          <div class="floating-panel" *ngIf="openMenu === 'friends'">
-            <button class="btn btn-ghost" (click)="emitAction(getVisibleFollowState() === 'following' ? 'unfollow' : 'follow', $event)">{{ getFollowMenuLabel() }}</button>
-            <button class="btn btn-ghost" (click)="emitAction(getVisibleFriendState() === 'friend' ? 'unfriend' : 'send-request', $event)">{{ getFriendMenuLabel() }}</button>
-            <button class="btn btn-ghost" (click)="emitAction('update-relationship', $event, 'FAVORITE')"> <svg viewBox="0 0 24 24" width="16" height="16" style="margin-right:8px;vertical-align:middle"><path d="M12 .587l3.668 7.431 8.2 1.192-5.934 5.788 1.402 8.175L12 18.897l-7.336 3.876 1.402-8.175L.132 9.21l8.2-1.192z" fill="currentColor"/></svg> Yêu thích</button>
-          </div>
-        </div>
-        <button *ngSwitchCase="'followers'" class="btn btn-ghost" (click)="emitAction('block', $event)">Chặn</button>
-        <div *ngSwitchCase="'muted'" class="floating-menu-wrapper">
-          <button class="btn btn-ghost" (click)="toggleMenu('muted', $event)">{{ getPrimaryActionLabel() }}</button>
-          <div class="floating-panel" *ngIf="openMenu === 'muted'">
-            <button class="btn btn-ghost" (click)="emitAction('block', $event)">Chặn</button>
-            <button class="btn btn-ghost" (click)="emitAction('mute', $event)">Mute</button>
-            <button class="btn btn-ghost" (click)="emitAction('unblock', $event)">Bỏ chặn</button>
-          </div>
-        </div>
-        <button *ngSwitchCase="'blocked'" class="btn btn-ghost" [ngClass]="getBlockButtonClass()" (click)="emitAction('unblock', $event)">{{ getPrimaryActionLabel() }}</button>
-        <button *ngSwitchCase="'following'" class="btn btn-ghost" [ngClass]="getFollowButtonClass()" (click)="emitAction(getVisibleFollowState() === 'following' ? 'unfollow' : 'follow', $event)">{{ getPrimaryActionLabel() }}</button>
-        <button *ngSwitchDefault class="btn btn-ghost" (click)="emitAction('unfollow', $event)">{{ getPrimaryActionLabel() }}</button>
+
+        <!-- all: Bạn bè -->
+        <button *ngSwitchCase="'all'" class="btn btn-primary" (click)="emitAction('message', $event)">Nhắn tin</button>
+
+        <!-- close-friends: Bạn thân -->
+        <button *ngSwitchCase="'close-friends'" class="btn btn-primary" (click)="emitAction('message', $event)">Nhắn tin</button>
+
+        <!-- following: Đang theo dõi -->
+        <button *ngSwitchCase="'following'" class="btn" [ngClass]="getVisibleFollowState() === 'following' ? 'btn-outline' : 'btn-primary'" (click)="emitAction(getVisibleFollowState() === 'following' ? 'unfollow' : 'follow', $event)">
+          {{ getVisibleFollowState() === 'following' ? 'Đang theo dõi' : 'Theo dõi' }}
+        </button>
+
+        <!-- followers: Được follow -->
+        <ng-container *ngSwitchCase="'followers'">
+          <button *ngIf="getVisibleFollowState() === 'not-following'" class="btn btn-primary" (click)="emitAction('follow', $event)">Theo dõi lại</button>
+          <button *ngIf="getVisibleFollowState() === 'following'" class="btn btn-outline" (click)="emitAction('unfollow', $event)">Đang theo dõi</button>
+        </ng-container>
+
+        <!-- blocked: Đã chặn -->
+        <button *ngSwitchCase="'blocked'" class="btn" [ngClass]="getVisibleBlockState() === 'blocked' ? 'btn-outline' : 'btn-primary'" (click)="emitAction(getVisibleBlockState() === 'blocked' ? 'unblock' : 'block', $event)">
+          {{ getVisibleBlockState() === 'blocked' ? 'Bỏ chặn' : 'Chặn' }}
+        </button>
+
+        <!-- muted: Ẩn -->
+        <button *ngSwitchCase="'muted'" class="btn" [ngClass]="getVisibleMuteState() === 'muted' ? 'btn-outline' : 'btn-primary'" (click)="emitAction(getVisibleMuteState() === 'muted' ? 'unmute' : 'mute', $event)">
+          {{ getVisibleMuteState() === 'muted' ? 'Bỏ ẩn' : 'Ẩn' }}
+        </button>
+
+        <!-- default -->
+        <button *ngSwitchDefault class="btn btn-primary" (click)="emitAction('default', $event)">{{ getPrimaryActionLabel() }}</button>
+
       </ng-container>
-    </div>
+
+      <!-- 3-dot floating menu button (always shown for list-row) -->
+      <div class="floating-menu-wrapper">
+        <button class="btn btn-icon btn-ghost" aria-label="Tuỳ chọn" (click)="toggleMenu('options', $event)">
+          •••
+        </button>
+
+        <!-- Backend-Driven floating panel: rendered from menuItems -->
+        <div class="floating-panel" *ngIf="openMenu === 'options'">
+          <ng-container *ngTemplateOutlet="menuItemTemplate; context: { items: menuItems }"></ng-container>
+        </div><!-- /floating-panel -->
+      </div><!-- /floating-menu-wrapper -->
+
+    </div><!-- /list-top-actions -->
+  </div><!-- /list-row-top -->
+
+  <!-- ── Row 2: Bio / Subtext (full-width) ── -->
+  <div class="list-row-bio" *ngIf="user.subtitle || user.mutualFriends">
+    <p class="card-meta">
+      <ng-container *ngIf="user.subtitle">{{ user.subtitle }}</ng-container>
+      <ng-container *ngIf="!user.subtitle && user.mutualFriends">
+        {{ user.mutualFriends }} bạn chung
+      </ng-container>
+    </p>
   </div>
+
+</div>
 }

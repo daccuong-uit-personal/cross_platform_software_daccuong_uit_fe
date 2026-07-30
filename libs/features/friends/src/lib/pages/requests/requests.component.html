@@ -4,7 +4,7 @@
 
   <div class="card-grid">
     @for (user of users(); track user.id) {
-      <fe-friend-card variant="avatar-card" [user]="user" [context]="'requests'" (actionRequested)="onAction($event)"></fe-friend-card>
+      <fe-friend-card variant="avatar-card" [user]="user" [context]="'requests'" (actionRequested)="onAction($event)" (menuItemClick)="onMenuItemClick($event, user)"></fe-friend-card>
     }
   </div>
 </div>

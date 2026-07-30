@@ -3,6 +3,15 @@ import { ApiService } from '@fe/core';
 import { Observable } from 'rxjs';
 import { HttpParams } from '@angular/common/http';
 
+export interface MenuItemConfig {
+  id: string;
+  label: string;
+  icon?: string;
+  isDanger?: boolean;
+  hasSubmenu?: boolean;
+  submenuItems?: MenuItemConfig[];
+}
+
 export interface FriendUser {
   id: string;
   name: string;
@@ -12,6 +21,7 @@ export interface FriendUser {
   status?: string;
   relationshipType?: string;
   subtitle?: string;
+  menuItems?: MenuItemConfig[];
 }
 
 @Injectable({
@@ -110,6 +120,10 @@ export class FriendsApiService {
 
   unfollowUser(userId: string): Observable<unknown> {
     return this.apiService.post('/follow/unfollow', { targetUserId: userId });
+  }
+
+  removeFollower(userId: string): Observable<unknown> {
+    return this.apiService.delete(`/follow/followers/${userId}`);
   }
 
   blockUser(userId: string): Observable<unknown> {
