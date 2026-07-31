@@ -1,11 +1,12 @@
 import {
   Component, EventEmitter, Output, Input,
-  signal, computed, inject
+  signal, computed, inject, OnInit, effect
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { UiButton } from '../../../button/button';
 import { CreatePostPayload, PostPrivacy } from '@fe/domain/social';
+import { AuthService } from '@fe/core';
 
 
 @Component({
@@ -15,9 +16,12 @@ import { CreatePostPayload, PostPrivacy } from '@fe/domain/social';
   templateUrl: './create-post-modal.component.html',
   styleUrls: ['./create-post-modal.component.css'],
 })
-export class CreatePostModalComponent {
+export class CreatePostModalComponent implements OnInit {
+  private readonly authService = inject(AuthService);
+
   @Input() isOpen = false;
   @Input() authorName = 'Bạn';
+  @Input() authorUsername = '';
   @Input() authorAvatar = '';
 
   @Output() close = new EventEmitter<void>();
@@ -40,6 +44,41 @@ export class CreatePostModalComponent {
     { value: 'friends', label: 'Bạn bè', icon: '👥' },
     { value: 'private', label: 'Chỉ mình tôi', icon: '🔒' },
   ];
+
+  constructor() {
+    effect(() => {
+      const user = this.authService.user();
+      const displayName = user?.displayName || user?.username || 'Bạn';
+      const username = user?.username || '';
+
+      this.authorName = displayName;
+      this.authorUsername = username;
+      this.authorAvatar = this.buildAvatarUrl(displayName, username);
+    });
+  }
+
+  ngOnInit() {
+    // no-op: auth profile is synced reactively from the auth service signal
+  }
+
+  private buildAvatarUrl(displayName: string, username: string): string {
+    const name = displayName || username || 'User';
+    return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=0D8ABC&color=fff`;
+  }
+
+  cyclePrivacy() {
+    const idx = this.privacyOptions.findIndex(o => o.value === this.privacy());
+    const next = this.privacyOptions[(idx + 1) % this.privacyOptions.length];
+    if (next) this.privacy.set(next.value);
+  }
+
+  getPrivacyOptionLabel(value: PostPrivacy) {
+    return this.privacyOptions.find(o => o.value === value)?.label ?? '';
+  }
+
+  getPrivacyOptionIcon(value: PostPrivacy) {
+    return this.privacyOptions.find(o => o.value === value)?.icon ?? '';
+  }
 
   onClose() {
     this.close.emit();
@@ -76,30 +115,31 @@ export class CreatePostModalComponent {
   }
 
   extractHashtags(text: string): string[] {
-    const matches = text.match(/#[\w\u00C0-\u024F]+/g) ?? [];
+    const matches = text.match(/#[\w\u00C0-\u024F-]+/g) ?? [];
     return [...new Set(matches.map(h => h.slice(1).toLowerCase()))];
   }
 
   onSubmit() {
     if (!this.canSubmit()) return;
 
-    let finalContent = this.content().trim();
-    if (this.hashtagsInput().trim()) {
-      const tags = this.hashtagsInput()
-        .split(',')
-        .map(t => t.trim())
-        .filter(t => t.length > 0)
-        .map(t => t.startsWith('#') ? t : `#${t}`)
-        .join(' ');
-      if (tags) {
-        finalContent += `\n\n${tags}`;
-      }
-    }
+    const finalContent = this.content().trim();
+
+    // Extract inline hashtags from content (e.g. user typed #tag inside textarea)
+    const inline = this.extractHashtags(finalContent).map(t => t.toLowerCase());
+
+    // Normalize hashtags entered in the separate hashtag input (comma-separated)
+    const inputTags = (this.hashtagsInput() || '')
+      .split(',')
+      .map(t => t.trim())
+      .filter(t => t.length > 0)
+      .map(t => t.replace(/^#/, '').replace(/\s+/g, '-').toLowerCase());
+
+    const hashtags = [...new Set([...inline, ...inputTags])];
 
     const payload: CreatePostPayload = {
       content: finalContent,
       images: this.mediaFiles(),
-      hashtags: [], // hashtags will be auto-parsed by backend from the appended finalContent
+      hashtags: hashtags,
       mentions: [],
       privacy: this.privacy(),
       allowComments: true,

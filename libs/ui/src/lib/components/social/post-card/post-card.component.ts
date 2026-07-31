@@ -20,10 +20,9 @@ const CONTENT_LIMIT = 280; // chars before truncating
           <div class="author-info">
             <div class="author-name-row">
               <span class="author-name">{{ post.author.fullName || post.author.username }}</span>
-              <span class="author-handle">@{{ post.author.username }}</span>
-              <span class="post-bullet">·</span>
               <span class="post-time">{{ formatDate(post.createdAt) }}</span>
             </div>
+            <span class="author-handle">@{{ post.author.username }}</span>
             <p class="author-secondary" *ngIf="post.author.bio">{{ post.author.bio }}</p>
           </div>
         </div>
@@ -112,10 +111,10 @@ const CONTENT_LIMIT = 280; // chars before truncating
     `
       .post-card {
         width: 100%;
-        padding: calc(16px * var(--padding-scale, 1));
+        padding: calc(12px * var(--padding-scale, 1));
         display: flex;
         flex-direction: column;
-        gap: calc(14px * var(--padding-scale, 1));
+        gap: calc(8px * var(--padding-scale, 1));
         background: var(--color-surface-base, #ffffff);
         border: 1px solid var(--color-border-subtle, rgba(148, 163, 184, 0.24));
         border-radius: 8px;
@@ -135,9 +134,9 @@ const CONTENT_LIMIT = 280; // chars before truncating
         gap: calc(12px * var(--padding-scale, 1));
       }
       .avatar {
-        min-width: calc(48px * var(--padding-scale, 1));
-        width: calc(48px * var(--padding-scale, 1));
-        height: calc(48px * var(--padding-scale, 1));
+        min-width: calc(40px * var(--padding-scale, 1));
+        width: calc(40px * var(--padding-scale, 1));
+        height: calc(40px * var(--padding-scale, 1));
         border-radius: 50%;
         background-color: var(--color-surface-subtle, #f3f4f6);
         background-size: cover;
@@ -152,9 +151,9 @@ const CONTENT_LIMIT = 280; // chars before truncating
       }
       .author-name-row {
         display: flex;
-        flex-wrap: wrap;
-        gap: calc(8px * var(--padding-scale, 1));
         align-items: center;
+        gap: calc(6px * var(--padding-scale, 1));
+        flex-wrap: wrap;
       }
       .author-name {
         font-size: var(--font-size-body);
@@ -190,7 +189,7 @@ const CONTENT_LIMIT = 280; // chars before truncating
       .post-text {
         margin: 0;
         font-size: var(--font-size-body);
-        line-height: 1.75;
+        line-height: 1.4;
         color: var(--color-text-base, #0f172a);
         word-break: break-word;
       }
@@ -230,7 +229,7 @@ const CONTENT_LIMIT = 280; // chars before truncating
 
       .media-item img {
         width: 100%;
-        height: 220px;
+        height: 160px;
         object-fit: cover;
         display: block;
         transition: transform 0.2s ease;
@@ -258,7 +257,7 @@ const CONTENT_LIMIT = 280; // chars before truncating
         display: flex;
         justify-content: flex-start;
         flex-wrap: wrap;
-        gap: calc(10px * var(--padding-scale, 1));
+        gap: calc(8px * var(--padding-scale, 1));
         padding-top: calc(4px * var(--padding-scale, 1));
       }
       .post-actions .action-btn {
@@ -270,7 +269,8 @@ const CONTENT_LIMIT = 280; // chars before truncating
         color: var(--color-text-muted, rgba(107, 114, 128, 0.85));
         cursor: pointer;
         font-size: var(--font-size-caption);
-        padding: calc(8px * var(--padding-scale, 1)) calc(12px * var(--padding-scale, 1));
+        padding: calc(6px * var(--padding-scale, 1)) calc(10px * var(--padding-scale, 1));
+        height: calc(36px * var(--padding-scale, 1));
         border-radius: 9999px;
         white-space: nowrap;
         transition: background 0.2s ease, color 0.2s ease;

@@ -13,23 +13,21 @@
 
     <!-- Author & Privacy -->
     <div class="modal-author">
-      <div class="author-avatar"
-        [style.background-image]="authorAvatar ? 'url(' + authorAvatar + ')' : 'none'"
-        [class.no-avatar]="!authorAvatar">
-        <span *ngIf="!authorAvatar">{{ authorName.charAt(0) }}</span>
-      </div>
-      <div class="author-details">
-        <span class="author-name">{{ authorName }}</span>
-        <div class="privacy-selector">
-          <select
-            class="privacy-select"
-            [ngModel]="privacy()"
-            (ngModelChange)="privacy.set($event)">
-            <option *ngFor="let opt of privacyOptions" [value]="opt.value">
-              {{ opt.icon }} {{ opt.label }}
-            </option>
-          </select>
+      <div class="author-info-block">
+        <div class="author-avatar"
+          [style.background-image]="authorAvatar ? 'url(' + authorAvatar + ')' : 'none'"
+          [class.no-avatar]="!authorAvatar">
+          <span *ngIf="!authorAvatar">{{ authorName.charAt(0) }}</span>
         </div>
+        <div class="author-details">
+          <span class="author-name">{{ authorName }}</span>
+          <span class="author-username" *ngIf="authorUsername">@{{ authorUsername }}</span>
+        </div>
+      </div>
+      <div class="privacy-selector">
+        <lib-button variant="outline" class="privacy-chip" type="button" (click)="cyclePrivacy()" aria-label="Thay đổi chế độ hiển thị">
+          {{ getPrivacyOptionLabel(privacy()) }}
+        </lib-button>
       </div>
     </div>
 

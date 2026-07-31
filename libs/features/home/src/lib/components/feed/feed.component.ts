@@ -2,6 +2,7 @@ import { Component, OnInit, computed, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PostCardComponent, UiButton, CreatePostModalComponent, SkeletonCardComponent } from '@fe/ui';
 import { HomeFacade } from '../../data-access/home.facade';
+import { AuthService } from '@fe/core';
 
 @Component({
   standalone: true,
@@ -12,6 +13,7 @@ import { HomeFacade } from '../../data-access/home.facade';
 })
 export class FeedComponent implements OnInit {
   private homeFacade = inject(HomeFacade);
+  private authService = inject(AuthService);
 
   posts = this.homeFacade.posts;
   isLoading = this.homeFacade.isLoading;
@@ -19,6 +21,7 @@ export class FeedComponent implements OnInit {
   activeTab = signal<'posts' | 'videos' | 'shop' | 'stories'>('posts');
   searchQuery = signal('');
   isCreatePostModalOpen = signal(false);
+  currentUser = computed(() => this.authService.user());
 
   filteredPosts = computed(() => {
     const query = this.searchQuery().trim().toLowerCase();
@@ -67,6 +70,7 @@ export class FeedComponent implements OnInit {
 
   ngOnInit(): void {
     this.homeFacade.loadFeed();
+    this.authService.checkAuth();
   }
 
   selectTab(tabId: 'posts' | 'videos' | 'shop' | 'stories') {
