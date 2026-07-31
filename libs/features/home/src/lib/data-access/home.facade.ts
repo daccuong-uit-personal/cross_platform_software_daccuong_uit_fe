@@ -1,5 +1,5 @@
 import { Injectable, signal, inject } from '@angular/core';
-import { SocialPostService, Post } from '@fe/domain/social';
+import { SocialPostService, Post, CreatePostPayload } from '@fe/domain/social';
 import { take } from 'rxjs/operators';
 
 @Injectable({
@@ -32,33 +32,48 @@ export class HomeFacade {
   }
 
   toggleLike(postId: string) {
+    const post = this._posts().find(p => p.id === postId);
+    if (!post) return;
+    const wasLiked = post.isLiked;
+
     // Optimistic update
     this._posts.update(posts => posts.map(p => {
       if (p.id === postId) {
         return {
           ...p,
-          isLiked: !p.isLiked,
-          likesCount: p.isLiked ? p.likesCount - 1 : p.likesCount + 1
+          isLiked: !wasLiked,
+          likesCount: wasLiked ? p.likesCount - 1 : p.likesCount + 1
         };
       }
       return p;
     }));
 
-    // Call API
-    this.postService.toggleLike(postId).pipe(take(1)).subscribe({
-      next: () => {}, // Assuming successful
+    // Call API (like vs unlike based on current state)
+    this.postService.toggleLike(postId, wasLiked).pipe(take(1)).subscribe({
       error: () => {
         // Rollback on error
         this._posts.update(posts => posts.map(p => {
           if (p.id === postId) {
             return {
               ...p,
-              isLiked: !p.isLiked,
-              likesCount: p.isLiked ? p.likesCount - 1 : p.likesCount + 1
+              isLiked: wasLiked,
+              likesCount: wasLiked ? p.likesCount + 1 : p.likesCount - 1
             };
           }
           return p;
         }));
+      }
+    });
+  }
+
+  createPost(payload: CreatePostPayload) {
+    this.postService.createPost(payload).pipe(take(1)).subscribe({
+      next: (newPost) => {
+        // Optimistic: prepend new post to list
+        this._posts.update(posts => [newPost, ...posts]);
+      },
+      error: (err) => {
+        this._error.set(err.message || 'Lỗi đăng bài');
       }
     });
   }

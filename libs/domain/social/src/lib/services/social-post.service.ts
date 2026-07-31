@@ -1,183 +1,196 @@
 /**
- * @fileoverview Social service - handles post operations
- * PHASE 5: Uses mock data. Replace with actual API service in Phase 5B.
+ * @fileoverview Social service - handles post operations via real API
  */
 
-import { Injectable } from '@angular/core';
-import { Observable, of, throwError } from 'rxjs';
-import { delay, map } from 'rxjs/operators';
+import { Injectable, inject } from '@angular/core';
+import { Observable, of, throwError, forkJoin } from 'rxjs';
+import { map, switchMap, catchError } from 'rxjs/operators';
 import { Post, CreatePostPayload, UpdatePostPayload, Feed } from '../models';
-import { MOCK_POSTS } from '../mocks/mock-data';
+import { ApiService, appConfig } from '@fe/core';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SocialPostService {
-  private posts = [...MOCK_POSTS];
+  private api = inject(ApiService);
+  private http = inject(HttpClient);
+  private readonly apiUrl = appConfig.apiUrl;
+
+  /** Map raw backend post to FE Post model */
+  private mapPost(raw: any): Post {
+    const author = raw.author ?? {};
+    return {
+      id: raw.id,
+      author: {
+        id: author.id ?? author.userId ?? '',
+        username: author.username ?? '',
+        fullName: author.displayName ?? author.fullName ?? author.username ?? '',
+        avatar: author.avatarUrl ?? author.avatar ?? '',
+        bio: author.bio ?? '',
+        followers: author.followersCount ?? 0,
+        following: author.followingCount ?? 0,
+        postsCount: author.postCount ?? 0,
+        isFollowing: author.isFollowing ?? false,
+        isFollowedBy: author.isFollowedBy ?? false,
+        isBlocked: false,
+        isMuted: false,
+      },
+      content: raw.content ?? '',
+      images: raw.mediaUrls ?? [],
+      video: undefined,
+      createdAt: raw.createdAt ? new Date(raw.createdAt) : new Date(),
+      updatedAt: raw.updatedAt ? new Date(raw.updatedAt) : new Date(),
+      likesCount: raw.likeCount ?? raw.likesCount ?? 0,
+      commentsCount: raw.commentCount ?? raw.commentsCount ?? 0,
+      sharesCount: raw.shareCount ?? raw.sharesCount ?? 0,
+      viewsCount: raw.viewCount ?? raw.viewsCount ?? 0,
+      isLiked: raw.isLikedByCurrentUser ?? raw.isLiked ?? false,
+      isBookmarked: raw.isBookmarkedByCurrentUser ?? raw.isBookmarked ?? false,
+      hashtags: raw.hashtags ?? [],
+      mentions: raw.mentions ?? [],
+      privacy: (raw.visibility ?? 'public') as any,
+      isPinned: raw.isPinned ?? false,
+      allowComments: raw.allowComments !== false,
+      location: raw.location,
+    };
+  }
 
   /**
    * Get feed posts (personal feed or discover)
-   * @param type 'personal' | 'discover'
-   * @param cursor pagination cursor
    */
-  getFeed(type: 'personal' | 'discover' = 'personal', cursor?: string): Observable<Feed> {
-    // Simulate pagination and API delay
-    return of({
-      posts: this.posts,
-      hasMore: false,
-      nextCursor: undefined,
-    }).pipe(delay(500));
+  getFeed(type: 'personal' | 'discover' = 'personal', page = 1): Observable<Feed> {
+    const endpoint = type === 'personal' ? '/feed' : '/discover';
+    return this.api.get<any>(endpoint, { params: { page, pageSize: 20 } }).pipe(
+      map(res => {
+        // Backend trả về { statusCode, data: [], meta: { pagination } }
+        const rawPosts: any[] = Array.isArray(res)
+          ? res
+          : Array.isArray(res.data)
+            ? res.data
+            : [];
+        const pagination = res.meta?.pagination ?? {};
+        return {
+          posts: rawPosts.map(p => this.mapPost(p)),
+          hasMore: pagination.hasNext ?? false,
+          nextCursor: pagination.currentPage ? String(pagination.currentPage + 1) : undefined,
+        };
+      }),
+      catchError(err => {
+        console.error('[SocialPostService] getFeed error:', err);
+        return of({ posts: [], hasMore: false });
+      })
+    );
   }
 
   /**
    * Get a single post by ID
    */
   getPost(postId: string): Observable<Post | null> {
-    const post = this.posts.find((p) => p.id === postId);
-    return of(post || null).pipe(delay(300));
+    return this.api.get<any>(`/posts/${postId}`).pipe(
+      map(res => this.mapPost(res)),
+      catchError(() => of(null))
+    );
   }
 
   /**
-   * Create a new post
+   * Create a new post - upload media first, then create post
    */
   createPost(payload: CreatePostPayload): Observable<Post> {
-    const newPost: Post = {
-      id: `post-${Date.now()}`,
-      author: {
-        id: 'user-001',
-        username: 'duc_dai',
-        fullName: 'Đức Đại',
-        avatar: 'https://i.pravatar.cc/150?img=12',
-        bio: '🚀 Full-stack dev | Coffee ☕ | Tech enthusiast',
-        followers: 1250,
-        following: 340,
-        postsCount: 43,
-        isFollowing: false,
-        isFollowedBy: false,
-        isBlocked: false,
-        isMuted: false,
-      },
-      content: payload.content,
-      images: payload.images ? payload.images.map(() => 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=600&h=400') : [],
-      video: undefined,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      likesCount: 0,
-      commentsCount: 0,
-      sharesCount: 0,
-      viewsCount: 0,
-      isLiked: false,
-      isBookmarked: false,
-      hashtags: payload.hashtags || [],
-      mentions: payload.mentions || [],
-      privacy: payload.privacy,
-      isPinned: false,
-      allowComments: payload.allowComments !== false,
-      location: payload.location,
-    };
+    const uploadTasks: Observable<string>[] = [];
 
-    this.posts.unshift(newPost);
-    return of(newPost).pipe(delay(800));
+    if (payload.images && payload.images.length > 0) {
+      for (const file of payload.images) {
+        const formData = new FormData();
+        formData.append('file', file);
+        const upload$ = this.http
+          .post<{ data: { id: string; fileName: string; originalName: string } }>(
+            `${this.apiUrl}/media/upload`,
+            formData
+          )
+          .pipe(
+            map(res => `${this.apiUrl}/media/${res.data.id}/file`)
+          );
+        uploadTasks.push(upload$);
+      }
+    }
+
+    const buildDto = (mediaUrls: string[] = []) => ({
+      content: payload.content,
+      type: mediaUrls.length > 1 ? 'gallery' : mediaUrls.length === 1 ? 'image' : 'text',
+      mediaUrls,
+      visibility: payload.privacy ?? 'public',
+      location: payload.location,
+    });
+
+    if (uploadTasks.length > 0) {
+      return forkJoin(uploadTasks).pipe(
+        switchMap(mediaUrls =>
+          this.api.post<any>('/posts', buildDto(mediaUrls))
+        ),
+        map(res => this.mapPost(res))
+      );
+    }
+
+    return this.api.post<any>('/posts', buildDto()).pipe(
+      map(res => this.mapPost(res))
+    );
   }
 
   /**
    * Update a post
    */
   updatePost(postId: string, payload: UpdatePostPayload): Observable<Post> {
-    const postIndex = this.posts.findIndex((p) => p.id === postId);
-    if (postIndex === -1) {
-      return throwError(() => new Error('Post not found'));
-    }
-
-    const post = this.posts[postIndex];
-    const updatedPost: Post = {
-      ...post,
-      ...payload,
-      updatedAt: new Date(),
-    };
-
-    this.posts[postIndex] = updatedPost;
-    return of(updatedPost).pipe(delay(600));
+    return this.api.put<any>(`/posts/${postId}`, payload).pipe(
+      map(res => this.mapPost(res))
+    );
   }
 
   /**
    * Delete a post
    */
   deletePost(postId: string): Observable<void> {
-    const postIndex = this.posts.findIndex((p) => p.id === postId);
-    if (postIndex === -1) {
-      return throwError(() => new Error('Post not found'));
-    }
-
-    this.posts.splice(postIndex, 1);
-    return of(undefined).pipe(delay(500));
+    return this.api.delete<void>(`/posts/${postId}`);
   }
 
   /**
-   * Like/Unlike a post
+   * Like a post (use isLiked to decide like vs unlike)
    */
-  toggleLike(postId: string): Observable<boolean> {
-    const post = this.posts.find((p) => p.id === postId);
-    if (!post) {
-      return throwError(() => new Error('Post not found'));
+  toggleLike(postId: string, currentlyLiked = false): Observable<boolean> {
+    if (currentlyLiked) {
+      return this.api.delete<any>(`/posts/${postId}/like`).pipe(
+        map(() => false),
+        catchError(() => of(false))
+      );
     }
-
-    const wasLiked = post.isLiked;
-    post.isLiked = !post.isLiked;
-    post.likesCount += post.isLiked ? 1 : -1;
-
-    return of(post.isLiked).pipe(delay(400));
+    return this.api.post<any>(`/posts/${postId}/like`).pipe(
+      map(() => true),
+      catchError(() => of(true))
+    );
   }
 
   /**
-   * Bookmark/Remove bookmark
-   */
-  toggleBookmark(postId: string): Observable<boolean> {
-    const post = this.posts.find((p) => p.id === postId);
-    if (!post) {
-      return throwError(() => new Error('Post not found'));
-    }
-
-    post.isBookmarked = !post.isBookmarked;
-    return of(post.isBookmarked).pipe(delay(300));
-  }
-
-  /**
-   * Share a post (repost)
+   * Share a post
    */
   sharePost(postId: string): Observable<void> {
-    const post = this.posts.find((p) => p.id === postId);
-    if (!post) {
-      return throwError(() => new Error('Post not found'));
-    }
-
-    post.sharesCount += 1;
-    return of(undefined).pipe(delay(400));
+    return this.api.post<void>(`/posts/${postId}/share`);
   }
 
   /**
    * Get posts by hashtag
    */
   getPostsByHashtag(hashtag: string): Observable<Post[]> {
-    const filtered = this.posts.filter((p) =>
-      p.hashtags.some((h) => h.toLowerCase() === hashtag.toLowerCase())
+    return this.api.get<any>(`/posts`, { params: { hashtag } }).pipe(
+      map(res => (Array.isArray(res.data) ? res.data : []).map((p: any) => this.mapPost(p)))
     );
-    return of(filtered).pipe(delay(500));
   }
 
   /**
    * Get user's posts
    */
   getUserPosts(userId: string): Observable<Post[]> {
-    const filtered = this.posts.filter((p) => p.author.id === userId);
-    return of(filtered).pipe(delay(400));
-  }
-
-  /**
-   * Get bookmarked posts
-   */
-  getBookmarkedPosts(): Observable<Post[]> {
-    const bookmarked = this.posts.filter((p) => p.isBookmarked);
-    return of(bookmarked).pipe(delay(500));
+    return this.api.get<any>(`/posts`, { params: { authorId: userId } }).pipe(
+      map(res => (Array.isArray(res.data) ? res.data : []).map((p: any) => this.mapPost(p)))
+    );
   }
 }

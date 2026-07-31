@@ -17,6 +17,9 @@ export interface FriendUser {
   name: string;
   avatar: string | null;
   mutualFriends?: number;
+  followerCount?: number;
+  followingCount?: number;
+  postCount?: number;
   relationshipDate?: string;
   status?: string;
   relationshipType?: string;

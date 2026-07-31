@@ -6,6 +6,7 @@ import {
   ChangeDetectionStrategy,
   inject,
   HostBinding,
+  computed,
 } from '@angular/core';
 import { FriendsLayoutService } from '../../services/friends-layout.service';
 import { CommonModule } from '@angular/common';
@@ -89,10 +90,16 @@ export class FriendCardComponent {
     return this.openMenu !== undefined;
   }
 
+  // Check if this card is currently selected in the layout
+  isSelected = computed(() => {
+    return this.layoutService.selectedFriend()?.id === this.user?.id;
+  });
+
   private localState:
     | 'pending'
     | 'suggested'
     | 'following'
+    | 'not-following'
     | 'default' = 'default';
 
   private localFriendState: 'friend' | 'not-friend' | 'default' = 'default';
@@ -178,7 +185,7 @@ export class FriendCardComponent {
 
   getVisibleFollowState(): 'following' | 'not-following' {
     if (this.localState === 'following') return 'following';
-    if (this.localState === 'default') return 'not-following';
+    if (this.localState === 'not-following') return 'not-following';
     return this.user?.status === 'following' ? 'following' : 'not-following';
   }
 
@@ -272,7 +279,7 @@ export class FriendCardComponent {
       this.updateMenuItem('cancel-request', 'send-friend-request', 'Thêm bạn bè');
     }
     if (type === 'unfollow') {
-      this.localState = 'default';
+      this.localState = 'not-following';
       this.user.status = 'not-following';
       this.updateMenuItem('unfollow', 'follow', 'Theo dõi');
     }
@@ -339,7 +346,7 @@ export class FriendCardComponent {
     
     // Optimistic UI: update menu items AND local states
     if (itemId === 'unfollow') {
-      this.localState = 'default';
+      this.localState = 'not-following';
       this.updateMenuItem('unfollow', 'follow', 'Theo dõi');
     } else if (itemId === 'follow') {
       this.localState = 'following';

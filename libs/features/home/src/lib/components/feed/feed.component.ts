@@ -1,11 +1,11 @@
 import { Component, OnInit, computed, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { PostCardComponent, UiButton } from '@fe/ui';
+import { PostCardComponent, UiButton, CreatePostModalComponent, SkeletonCardComponent } from '@fe/ui';
 import { HomeFacade } from '../../data-access/home.facade';
 
 @Component({
   standalone: true,
-  imports: [CommonModule, PostCardComponent, UiButton],
+  imports: [CommonModule, PostCardComponent, UiButton, CreatePostModalComponent, SkeletonCardComponent],
   selector: 'fe-feed',
   templateUrl: './feed.component.html',
   styleUrls: ['./feed.component.css'],
@@ -14,8 +14,11 @@ export class FeedComponent implements OnInit {
   private homeFacade = inject(HomeFacade);
 
   posts = this.homeFacade.posts;
+  isLoading = this.homeFacade.isLoading;
+  error = this.homeFacade.error;
   activeTab = signal<'posts' | 'videos' | 'shop' | 'stories'>('posts');
   searchQuery = signal('');
+  isCreatePostModalOpen = signal(false);
 
   filteredPosts = computed(() => {
     const query = this.searchQuery().trim().toLowerCase();
@@ -59,6 +62,9 @@ export class FeedComponent implements OnInit {
     { id: 'stories', label: 'Truyện' },
   ] as const;
 
+  // Show 3 skeleton cards while loading
+  skeletonItems = [1, 2, 3];
+
   ngOnInit(): void {
     this.homeFacade.loadFeed();
   }
@@ -72,11 +78,27 @@ export class FeedComponent implements OnInit {
   }
 
   onCreatePost(): void {
-    // Placeholder for future create-post flow.
-    console.log('Open create post drawer or modal');
+    this.isCreatePostModalOpen.set(true);
+  }
+
+  onCloseCreatePost(): void {
+    this.isCreatePostModalOpen.set(false);
+  }
+
+  onSubmitPost(event: any): void {
+    this.homeFacade.createPost(event);
+    this.isCreatePostModalOpen.set(false);
   }
 
   onToggleLike(postId: string): void {
     this.homeFacade.toggleLike(postId);
+  }
+
+  retryLoad(): void {
+    this.homeFacade.loadFeed();
+  }
+
+  trackByPostId(_index: number, post: any): string {
+    return post.id;
   }
 }

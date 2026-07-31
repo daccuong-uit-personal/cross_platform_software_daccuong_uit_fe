@@ -2,9 +2,11 @@
  * @fileoverview Post Card Component
  */
 
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Post } from '@fe/domain/social';
+
+const CONTENT_LIMIT = 280; // chars before truncating
 
 @Component({
   selector: 'app-post-card',
@@ -29,25 +31,61 @@ import { Post } from '@fe/domain/social';
         <button type="button" class="more-btn" aria-label="Thêm tùy chọn" (click)="onMoreOptions()">···</button>
       </div>
 
-      <p class="post-text">{{ post.content }}</p>
+      <p class="post-text" [class.truncated]="!isExpanded() && post.content.length > contentLimit">
+        {{ isExpanded() || post.content.length <= contentLimit ? post.content : post.content.slice(0, contentLimit) + '...' }}
+      </p>
+      <button class="see-more-btn" *ngIf="post.content.length > contentLimit" (click)="isExpanded.set(!isExpanded())">
+        {{ isExpanded() ? 'Thu gọn' : 'Xem thêm' }}
+      </button>
 
       <div class="post-tags" *ngIf="post.hashtags.length || post.mentions.length">
         <span class="tag" *ngFor="let tag of post.hashtags">#{{ tag }}</span>
         <span class="tag mention" *ngFor="let mention of post.mentions">@{{ mention }}</span>
       </div>
 
-      <div class="post-media" *ngIf="post.images.length">
-        <img *ngFor="let image of post.images" [src]="image" alt="Post media" />
+      <div class="post-media"
+        *ngIf="post.images && post.images.length"
+        [class.media-1]="post.images.length === 1"
+        [class.media-2]="post.images.length === 2"
+        [class.media-3]="post.images.length === 3"
+        [class.media-4plus]="post.images.length >= 4">
+        <div class="media-item"
+          *ngFor="let image of post.images.slice(0, 4); let i = index"
+          [class.hidden-on-mobile]="post.images.length > 4 && i >= 4">
+          <img [src]="image" [alt]="'Ảnh bài viết ' + (i + 1)" loading="lazy" />
+          <div class="media-overlay-count"
+            *ngIf="post.images.length > 4 && i === 3">
+            +{{ post.images.length - 4 }}
+          </div>
+        </div>
       </div>
 
+      <!-- Stats Bar (Facebook-style) -->
+      <div class="post-stats" *ngIf="post.likesCount || post.commentsCount || post.sharesCount">
+        <div class="stats-reactions" *ngIf="post.likesCount">
+          <span class="reaction-icons">
+            <span class="reaction-icon like">👍</span>
+          </span>
+          <span class="stats-count">{{ post.likesCount }}</span>
+        </div>
+        <div class="stats-right">
+          <span *ngIf="post.commentsCount">{{ post.commentsCount }} bình luận</span>
+          <span *ngIf="post.sharesCount">{{ post.sharesCount }} lượt chia sẻ</span>
+        </div>
+      </div>
+
+      <div class="post-divider"></div>
+
+      <!-- Action Bar (Facebook-style with labels) -->
       <div class="post-actions">
         <button class="action-btn action-like" [class.liked]="post.isLiked" type="button" (click)="onToggleLike()">
           <span class="icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.8 1-1a5.5 5.5 0 0 0 0-7.8z" />
+              <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z" />
+              <path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3" />
             </svg>
           </span>
-          <span class="count" *ngIf="post.likesCount">{{ post.likesCount }}</span>
+          <span class="action-label">Thích</span>
         </button>
         <button class="action-btn action-comment" type="button" (click)="onComment()">
           <span class="icon">
@@ -55,36 +93,9 @@ import { Post } from '@fe/domain/social';
               <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
             </svg>
           </span>
-          <span class="count" *ngIf="post.commentsCount">{{ post.commentsCount }}</span>
+          <span class="action-label">Bình luận</span>
         </button>
-        <button class="action-btn action-retweet" type="button" (click)="onShare()">
-          <span class="icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="23 7 23 1 17 1" />
-              <path d="M20 14a9 9 0 0 0-9-9H1" />
-              <polyline points="1 17 1 23 7 23" />
-              <path d="M4 10a9 9 0 0 0 9 9h11" />
-            </svg>
-          </span>
-          <span class="count" *ngIf="post.sharesCount">{{ post.sharesCount }}</span>
-        </button>
-        <button class="action-btn action-stock" type="button">
-          <span class="icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
-            </svg>
-          </span>
-        </button>
-        <button class="action-btn action-views" type="button">
-          <span class="icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-              <circle cx="12" cy="12" r="3" />
-            </svg>
-          </span>
-          <span class="count">{{ post.viewsCount ?? 0 }}</span>
-        </button>
-        <button class="action-btn action-share" type="button" (click)="onToggleBookmark()">
+        <button class="action-btn action-share" type="button" (click)="onShare()">
           <span class="icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M4 12v3a3 3 0 0 0 3 3h10" />
@@ -92,6 +103,7 @@ import { Post } from '@fe/domain/social';
               <line x1="21" y1="12" x2="9" y2="12" />
             </svg>
           </span>
+          <span class="action-label">Chia sẻ</span>
         </button>
       </div>
     </article>
@@ -198,16 +210,49 @@ import { Post } from '@fe/domain/social';
       }
       .post-media {
         display: grid;
-        gap: calc(10px * var(--padding-scale, 1));
+        gap: 3px;
+        border-radius: calc(12px * var(--padding-scale, 1));
+        overflow: hidden;
         margin-top: calc(6px * var(--padding-scale, 1));
         width: 100%;
       }
-      .post-media img {
+      .post-media.media-1 { grid-template-columns: 1fr; }
+      .post-media.media-2 { grid-template-columns: 1fr 1fr; }
+      .post-media.media-3 { grid-template-columns: 1fr 1fr; }
+      .post-media.media-3 .media-item:first-child { grid-column: 1 / -1; }
+      .post-media.media-4plus { grid-template-columns: 1fr 1fr; }
+
+      .media-item {
+        position: relative;
+        overflow: hidden;
+        background: var(--color-surface-subtle, #f0f2f5);
+      }
+
+      .media-item img {
         width: 100%;
-        height: auto;
-        max-height: calc(450px * var(--padding-scale, 1));
-        border-radius: calc(20px * var(--padding-scale, 1));
+        height: 220px;
         object-fit: cover;
+        display: block;
+        transition: transform 0.2s ease;
+      }
+      .post-media.media-1 .media-item img {
+        height: auto;
+        max-height: 500px;
+      }
+      .media-item:hover img {
+        transform: scale(1.02);
+      }
+
+      .media-overlay-count {
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.55);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-size: 28px;
+        font-weight: 700;
       }
       .post-actions {
         display: flex;
@@ -238,36 +283,86 @@ import { Post } from '@fe/domain/social';
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        width: calc(18px * var(--padding-scale, 1));
-        height: calc(18px * var(--padding-scale, 1));
+        width: calc(20px * var(--padding-scale, 1));
+        height: calc(20px * var(--padding-scale, 1));
       }
       .post-actions .action-btn .icon svg {
         width: 100%;
         height: 100%;
         display: block;
       }
-      .post-actions .action-btn .count {
-        color: var(--color-text-muted, rgba(107, 114, 128, 0.72));
+      .post-actions .action-btn .action-label {
         font-size: var(--font-size-caption);
+        font-weight: 600;
+        color: inherit;
       }
       .post-actions .action-like:hover {
-        background: rgba(249, 24, 128, 0.12);
+        background: rgba(23, 120, 242, 0.08);
+        color: #1877f2;
       }
       .post-actions .action-like.liked {
-        color: rgb(249, 24, 128);
+        color: #1877f2;
       }
       .post-actions .action-like.liked .icon svg {
-        fill: rgb(249, 24, 128);
-        stroke: rgb(249, 24, 128);
+        fill: #1877f2;
+        stroke: #1877f2;
       }
-      .post-actions .action-retweet:hover {
-        background: rgba(23, 191, 99, 0.12);
+      .post-actions .action-comment:hover { background: rgba(15, 23, 42, 0.06); }
+      .post-actions .action-share:hover { background: rgba(15, 23, 42, 0.06); }
+
+      /* Stats Bar */
+      .post-stats {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: calc(6px * var(--padding-scale, 1)) 0;
+        font-size: var(--font-size-caption);
+        color: var(--color-text-muted, #65676b);
       }
-      .post-actions .action-share:hover,
-      .post-actions .action-stock:hover,
-      .post-actions .action-views:hover,
-      .post-actions .action-comment:hover {
-        background: rgba(15, 23, 42, 0.06);
+      .stats-reactions {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .reaction-icons {
+        display: inline-flex;
+      }
+      .reaction-icon {
+        font-size: 16px;
+        line-height: 1;
+      }
+      .stats-right {
+        display: flex;
+        gap: 8px;
+      }
+      .stats-right span {
+        cursor: pointer;
+      }
+      .stats-right span:hover {
+        text-decoration: underline;
+      }
+
+      /* Divider */
+      .post-divider {
+        height: 1px;
+        background: var(--color-border-subtle, rgba(148, 163, 184, 0.24));
+        margin: calc(4px * var(--padding-scale, 1)) 0;
+      }
+
+      /* See More Button */
+      .see-more-btn {
+        border: none;
+        background: transparent;
+        color: var(--color-text-muted, #65676b);
+        font-weight: 600;
+        font-size: var(--font-size-caption);
+        cursor: pointer;
+        padding: 0;
+        margin-top: -8px;
+        transition: color 0.15s;
+      }
+      .see-more-btn:hover {
+        color: var(--color-text-base, #050505);
       }
     `
   ],
@@ -281,6 +376,9 @@ export class PostCardComponent {
   @Output() share = new EventEmitter<void>();
   @Output() reply = new EventEmitter<string>();
   @Output() moreOptions = new EventEmitter<void>();
+
+  readonly isExpanded = signal(false);
+  readonly contentLimit = CONTENT_LIMIT;
 
   formatDate(date: Date): string {
     const now = new Date();

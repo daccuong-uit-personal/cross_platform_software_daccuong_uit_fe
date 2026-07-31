@@ -4,7 +4,7 @@
   width: 100%;
   min-height: 100%;
   background: var(--color-surface-base);
-  border-radius: 24px;
+  border-radius: 0;
   overflow: hidden;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
 }
@@ -61,7 +61,7 @@
 }
 
 .btn-view-profile {
-  margin-bottom: 4px; /* Align nicely with the name below */
+  margin-bottom: -12px; /* Push the button down so it doesn't touch the banner */
 }
 
 .hero-info {

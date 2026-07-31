@@ -12,7 +12,7 @@
           <div class="profile-avatar-wrap">
             <img [src]="avatarUrl()" alt="Avatar">
           </div>
-          <lib-button variant="outline" class="btn-view-profile">Xem hồ sơ</lib-button>
+          <lib-button variant="primary" class="btn-view-profile">Xem hồ sơ</lib-button>
         </div>
 
         <div class="hero-info">
@@ -23,12 +23,12 @@
         <!-- Compact stats row -->
         <div class="hero-stats">
           <div class="stat-item">
-            <strong>{{ friend?.postsCount || 0 }}</strong>
+            <strong>{{ friend?.postCount || 0 }}</strong>
             <span>Bài đăng</span>
           </div>
           <div class="stat-item">
-            <strong>{{ friend?.followersCount || 0 }}</strong>
-            <span>Theo dõi</span>
+            <strong>{{ friend?.followerCount || 0 }}</strong>
+            <span>Người theo dõi</span>
           </div>
           <div class="stat-item">
             <strong>{{ friend?.followingCount || 0 }}</strong>

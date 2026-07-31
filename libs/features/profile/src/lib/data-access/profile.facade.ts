@@ -64,9 +64,9 @@ export class ProfileFacade {
         this._profile.set(data.profile);
         this._stats.set({
           userId,
-          postsCount: data.profile?.stats?.postCount ?? data.stats?.postsCount ?? 0,
-          followersCount: data.profile?.stats?.followerCount ?? data.stats?.followersCount ?? 0,
-          followingCount: data.profile?.stats?.followingCount ?? data.stats?.followingCount ?? 0,
+          postsCount: (data.profile as any)?.postCount ?? data.profile?.stats?.postCount ?? data.stats?.postsCount ?? 0,
+          followersCount: (data.profile as any)?.followerCount ?? data.profile?.stats?.followerCount ?? data.stats?.followersCount ?? 0,
+          followingCount: (data.profile as any)?.followingCount ?? data.profile?.stats?.followingCount ?? data.stats?.followingCount ?? 0,
           likesReceivedCount: data.stats?.likesReceivedCount ?? 0,
           engagementRate: data.stats?.engagementRate ?? 0,
         });

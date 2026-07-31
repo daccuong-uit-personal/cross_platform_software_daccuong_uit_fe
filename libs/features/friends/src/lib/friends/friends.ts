@@ -107,6 +107,7 @@ export class FriendsComponent {
       filter(event => event instanceof NavigationEnd)
     ).subscribe((event: any) => {
       this.currentUrl.set(event.urlAfterRedirects);
+      this.layoutService.selectFriend(null);
     });
   }
 
