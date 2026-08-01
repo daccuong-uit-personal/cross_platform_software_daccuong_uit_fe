@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { ApiService } from '@fe/core';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { HttpParams } from '@angular/common/http';
 
 export interface MenuItemConfig {
@@ -16,10 +16,12 @@ export interface FriendUser {
   id: string;
   name: string;
   avatar: string | null;
+  username?: string;
   mutualFriends?: number;
   followerCount?: number;
   followingCount?: number;
   postCount?: number;
+  privatePostCount?: number;
   relationshipDate?: string;
   status?: string;
   relationshipType?: string;
@@ -42,55 +44,73 @@ export class FriendsApiService {
   getFriends(page = 1, pageSize = 20): Observable<FriendUser[]> {
     return this.apiService.get<FriendUser[]>('/friendship/friends', {
       params: this.buildPaginationParams(page, pageSize)
-    });
+    }).pipe(
+      map(res => res.data)
+    );
   }
 
   getIncomingRequests(page = 1, pageSize = 20): Observable<FriendUser[]> {
     return this.apiService.get<FriendUser[]>('/friendship/requests/received', {
       params: this.buildPaginationParams(page, pageSize)
-    });
+    }).pipe(
+      map(res => res.data)
+    );
   }
 
   getSentRequests(page = 1, pageSize = 20): Observable<FriendUser[]> {
     return this.apiService.get<FriendUser[]>('/friendship/requests/sent', {
       params: this.buildPaginationParams(page, pageSize)
-    });
+    }).pipe(
+      map(res => res.data)
+    );
   }
 
   getSuggestions(page = 1, pageSize = 20): Observable<FriendUser[]> {
     return this.apiService.get<FriendUser[]>('/friendship/suggestions', {
       params: this.buildPaginationParams(page, pageSize)
-    });
+    }).pipe(
+      map(res => res.data)
+    );
   }
 
   getRelationships(page = 1, pageSize = 20): Observable<FriendUser[]> {
     return this.apiService.get<FriendUser[]>('/friendship/relationships', {
       params: this.buildPaginationParams(page, pageSize)
-    });
+    }).pipe(
+      map(res => res.data)
+    );
   }
 
   getFollowing(page = 1, pageSize = 20): Observable<FriendUser[]> {
     return this.apiService.get<FriendUser[]>('/follow/following', {
       params: this.buildPaginationParams(page, pageSize)
-    });
+    }).pipe(
+      map(res => res.data)
+    );
   }
 
   getFollowers(page = 1, pageSize = 20): Observable<FriendUser[]> {
     return this.apiService.get<FriendUser[]>('/follow/followers', {
       params: this.buildPaginationParams(page, pageSize)
-    });
+    }).pipe(
+      map(res => res.data)
+    );
   }
 
   getBlockedUsers(page = 1, pageSize = 20): Observable<FriendUser[]> {
     return this.apiService.get<FriendUser[]>('/users/blocked', {
       params: this.buildPaginationParams(page, pageSize)
-    });
+    }).pipe(
+      map(res => res.data)
+    );
   }
 
   getMutedUsers(page = 1, pageSize = 20): Observable<FriendUser[]> {
     return this.apiService.get<FriendUser[]>('/users/muted', {
       params: this.buildPaginationParams(page, pageSize)
-    });
+    }).pipe(
+      map(res => res.data)
+    );
   }
 
   sendFriendRequest(userId: string): Observable<unknown> {

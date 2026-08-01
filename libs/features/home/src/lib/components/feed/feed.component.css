@@ -117,7 +117,7 @@
 
 .compose-input-avatar {
   position: absolute;
-  left: calc(14px * var(--padding-scale, 1));
+  left: calc(1px * var(--padding-scale, 1));
   top: 50%;
   transform: translateY(-50%);
   width: calc(42px * var(--padding-scale, 1));

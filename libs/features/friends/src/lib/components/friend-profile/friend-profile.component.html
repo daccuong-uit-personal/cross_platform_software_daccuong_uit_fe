@@ -23,7 +23,7 @@
         <!-- Compact stats row -->
         <div class="hero-stats">
           <div class="stat-item">
-            <strong>{{ friend?.postCount || 0 }}</strong>
+            <strong>{{ postCountDisplay() }}</strong>
             <span>Bài đăng</span>
           </div>
           <div class="stat-item">
@@ -145,7 +145,7 @@
       <ng-container *ngIf="!isLoadingPosts()">
         <ng-container *ngIf="posts().length > 0; else noPostsTpl">
           <div class="posts-list">
-            <app-post-card *ngFor="let post of posts()" [post]="post"></app-post-card>
+            <app-post-card *ngFor="let post of posts()" [post]="post" (toggleLike)="toggleLike(post.id)"></app-post-card>
           </div>
         </ng-container>
         <ng-template #noPostsTpl>

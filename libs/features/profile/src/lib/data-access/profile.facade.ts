@@ -8,7 +8,7 @@ import {
   ProfilePost,
   ProfileTab,
 } from '@fe/domain/profile';
-import { SocialUserService, UserStatistics } from '@fe/domain/social';
+import { Post, SocialPostService, SocialUserService, UserStatistics } from '@fe/domain/social';
 import { take, catchError } from 'rxjs/operators';
 import { forkJoin, of } from 'rxjs';
 
@@ -18,6 +18,7 @@ import { forkJoin, of } from 'rxjs';
 export class ProfileFacade {
   private readonly profileService = inject(ProfileService);
   private readonly socialService = inject(SocialUserService);
+  private readonly socialPostService = inject(SocialPostService);
 
   private readonly _profile = signal<ProfileResponse | null>(null);
   private readonly _stats = signal<UserStatistics | null>(null);
@@ -29,6 +30,7 @@ export class ProfileFacade {
   private readonly _tabData = signal<ProfileTabDataResponse | null>(null);
   private readonly _isLoading = signal<boolean>(false);
   private readonly _error = signal<string | null>(null);
+  private readonly pendingLikePostIds = new Set<string>();
 
   readonly profile = this._profile.asReadonly();
   readonly stats = this._stats.asReadonly();
@@ -79,17 +81,85 @@ export class ProfileFacade {
     });
   }
 
+  private mapProfilePost(rawPost: any, profile: ProfileResponse | null): ProfilePost {
+    return this.socialPostService.mapPostForUi(rawPost, {
+      fallbackAuthor: profile ? {
+        id: profile.userId,
+        username: profile.username ?? '',
+        fullName: profile.displayName ?? profile.username ?? '',
+        avatar: profile.avatarUrl ?? '',
+        bio: profile.bio ?? '',
+        followers: 0,
+        following: 0,
+        postsCount: this._stats()?.postsCount ?? 0,
+        isFollowing: false,
+        isFollowedBy: false,
+        isBlocked: false,
+        isMuted: false,
+      } : undefined,
+    }) as ProfilePost;
+  }
+
+  togglePostLike(postId: string) {
+    const post = this._posts().find((item) => item.id === postId);
+    if (!post || this.pendingLikePostIds.has(postId)) {
+      return;
+    }
+
+    const wasLiked = post.isLiked;
+    this.pendingLikePostIds.add(postId);
+
+    const optimistic = this.socialPostService.applyOptimisticLike(this._posts(), postId);
+    this._posts.set(optimistic.posts);
+
+    this.socialPostService.toggleLike(postId, wasLiked).pipe(take(1)).subscribe({
+      next: (result) => {
+        this._posts.update((posts) => this.socialPostService.reconcileLike(posts, postId, result, {
+          wasLiked,
+          likesCount: optimistic.optimisticLikesCount,
+        }, optimistic.optimisticIsLiked));
+      },
+      error: () => {
+        this._posts.update((posts) => this.socialPostService.rollbackLike(posts, postId, {
+          wasLiked,
+          likesCount: post.likesCount,
+        }));
+      },
+      complete: () => {
+        this.pendingLikePostIds.delete(postId);
+      },
+    });
+  }
+
   loadProfileTabData(userId: string, tabId: string) {
     this.profileService.getProfileTabData(userId, tabId as any).pipe(take(1)).subscribe({
       next: (tabData) => {
-        this._tabData.set(tabData);
+        const payload = (tabData as any) ?? {};
+        const data = Array.isArray(payload.data) ? payload.data : Array.isArray(payload) ? payload : [];
+        this._tabData.set({ ...(payload ?? {}), data });
 
         if (tabId === 'posts') {
-          this._posts.set((tabData.data as ProfilePost[]) ?? []);
+          const existingPosts = this._posts();
+          const posts = Array.isArray(data)
+            ? (data as any[]).map((post) => {
+                const mappedPost = this.mapProfilePost(post, this._profile()) as ProfilePost;
+                const existing = existingPosts.find((item) => item.id === mappedPost.id);
+                if (existing) {
+                  const storedLikeState = this.socialPostService.getLikeState(mappedPost.id);
+                  return {
+                    ...mappedPost,
+                    isLiked: storedLikeState?.isLiked ?? existing.isLiked,
+                    likesCount: storedLikeState?.likesCount ?? (mappedPost.likesCount || existing.likesCount),
+                  } as ProfilePost;
+                }
+                return mappedPost;
+              })
+            : [];
+          this._posts.set(posts as ProfilePost[]);
         } else if (tabId === 'groups') {
-          this._groups.set((tabData.data as ProfileGroup[]) ?? []);
+          this._groups.set((data as ProfileGroup[]) ?? []);
         } else if (tabId === 'friends') {
-          this._friends.set((tabData.data as ProfileFriend[]) ?? []);
+          this._friends.set((data as ProfileFriend[]) ?? []);
         }
       },
       error: () => {

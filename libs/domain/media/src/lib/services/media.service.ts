@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { ApiService, appConfig, urlConfig } from '@fe/core';
 
 export interface MediaItem {
@@ -35,7 +35,9 @@ export class MediaService {
     return this.api.get<MediaItem[]>(urlConfig.media.list, {
       params,
       cache: 1000 * 10,
-    });
+    }).pipe(
+      map(res => res.data)
+    );
   }
 
   uploadMedia(formData: FormData) {

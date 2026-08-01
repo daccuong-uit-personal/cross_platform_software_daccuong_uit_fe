@@ -41,10 +41,9 @@
         <ng-container *ngIf="!user.subtitle && user.mutualFriends">
           {{ user.mutualFriends }} bạn chung
         </ng-container>
-        <ng-container *ngIf="!user.subtitle && !user.mutualFriends && (user.followerCount !== undefined || user.postCount !== undefined)">
+        <ng-container *ngIf="!user.subtitle && !user.mutualFriends && (user.followerCount !== undefined || user.username)">
           <span *ngIf="user.followerCount !== undefined">{{ user.followerCount }} người theo dõi</span>
-          <span *ngIf="user.followerCount !== undefined && user.postCount !== undefined"> • </span>
-          <span *ngIf="user.postCount !== undefined">{{ user.postCount }} bài viết</span>
+          <span *ngIf="user.followerCount === undefined && user.username">{{ user.username }}</span>
         </ng-container>
       </p>
     </div>
@@ -173,16 +172,15 @@
   </div><!-- /list-row-top -->
 
   <!-- ── Row 2: Bio / Subtext (full-width) ── -->
-  <div class="list-row-bio" *ngIf="user.subtitle || user.mutualFriends || user.followerCount !== undefined || user.postCount !== undefined">
+  <div class="list-row-bio" *ngIf="user.subtitle || user.mutualFriends || user.followerCount !== undefined || user.postCount !== undefined || user.username">
     <p class="card-meta">
       <ng-container *ngIf="user.subtitle">{{ user.subtitle }}</ng-container>
       <ng-container *ngIf="!user.subtitle && user.mutualFriends">
         {{ user.mutualFriends }} bạn chung
       </ng-container>
-      <ng-container *ngIf="!user.subtitle && !user.mutualFriends && (user.followerCount !== undefined || user.postCount !== undefined)">
+      <ng-container *ngIf="!user.subtitle && !user.mutualFriends && (user.followerCount !== undefined || user.username)">
         <span *ngIf="user.followerCount !== undefined">{{ user.followerCount }} người theo dõi</span>
-        <span *ngIf="user.followerCount !== undefined && user.postCount !== undefined"> • </span>
-        <span *ngIf="user.postCount !== undefined">{{ user.postCount }} bài viết</span>
+        <span *ngIf="user.followerCount === undefined && user.username">{{ user.username }}</span>
       </ng-container>
     </p>
   </div>

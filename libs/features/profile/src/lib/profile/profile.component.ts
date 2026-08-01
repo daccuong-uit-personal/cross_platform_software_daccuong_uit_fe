@@ -34,6 +34,7 @@ import { ProfileFacade } from '../data-access/profile.facade';
 export class ProfileComponent {
   private authService = inject(AuthService);
   private profileFacade = inject(ProfileFacade);
+  private loadedUserId: string | null = null;
 
   profileData = this.profileFacade.profile;
 
@@ -95,12 +96,17 @@ export class ProfileComponent {
 
   menuItems: SidebarMenuItem[] = GLOBAL_MENU_ITEMS;
 
+  private resolveUserId(): string | null {
+    const user = this.authService.user();
+    return (user?.userId ?? user?.id ?? null) as string | null;
+  }
+
   constructor() {
     effect(() => {
-      const user = this.authService.user();
-      const userId = user?.userId;
-      if (userId) {
+      const userId = this.resolveUserId();
+      if (userId && userId !== this.loadedUserId) {
         untracked(() => {
+          this.loadedUserId = userId;
           this.profileFacade.loadProfile(userId);
           this.profileFacade.loadProfileTabData(userId, this.activeTab());
         });
@@ -110,8 +116,7 @@ export class ProfileComponent {
 
   selectTab(tabId: ProfileTabId) {
     this.activeTab.set(tabId);
-    const user = this.authService.user();
-    const userId = user?.userId;
+    const userId = this.resolveUserId();
     if (userId) {
       this.profileFacade.loadProfileTabData(userId, tabId);
     }
@@ -119,6 +124,10 @@ export class ProfileComponent {
 
   onTabChange(tab: UiTab) {
     this.selectTab(tab.id as ProfileTabId);
+  }
+
+  onToggleLike(postId: string) {
+    this.profileFacade.togglePostLike(postId);
   }
 
   trackByTabId(index: number, tab: ProfileTab) {

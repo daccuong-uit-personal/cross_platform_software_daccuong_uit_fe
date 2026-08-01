@@ -4,6 +4,25 @@ import { Observable, map, of } from 'rxjs';
 import { appConfig } from '../config/app-config';
 import { CacheService } from './cache.service';
 
+export interface ApiResponse<T> {
+  statusCode: number;
+  message?: string;
+  data: T;
+  meta?: {
+    timestamp?: string;
+    path?: string;
+    pagination?: {
+      currentPage?: number;
+      totalPages?: number;
+      totalItems?: number;
+      itemsPerPage?: number;
+      hasNext?: boolean;
+      nextCursor?: string;
+    };
+    [key: string]: unknown;
+  };
+}
+
 export interface ApiOptions {
   headers?: HttpHeaders | { [header: string]: string | string[] };
   params?: HttpParams | { [param: string]: string | number | boolean | ReadonlyArray<string | number | boolean> };
@@ -22,23 +41,6 @@ export class ApiService {
   private readonly http = inject(HttpClient);
   private readonly cache = inject(CacheService);
   private readonly apiBase = appConfig.apiUrl;
-
-  private unwrap<T>(source: Observable<unknown>): Observable<T> {
-    return source.pipe(
-      map(res => {
-        const response = res as Record<string, unknown>;
-        // Handle double wrapping: { data: { data: { ... } } }
-        if (response && response['data'] && (response['data'] as Record<string, unknown>)['data'] !== undefined) {
-          return (response['data'] as Record<string, unknown>)['data'] as T;
-        }
-        // Handle single wrapping: { data: { ... } }
-        if (response && response['data'] !== undefined) {
-          return response['data'] as T;
-        }
-        return res as T;
-      })
-    );
-  }
 
   /**
    * Remove cache option from ApiOptions to avoid passing to HttpClient
@@ -64,13 +66,13 @@ export class ApiService {
     return key;
   }
 
-  get<T>(path: string, options?: ApiOptions): Observable<T> {
+  get<T>(path: string, options?: ApiOptions): Observable<ApiResponse<T>> {
     const cacheKey = this.getCacheKey(path, options?.params);
     const cacheConfig = options?.cache;
 
     // Check cache first
     if (cacheConfig) {
-      const cached = this.cache.get<T>(cacheKey);
+      const cached = this.cache.get<ApiResponse<T>>(cacheKey);
       if (cached) {
         return of(cached);
       }
@@ -78,7 +80,7 @@ export class ApiService {
 
     // Fetch from API
     const sanitized = this.sanitizeOptions(options);
-    return this.unwrap<T>(this.http.get(`${this.apiBase}${path}`, sanitized)).pipe(
+    return this.http.get<ApiResponse<T>>(`${this.apiBase}${path}`, sanitized).pipe(
       map(data => {
         // Store in cache if enabled
         if (cacheConfig) {
@@ -90,24 +92,19 @@ export class ApiService {
     );
   }
 
-  post<T>(path: string, body: unknown = {}, options?: ApiOptions): Observable<T> {
+  post<T>(path: string, body: unknown = {}, options?: ApiOptions): Observable<ApiResponse<T>> {
     const sanitized = this.sanitizeOptions(options);
-    return this.unwrap<T>(this.http.post(`${this.apiBase}${path}`, body, sanitized));
+    return this.http.post<ApiResponse<T>>(`${this.apiBase}${path}`, body, sanitized);
   }
 
-  put<T>(path: string, body: unknown = {}, options?: ApiOptions): Observable<T> {
+  put<T>(path: string, body: unknown, options?: ApiOptions): Observable<ApiResponse<T>> {
     const sanitized = this.sanitizeOptions(options);
-    return this.unwrap<T>(this.http.put(`${this.apiBase}${path}`, body, sanitized));
+    return this.http.put<ApiResponse<T>>(`${this.apiBase}${path}`, body, sanitized);
   }
 
-  patch<T>(path: string, body: unknown = {}, options?: ApiOptions): Observable<T> {
+  delete<T>(path: string, options?: ApiOptions): Observable<ApiResponse<T>> {
     const sanitized = this.sanitizeOptions(options);
-    return this.unwrap<T>(this.http.patch(`${this.apiBase}${path}`, body, sanitized));
-  }
-
-  delete<T>(path: string, options?: ApiOptions): Observable<T> {
-    const sanitized = this.sanitizeOptions(options);
-    return this.unwrap<T>(this.http.delete(`${this.apiBase}${path}`, sanitized));
+    return this.http.delete<ApiResponse<T>>(`${this.apiBase}${path}`, sanitized);
   }
 }
 

@@ -59,50 +59,33 @@ const CONTENT_LIMIT = 280; // chars before truncating
         </div>
       </div>
 
-      <!-- Stats Bar (Facebook-style) -->
-      <div class="post-stats" *ngIf="post.likesCount || post.commentsCount || post.sharesCount">
-        <div class="stats-reactions" *ngIf="post.likesCount">
-          <span class="reaction-icons">
-            <span class="reaction-icon like">👍</span>
-          </span>
-          <span class="stats-count">{{ post.likesCount }}</span>
-        </div>
-        <div class="stats-right">
-          <span *ngIf="post.commentsCount">{{ post.commentsCount }} bình luận</span>
-          <span *ngIf="post.sharesCount">{{ post.sharesCount }} lượt chia sẻ</span>
-        </div>
-      </div>
-
       <div class="post-divider"></div>
 
-      <!-- Action Bar (Facebook-style with labels) -->
       <div class="post-actions">
-        <button class="action-btn action-like" [class.liked]="post.isLiked" type="button" (click)="onToggleLike()">
-          <span class="icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z" />
-              <path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3" />
+        <button class="action-btn action-like" [class.liked]="post.isLiked" type="button" (click)="onToggleLike()" aria-label="Yêu thích">
+          <span class="action-count">{{ post.likesCount }}</span>
+          <span class="icon" [class.liked]="post.isLiked">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M16.5 3.5c-1.74 0-3.41.81-4.5 2.09C10.91 4.31 9.24 3.5 7.5 3.5 4.42 3.5 2 5.92 2 9c0 4.28 4.5 7.74 9.55 12.04L12 21.35l.45-.31C17.5 16.74 22 13.28 22 9c0-3.08-2.42-5.5-5.5-5.5z" />
             </svg>
           </span>
-          <span class="action-label">Thích</span>
         </button>
-        <button class="action-btn action-comment" type="button" (click)="onComment()">
+        <button class="action-btn action-comment" type="button" (click)="onComment()" aria-label="Bình luận">
+          <span class="action-count">{{ post.commentsCount }}</span>
           <span class="icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
             </svg>
           </span>
-          <span class="action-label">Bình luận</span>
         </button>
-        <button class="action-btn action-share" type="button" (click)="onShare()">
+        <button class="action-btn action-share" type="button" (click)="onShare()" aria-label="Chia sẻ">
+          <span class="action-count">{{ post.sharesCount }}</span>
           <span class="icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M4 12v3a3 3 0 0 0 3 3h10" />
-              <polyline points="16 6 21 12 16 18" />
-              <line x1="21" y1="12" x2="9" y2="12" />
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M22 2L11 13" />
+              <path d="M22 2L15 22L11 13L2 9L22 2Z" />
             </svg>
           </span>
-          <span class="action-label">Chia sẻ</span>
         </button>
       </div>
     </article>
@@ -269,14 +252,18 @@ const CONTENT_LIMIT = 280; // chars before truncating
         color: var(--color-text-muted, rgba(107, 114, 128, 0.85));
         cursor: pointer;
         font-size: var(--font-size-caption);
-        padding: calc(6px * var(--padding-scale, 1)) calc(10px * var(--padding-scale, 1));
-        height: calc(36px * var(--padding-scale, 1));
+        padding: calc(8px * var(--padding-scale, 1)) calc(12px * var(--padding-scale, 1));
+        height: calc(38px * var(--padding-scale, 1));
         border-radius: 9999px;
         white-space: nowrap;
         transition: background 0.2s ease, color 0.2s ease;
       }
       .post-actions .action-btn:hover {
         background: rgba(29, 155, 240, 0.08);
+        color: var(--color-text-base, #0f172a);
+      }
+      .post-actions .action-count {
+        font-weight: 700;
         color: var(--color-text-base, #0f172a);
       }
       .post-actions .action-btn .icon {
@@ -290,25 +277,22 @@ const CONTENT_LIMIT = 280; // chars before truncating
         width: 100%;
         height: 100%;
         display: block;
-      }
-      .post-actions .action-btn .action-label {
-        font-size: var(--font-size-caption);
-        font-weight: 600;
-        color: inherit;
+        fill: currentColor;
       }
       .post-actions .action-like:hover {
-        background: rgba(23, 120, 242, 0.08);
-        color: #1877f2;
+        background: rgba(255, 56, 92, 0.12);
+        color: #e0245e;
       }
       .post-actions .action-like.liked {
-        color: #1877f2;
+        color: #e0245e;
       }
-      .post-actions .action-like.liked .icon svg {
-        fill: #1877f2;
-        stroke: #1877f2;
+      .post-actions .action-like .icon.liked svg {
+        fill: #e0245e;
       }
-      .post-actions .action-comment:hover { background: rgba(15, 23, 42, 0.06); }
-      .post-actions .action-share:hover { background: rgba(15, 23, 42, 0.06); }
+      .post-actions .action-comment:hover,
+      .post-actions .action-share:hover {
+        background: rgba(15, 23, 42, 0.06);
+      }
 
       /* Stats Bar */
       .post-stats {

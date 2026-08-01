@@ -11,6 +11,7 @@ export class HomeFacade {
   private readonly _posts = signal<Post[]>([]);
   private readonly _isLoading = signal<boolean>(false);
   private readonly _error = signal<string | null>(null);
+  private readonly pendingLikePostIds = new Set<string>();
 
   readonly posts = this._posts.asReadonly();
   readonly isLoading = this._isLoading.asReadonly();
@@ -33,36 +34,32 @@ export class HomeFacade {
 
   toggleLike(postId: string) {
     const post = this._posts().find(p => p.id === postId);
-    if (!post) return;
+    if (!post || this.pendingLikePostIds.has(postId)) {
+      return;
+    }
+
     const wasLiked = post.isLiked;
+    this.pendingLikePostIds.add(postId);
 
-    // Optimistic update
-    this._posts.update(posts => posts.map(p => {
-      if (p.id === postId) {
-        return {
-          ...p,
-          isLiked: !wasLiked,
-          likesCount: wasLiked ? p.likesCount - 1 : p.likesCount + 1
-        };
-      }
-      return p;
-    }));
+    const optimistic = this.postService.applyOptimisticLike(this._posts(), postId);
+    this._posts.set(optimistic.posts);
 
-    // Call API (like vs unlike based on current state)
     this.postService.toggleLike(postId, wasLiked).pipe(take(1)).subscribe({
+      next: (result) => {
+        this._posts.update(posts => this.postService.reconcileLike(posts, postId, result, {
+          wasLiked,
+          likesCount: optimistic.optimisticLikesCount,
+        }, optimistic.optimisticIsLiked));
+      },
       error: () => {
-        // Rollback on error
-        this._posts.update(posts => posts.map(p => {
-          if (p.id === postId) {
-            return {
-              ...p,
-              isLiked: wasLiked,
-              likesCount: wasLiked ? p.likesCount + 1 : p.likesCount - 1
-            };
-          }
-          return p;
+        this._posts.update(posts => this.postService.rollbackLike(posts, postId, {
+          wasLiked,
+          likesCount: post.likesCount,
         }));
-      }
+      },
+      complete: () => {
+        this.pendingLikePostIds.delete(postId);
+      },
     });
   }
 

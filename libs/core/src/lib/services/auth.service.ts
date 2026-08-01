@@ -1,7 +1,8 @@
 import { HttpContext } from '@angular/common/http';
 import { Injectable, signal, computed, inject } from '@angular/core';
-import { ApiService } from './api.service';
-import { tap, catchError, of, switchMap } from 'rxjs';
+import { ApiResponse, ApiService } from './api.service';
+import { catchError, of, switchMap } from 'rxjs';
+import { map, tap } from 'rxjs/operators';
 import { urlConfig } from '../config/url-config';
 import { showGlobalLoading } from '../interceptors/loading.interceptor';
 
@@ -34,7 +35,8 @@ export class AuthService {
     const context = new HttpContext().set(showGlobalLoading, true);
 
     return this.api.post<AuthResponse>(urlConfig.auth.login, credentials, { context }).pipe(
-      tap(res => this.storeTokens(res)),
+      map((res: ApiResponse<AuthResponse>) => res.data),
+      tap((auth: AuthResponse) => this.storeTokens(auth)),
       switchMap(() => this.fetchProfile(true))
     );
   }
@@ -43,18 +45,23 @@ export class AuthService {
     const context = new HttpContext().set(showGlobalLoading, true);
 
     return this.api.post<AuthResponse>(urlConfig.auth.register, data, { context }).pipe(
-      tap(res => this.storeTokens(res)),
+      map((res: ApiResponse<AuthResponse>) => res.data),
+      tap((auth: AuthResponse) => this.storeTokens(auth)),
       switchMap(() => this.fetchProfile(true))
     );
   }
 
   sendOtp(phoneNumber: string) {
-    return this.api.post<{ message: string }>(urlConfig.auth.sendOtp, { phoneNumber });
+    return this.api.post<{ message: string }>(urlConfig.auth.sendOtp, { phoneNumber }).pipe(
+      map((res: ApiResponse<{ message: string }>) => res.data)
+    );
   }
 
   changePassword(data: Record<string, unknown>) {
     const context = new HttpContext().set(showGlobalLoading, true);
-    return this.api.post<{ message: string }>(urlConfig.auth.changePassword, data, { context });
+    return this.api.post<{ message: string }>(urlConfig.auth.changePassword, data, { context }).pipe(
+      map((res: ApiResponse<{ message: string }>) => res.data)
+    );
   }
 
   logout() {
@@ -69,7 +76,8 @@ export class AuthService {
     if (!refreshToken) return of(null);
 
     return this.api.post<AuthResponse>(urlConfig.auth.refresh, { refreshToken }).pipe(
-      tap(res => this.storeTokens(res)),
+      map((res: ApiResponse<AuthResponse>) => res.data),
+      tap((auth: AuthResponse) => this.storeTokens(auth)),
       catchError(() => {
         this.logout();
         return of(null);
@@ -108,7 +116,8 @@ export class AuthService {
       : undefined;
 
     return this.api.get<User>(urlConfig.profile.me, options).pipe(
-      tap(user => {
+      map((res: ApiResponse<User>) => res.data),
+      tap((user: User) => {
         this._user.set(user);
         this.storeUser(user);
       })
