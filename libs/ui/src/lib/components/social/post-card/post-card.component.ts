@@ -27,7 +27,7 @@ const CONTENT_LIMIT = 280; // chars before truncating
           </div>
         </div>
 
-        <button type="button" class="more-btn" aria-label="Thêm tùy chọn" (click)="onMoreOptions()">···</button>
+        <button *ngIf="!isCompactMode" type="button" class="more-btn" aria-label="Thêm tùy chọn" (click)="onMoreOptions()">···</button>
       </div>
 
       <p class="post-text" [class.truncated]="!isExpanded() && post.content.length > contentLimit">
@@ -102,6 +102,7 @@ const CONTENT_LIMIT = 280; // chars before truncating
         border: 1px solid var(--color-border-subtle, rgba(148, 163, 184, 0.24));
         border-radius: 8px;
         transition: background 0.2s ease;
+        box-sizing: border-box;
       }
       .post-card:hover {
         background: var(--color-surface-subtle, rgba(29, 155, 240, 0.04));
@@ -354,12 +355,14 @@ const CONTENT_LIMIT = 280; // chars before truncating
 export class PostCardComponent {
   @Input() post!: Post;
   @Input() showReplyBox = true;
+  @Input() isCompactMode = false;
   @Output() toggleLike = new EventEmitter<void>();
   @Output() toggleBookmark = new EventEmitter<void>();
   @Output() comment = new EventEmitter<void>();
   @Output() share = new EventEmitter<void>();
   @Output() reply = new EventEmitter<string>();
   @Output() moreOptions = new EventEmitter<void>();
+  @Output() close = new EventEmitter<void>();
 
   readonly isExpanded = signal(false);
   readonly contentLimit = CONTENT_LIMIT;
@@ -405,5 +408,9 @@ export class PostCardComponent {
 
   onMoreOptions(): void {
     this.moreOptions.emit();
+  }
+
+  onClose(): void {
+    this.close.emit();
   }
 }

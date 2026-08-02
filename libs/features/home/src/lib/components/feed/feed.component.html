@@ -58,7 +58,8 @@
       <app-post-card
         *ngFor="let post of filteredPosts(); trackBy: trackByPostId"
         [post]="post"
-        (toggleLike)="onToggleLike(post.id)">
+        (toggleLike)="onToggleLike(post.id)"
+        (comment)="onOpenComments(post)">
       </app-post-card>
     </ng-container>
 
@@ -67,6 +68,15 @@
       <p>Chưa có bài đăng nào. Hãy là người đầu tiên đăng bài!</p>
     </div>
   </div>
+
+  <lib-comment-thread-panel
+    *ngIf="isCommentPanelOpen() && selectedCommentTarget()"
+    [target]="selectedCommentTarget()!"
+    [post]="selectedCommentTarget()?.post"
+    [comments]="selectedComments()"
+    (close)="onCloseCommentPanel()"
+    (submitComment)="onSubmitComment($event)">
+  </lib-comment-thread-panel>
 </div>
 
 <!-- Create Post Modal -->
@@ -75,3 +85,4 @@
   (close)="onCloseCreatePost()"
   (submitPost)="onSubmitPost($event)">
 </lib-create-post-modal>
+

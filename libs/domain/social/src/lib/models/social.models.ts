@@ -44,6 +44,12 @@ export interface Post {
 
 export type PostPrivacy = 'public' | 'private' | 'friends';
 
+export interface MentionRange {
+  userId: string;
+  start: number;
+  end: number;
+}
+
 export interface Comment {
   id: string;
   author: User;
@@ -55,6 +61,9 @@ export interface Comment {
   isLiked: boolean;
   replies: Comment[];
   mentionedUsers: string[];
+  mentionRanges?: MentionRange[];
+  replyCount?: number;
+  parentId?: string | null;
 }
 
 export interface Notification {
@@ -139,6 +148,8 @@ export interface CreateCommentPayload {
   postId: string;
   content: string;
   mentionedUsers?: string[];
+  mentionedUserIds?: string[];
+  mentionRanges?: MentionRange[];
   replyToCommentId?: string;
 }
 

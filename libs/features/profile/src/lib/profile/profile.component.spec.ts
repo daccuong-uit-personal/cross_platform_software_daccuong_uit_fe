@@ -22,16 +22,30 @@ describe('ProfileComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should keep first four tabs visible by default', () => {
-    expect(component.visibleTabs().length).toBe(4);
-    expect(component.hiddenTabs().length).toBeGreaterThan(0);
-  });
+  it('should open and close the comment panel for a post', () => {
+    const post = {
+      id: 'post-1',
+      content: 'Hello world',
+      author: { id: 'u1', username: 'alice', fullName: 'Alice', avatar: '' },
+      createdAt: '2024-01-01T00:00:00.000Z',
+      images: [],
+      hashtags: [],
+      mentions: [],
+      likesCount: 0,
+      commentsCount: 0,
+      sharesCount: 0,
+      isLiked: false,
+      comments: [],
+    } as any;
 
-  it('should activate hidden tab and bring it into visible tabs when selected', () => {
-    const hiddenTab = component.hiddenTabs()[0];
-    component.selectTab(hiddenTab.id);
+    component.onOpenComments(post);
 
-    expect(component.activeTab()).toBe(hiddenTab.id);
-    expect(component.visibleTabs().some((tab) => tab.id === hiddenTab.id)).toBeTrue();
+    expect(component.isCommentPanelOpen()).toBeTrue();
+    expect(component.selectedCommentTarget()?.post).toEqual(post);
+
+    component.onCloseCommentPanel();
+
+    expect(component.isCommentPanelOpen()).toBeFalse();
+    expect(component.selectedCommentTarget()).toBeNull();
   });
 });

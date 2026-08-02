@@ -11,6 +11,7 @@ export * from './lib/header/app-header.component';
 export * from './lib/footer/auth-footer.component';
 export * from './lib/footer/app-footer.component';
 export * from './lib/components';
+export * from './lib/components/social';
 
 // Layouts
 export * from './lib/layouts/form-layout.component';

@@ -11,7 +11,9 @@ import {
   ProfileGroupCardComponent,
   GLOBAL_MENU_ITEMS,
   UiTabsComponent,
-  UiTab
+  UiTab,
+  CommentThreadPanelComponent,
+  CommentThreadTarget,
 } from '@fe/ui';
 import { ProfileRightSidebarComponent } from '../components/profile-right-sidebar/profile-right-sidebar.component';
 import {
@@ -21,12 +23,14 @@ import {
   ProfileFriend,
   ProfileGroup,
 } from '@fe/domain/profile';
+import { Comment, CreateCommentPayload, Post, SocialCommentService } from '@fe/domain/social';
+import { insertCommentIntoTree, mergeCommentsWithServer, replaceOptimisticComment } from '@fe/domain/social';
 import { ProfileFacade } from '../data-access/profile.facade';
 
 @Component({
   standalone: true,
   selector: 'feat-profile-page',
-  imports: [CommonModule, RouterModule, PageShellComponent, ProfileRightSidebarComponent, UiButton, PostCardComponent, ProfileFriendCardComponent, ProfileGroupCardComponent, UiTabsComponent],
+  imports: [CommonModule, RouterModule, PageShellComponent, ProfileRightSidebarComponent, UiButton, PostCardComponent, ProfileFriendCardComponent, ProfileGroupCardComponent, UiTabsComponent, CommentThreadPanelComponent],
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -34,6 +38,7 @@ import { ProfileFacade } from '../data-access/profile.facade';
 export class ProfileComponent {
   private authService = inject(AuthService);
   private profileFacade = inject(ProfileFacade);
+  private socialCommentService = inject(SocialCommentService);
   private loadedUserId: string | null = null;
 
   profileData = this.profileFacade.profile;
@@ -71,6 +76,9 @@ export class ProfileComponent {
   posts = this.profileFacade.posts;
   friends = this.profileFacade.friends;
   groups = this.profileFacade.groups;
+  isCommentPanelOpen = signal(false);
+  selectedCommentTarget = signal<CommentThreadTarget | null>(null);
+  selectedComments = signal<Comment[]>([]);
   
   // Expose tab data to check if empty
   tabData = this.profileFacade.tabData;
@@ -128,6 +136,94 @@ export class ProfileComponent {
 
   onToggleLike(postId: string) {
     this.profileFacade.togglePostLike(postId);
+  }
+
+  onOpenComments(post: Post): void {
+    this.selectedCommentTarget.set({
+      id: post.id,
+      type: 'post',
+      title: post.content?.slice(0, 60) || 'Bài viết',
+      description: post.author?.fullName ? `Đăng bởi ${post.author.fullName}` : undefined,
+      previewImage: post.images?.[0],
+      badge: 'Bài đăng',
+      post,
+    });
+    this.selectedComments.set([]);
+    this.isCommentPanelOpen.set(true);
+
+    this.socialCommentService.getComments(post.id).subscribe((comments) => {
+      this.selectedComments.update((currentComments) => mergeCommentsWithServer(currentComments, comments));
+    });
+  }
+
+  onCloseCommentPanel(): void {
+    this.isCommentPanelOpen.set(false);
+    this.selectedCommentTarget.set(null);
+    this.selectedComments.set([]);
+  }
+
+  onSubmitComment(payload: CreateCommentPayload): void {
+    const optimisticId = `optimistic-${Date.now()}`;
+    const currentUser = this.authService.user();
+    const optimisticComment: Comment = {
+      id: optimisticId,
+      author: {
+        id: currentUser?.userId ?? currentUser?.id ?? 'me',
+        username: currentUser?.username ?? 'me',
+        fullName: currentUser?.displayName ?? currentUser?.username ?? 'Bạn',
+        avatar: 'https://i.pravatar.cc/150?img=12',
+        bio: '',
+        followers: 0,
+        following: 0,
+        postsCount: 0,
+        isFollowing: false,
+        isFollowedBy: false,
+        isBlocked: false,
+        isMuted: false,
+      },
+      postId: payload.postId,
+      content: payload.content,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      likesCount: 0,
+      isLiked: false,
+      replies: [],
+      mentionedUsers: payload.mentionedUserIds ?? payload.mentionedUsers ?? [],
+      mentionRanges: payload.mentionRanges ?? [],
+      replyCount: 0,
+      parentId: payload.replyToCommentId ?? null,
+    };
+
+    this.selectedComments.update((comments) => {
+      if (payload.replyToCommentId) {
+        return insertCommentIntoTree(comments, optimisticComment, payload.replyToCommentId);
+      }
+
+      return [optimisticComment, ...comments];
+    });
+
+    this.socialCommentService.createComment(payload).subscribe({
+      next: (comment) => {
+        this.selectedComments.update((comments) => {
+          if (!comment?.id) {
+            return comments;
+          }
+
+          return replaceOptimisticComment(comments, optimisticId, {
+            ...optimisticComment,
+            ...comment,
+            author: comment.author ?? optimisticComment.author,
+            replies: comment.replies ?? [],
+            mentionedUsers: comment.mentionedUsers ?? optimisticComment.mentionedUsers,
+            mentionRanges: comment.mentionRanges ?? optimisticComment.mentionRanges,
+            parentId: comment.parentId ?? optimisticComment.parentId,
+          });
+        });
+      },
+      error: () => {
+        this.selectedComments.update((comments) => comments.filter((item) => item.id !== optimisticId));
+      },
+    });
   }
 
   trackByTabId(index: number, tab: ProfileTab) {
