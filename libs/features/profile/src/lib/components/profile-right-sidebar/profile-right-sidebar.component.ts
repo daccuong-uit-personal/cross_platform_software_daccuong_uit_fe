@@ -8,10 +8,7 @@ import {
   computed,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {
-  RouterModule,
-  Router
-} from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { AuthService } from '@fe/core';
 import { ProfileFacade } from '../../data-access/profile.facade';
 
@@ -28,10 +25,18 @@ export class ProfileRightSidebarComponent {
   private elementRef = inject(ElementRef);
   private profileFacade = inject(ProfileFacade);
 
-  @ViewChild('menuDropdown')
-  menuDropdown: any;
+  @ViewChild('menuDropdown') menuDropdown: any;
+  @ViewChild('reelsContainer') reelsContainer!: ElementRef<HTMLDivElement>;
 
   user = this.authService.user;
+  profileData = this.profileFacade.profile;
+
+  // Tự động kiểm tra xem user hiện tại có phải chủ sở hữu profile này không
+  isOwner = computed(() => {
+    const currentUserId = this.user()?.id;
+    const profileUserId = this.profileData()?.id;
+    return !!currentUserId && currentUserId === profileUserId;
+  });
 
   showMenu = signal(false);
 
@@ -39,7 +44,6 @@ export class ProfileRightSidebarComponent {
   videoCount = signal(5);
   viewsCount = signal(120);
 
-  profileData = this.profileFacade.profile;
   location = computed(() => this.profileData()?.location || 'Hồ Chí Minh, Việt Nam');
   from = computed(() => 'Hà Nội, Việt Nam');
   birthday = computed(() => '01/01/1995');
@@ -48,9 +52,38 @@ export class ProfileRightSidebarComponent {
 
   mockReels = signal([
     { id: 1, title: 'Bí kíp quay video triệu view', views: '1.2M', cover: 'https://picsum.photos/300/500?random=11' },
-    { id: 2, title: 'Cách edit video siêu nhanh', views: '850K', cover: 'https://picsum.photos/300/500?random=12' }
+    { id: 2, title: 'Cách edit video siêu nhanh', views: '850K', cover: 'https://picsum.photos/300/500?random=12' },
+    { id: 3, title: 'Xu hướng Reels mới nhất', views: '500K', cover: 'https://picsum.photos/300/500?random=13' }
   ]);
 
+  // ═══════════════════════════════════════════════════════════
+  // Handlers cho Slider Tin Nổi Bật
+  // ═══════════════════════════════════════════════════════════
+  scrollLeft(): void {
+    if (this.reelsContainer) {
+      this.reelsContainer.nativeElement.scrollBy({ left: -160, behavior: 'smooth' });
+    }
+  }
+
+  scrollRight(): void {
+    if (this.reelsContainer) {
+      this.reelsContainer.nativeElement.scrollBy({ left: 160, behavior: 'smooth' });
+    }
+  }
+
+  onActionClick(): void {
+    if (this.isOwner()) {
+      // Logic mở modal/chuyển trang Chỉnh sửa tin nổi bật
+      console.log('Mở modal chỉnh sửa tin nổi bật');
+    } else {
+      // Logic xem tất cả tin nổi bật của người dùng
+      console.log('Xem tất cả tin nổi bật');
+    }
+  }
+
+  // ═══════════════════════════════════════════════════════════
+  // Menu & Auth Handlers
+  // ═══════════════════════════════════════════════════════════
   toggleMenu(event?: Event) {
     if (event) {
       event.stopPropagation();

@@ -26,11 +26,12 @@ import {
 import { Comment, CreateCommentPayload, Post, SocialCommentService } from '@fe/domain/social';
 import { insertCommentIntoTree, mergeCommentsWithServer, replaceOptimisticComment } from '@fe/domain/social';
 import { ProfileFacade } from '../data-access/profile.facade';
+import { AboutComponent } from './about/about.component';
 
 @Component({
   standalone: true,
   selector: 'feat-profile-page',
-  imports: [CommonModule, RouterModule, PageShellComponent, ProfileRightSidebarComponent, UiButton, PostCardComponent, ProfileFriendCardComponent, ProfileGroupCardComponent, UiTabsComponent, CommentThreadPanelComponent],
+  imports: [CommonModule, RouterModule, PageShellComponent, ProfileRightSidebarComponent, UiButton, PostCardComponent, ProfileFriendCardComponent, ProfileGroupCardComponent, UiTabsComponent, CommentThreadPanelComponent, AboutComponent],
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -62,8 +63,8 @@ export class ProfileComponent {
       label: tab.label,
     }))
   );
-  
-  uiTabs = computed<UiTab[]>(() => 
+
+  uiTabs = computed<UiTab[]>(() =>
     this.tabs().map(tab => ({
       id: tab.id,
       label: tab.label
@@ -79,7 +80,7 @@ export class ProfileComponent {
   isCommentPanelOpen = signal(false);
   selectedCommentTarget = signal<CommentThreadTarget | null>(null);
   selectedComments = signal<Comment[]>([]);
-  
+
   // Expose tab data to check if empty
   tabData = this.profileFacade.tabData;
   isTabEmpty = computed(() => {
@@ -124,6 +125,9 @@ export class ProfileComponent {
 
   selectTab(tabId: ProfileTabId) {
     this.activeTab.set(tabId);
+    if (tabId === 'about') {
+      return;
+    }
     const userId = this.resolveUserId();
     if (userId) {
       this.profileFacade.loadProfileTabData(userId, tabId);

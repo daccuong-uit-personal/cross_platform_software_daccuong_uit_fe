@@ -23,8 +23,12 @@ export interface ProfileResponse {
   bio?: string;
   avatarUrl?: string;
   coverUrl?: string;
-  email?: string;
+  website?: string;
   location?: string;
+  hometown?: string;
+  birthday?: string;
+  gender?: string;
+  relationshipStatus?: string;
   isVerified?: boolean;
   isPrivate?: boolean;
   stats?: ProfileStats;

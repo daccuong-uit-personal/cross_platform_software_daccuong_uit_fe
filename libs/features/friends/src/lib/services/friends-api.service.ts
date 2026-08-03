@@ -27,6 +27,13 @@ export interface FriendUser {
   relationshipType?: string;
   subtitle?: string;
   menuItems?: MenuItemConfig[];
+  bio?: string;
+  website?: string;
+  location?: string;
+  hometown?: string;
+  birthday?: string;
+  gender?: string;
+  relationshipStatus?: string;
 }
 
 @Injectable({

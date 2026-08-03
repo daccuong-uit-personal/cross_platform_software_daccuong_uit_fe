@@ -1,6 +1,6 @@
 import type { Post } from '@fe/domain/social';
 
-export type ProfileTabId = 'posts' | 'videos' | 'reels' | 'stories' | 'novels' | 'friends' | 'groups';
+export type ProfileTabId = 'posts' | 'about' | 'videos' | 'reels' | 'stories' | 'novels' | 'friends' | 'groups';
 
 export interface ProfileTab {
   id: ProfileTabId;

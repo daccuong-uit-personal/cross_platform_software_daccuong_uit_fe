@@ -49,6 +49,7 @@ export class ProfileFacade {
 
     const defaultTabs: ProfileTab[] = [
       { id: 'posts', label: 'Bài đăng', count: undefined },
+      { id: 'about', label: 'Giới thiệu', count: undefined },
       { id: 'reels', label: 'Reels', count: undefined },
       { id: 'videos', label: 'Videos', count: undefined },
       { id: 'stories', label: 'Stories', count: undefined },
@@ -142,18 +143,18 @@ export class ProfileFacade {
           const existingPosts = this._posts();
           const posts = Array.isArray(data)
             ? (data as any[]).map((post) => {
-                const mappedPost = this.mapProfilePost(post, this._profile()) as ProfilePost;
-                const existing = existingPosts.find((item) => item.id === mappedPost.id);
-                if (existing) {
-                  const storedLikeState = this.socialPostService.getLikeState(mappedPost.id);
-                  return {
-                    ...mappedPost,
-                    isLiked: storedLikeState?.isLiked ?? existing.isLiked,
-                    likesCount: storedLikeState?.likesCount ?? (mappedPost.likesCount || existing.likesCount),
-                  } as ProfilePost;
-                }
-                return mappedPost;
-              })
+              const mappedPost = this.mapProfilePost(post, this._profile()) as ProfilePost;
+              const existing = existingPosts.find((item) => item.id === mappedPost.id);
+              if (existing) {
+                const storedLikeState = this.socialPostService.getLikeState(mappedPost.id);
+                return {
+                  ...mappedPost,
+                  isLiked: storedLikeState?.isLiked ?? existing.isLiked,
+                  likesCount: storedLikeState?.likesCount ?? (mappedPost.likesCount || existing.likesCount),
+                } as ProfilePost;
+              }
+              return mappedPost;
+            })
             : [];
           this._posts.set(posts as ProfilePost[]);
         } else if (tabId === 'groups') {
