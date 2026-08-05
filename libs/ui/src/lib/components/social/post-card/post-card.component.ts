@@ -5,13 +5,14 @@
 import { Component, Input, Output, EventEmitter, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Post } from '@fe/domain/social';
+import { RelativeTimePipe } from '@fe/core';
 
 const CONTENT_LIMIT = 280; // chars before truncating
 
 @Component({
   selector: 'app-post-card',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RelativeTimePipe],
   template: `
     <article class="post-card" *ngIf="post">
       <div class="post-card-header">
@@ -20,10 +21,9 @@ const CONTENT_LIMIT = 280; // chars before truncating
           <div class="author-info">
             <div class="author-name-row">
               <span class="author-name">{{ post.author.fullName || post.author.username }}</span>
-              <span class="post-time">{{ formatDate(post.createdAt) }}</span>
+              <span class="post-time">{{ post.createdAt | relativeTime }}</span>
             </div>
             <span class="author-handle">@{{ post.author.username }}</span>
-            <p class="author-secondary" *ngIf="post.author.bio">{{ post.author.bio }}</p>
           </div>
         </div>
 
@@ -161,7 +161,7 @@ const CONTENT_LIMIT = 280; // chars before truncating
         border: none;
         background: transparent;
         color: var(--color-text-muted, rgba(0, 0, 0, 0.55));
-        font-size: var(--font-size-caption);
+        font-size: var(--font-size-label);
         cursor: pointer;
         padding: calc(6px * var(--padding-scale, 1));
         border-radius: 9999px;
@@ -366,21 +366,6 @@ export class PostCardComponent {
 
   readonly isExpanded = signal(false);
   readonly contentLimit = CONTENT_LIMIT;
-
-  formatDate(date: Date): string {
-    const now = new Date();
-    const diffMs = now.getTime() - new Date(date).getTime();
-    const diffMins = Math.floor(diffMs / 60000);
-    const diffHours = Math.floor(diffMs / 3600000);
-    const diffDays = Math.floor(diffMs / 86400000);
-
-    if (diffMins < 1) return 'now';
-    if (diffMins < 60) return `${diffMins}m ago`;
-    if (diffHours < 24) return `${diffHours}h ago`;
-    if (diffDays < 7) return `${diffDays}d ago`;
-
-    return new Date(date).toLocaleDateString();
-  }
 
   onToggleLike(): void {
     this.toggleLike.emit();

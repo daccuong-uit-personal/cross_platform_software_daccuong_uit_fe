@@ -26,3 +26,6 @@ export * from './lib/interceptors/error.interceptor';
 // Guards
 export * from './lib/guards/auth.guard';
 export * from './lib/guards/guest.guard';
+
+// Pipes
+export * from './lib/pipes/relative-time.pipe';

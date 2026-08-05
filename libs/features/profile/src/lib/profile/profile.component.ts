@@ -27,11 +27,12 @@ import { Comment, CreateCommentPayload, Post, SocialCommentService } from '@fe/d
 import { insertCommentIntoTree, mergeCommentsWithServer, replaceOptimisticComment } from '@fe/domain/social';
 import { ProfileFacade } from '../data-access/profile.facade';
 import { AboutComponent } from './about/about.component';
+import { RelativeTimePipe } from '@fe/core';
 
 @Component({
   standalone: true,
   selector: 'feat-profile-page',
-  imports: [CommonModule, RouterModule, PageShellComponent, ProfileRightSidebarComponent, UiButton, PostCardComponent, ProfileFriendCardComponent, ProfileGroupCardComponent, UiTabsComponent, CommentThreadPanelComponent, AboutComponent],
+  imports: [CommonModule, RouterModule, PageShellComponent, ProfileRightSidebarComponent, UiButton, PostCardComponent, ProfileFriendCardComponent, ProfileGroupCardComponent, UiTabsComponent, CommentThreadPanelComponent, AboutComponent, RelativeTimePipe],
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -51,6 +52,7 @@ export class ProfileComponent {
   coverUrl = computed(() => this.profileData()?.coverUrl || 'https://images.unsplash.com/photo-1511632765486-a01980e01a18');
   isVerified = computed(() => this.profileData()?.isVerified ?? false);
   profileHandle = computed(() => this.username() ? `@${this.username()}` : '@người_dùng');
+  createdAt = computed(() => this.profileData()?.createdAt ?? '');
 
   stats = this.profileFacade.stats;
   followingCount = computed(() => this.stats()?.followingCount ?? 0);

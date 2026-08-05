@@ -32,6 +32,7 @@ export interface ProfileResponse {
   isVerified?: boolean;
   isPrivate?: boolean;
   stats?: ProfileStats;
+  createdAt?: string;
 }
 
 export interface ProfileInsights {

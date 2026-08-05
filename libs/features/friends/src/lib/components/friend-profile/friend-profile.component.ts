@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, Input, OnChanges, SimpleChanges, co
 import { CommonModule } from '@angular/common';
 import { UiButton } from '@fe/ui';
 import { PostCardComponent } from '@fe/ui';
+import { RelativeTimePipe } from '@fe/core';
 import { ProfileService } from '@fe/domain/profile';
 import { Post, SocialPostService } from '@fe/domain/social';
 import { take, catchError } from 'rxjs/operators';
@@ -11,7 +12,7 @@ import { of } from 'rxjs';
 @Component({
   selector: 'feat-friend-profile',
   standalone: true,
-  imports: [CommonModule, UiButton, PostCardComponent],
+  imports: [CommonModule, UiButton, PostCardComponent, RelativeTimePipe],
   templateUrl: './friend-profile.component.html',
   styleUrls: ['./friend-profile.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush

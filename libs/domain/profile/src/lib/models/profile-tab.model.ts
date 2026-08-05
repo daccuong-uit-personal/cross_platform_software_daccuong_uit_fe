@@ -12,7 +12,7 @@ export type ProfilePost = Post;
 
 export interface ProfileFriend {
   id: string;
-  fullName: string;
+  displayName: string;
   username: string;
   avatarUrl: string;
   mutualFriends: number;

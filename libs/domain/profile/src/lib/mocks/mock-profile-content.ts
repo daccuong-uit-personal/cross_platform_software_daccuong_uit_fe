@@ -185,7 +185,7 @@ export const MOCK_PROFILE_POSTS: ProfilePost[] = [
 export const MOCK_PROFILE_FRIENDS: ProfileFriend[] = [
   {
     id: 'mock-friend-001',
-    fullName: 'Trần Văn A',
+    displayName: 'Trần Văn A',
     username: 'tranva',
     avatarUrl: 'https://ui-avatars.com/api/?name=Tr%E1%BA%A7n+V%C4%83n+A&background=333&color=fff',
     mutualFriends: 14,
@@ -193,7 +193,7 @@ export const MOCK_PROFILE_FRIENDS: ProfileFriend[] = [
   },
   {
     id: 'mock-friend-002',
-    fullName: 'Lê Thị B',
+    displayName: 'Lê Thị B',
     username: 'lethib',
     avatarUrl: 'https://ui-avatars.com/api/?name=L%C3%AA+Th%E1%BB%8B+B&background=4f46e5&color=fff',
     mutualFriends: 9,
@@ -201,7 +201,7 @@ export const MOCK_PROFILE_FRIENDS: ProfileFriend[] = [
   },
   {
     id: 'mock-friend-003',
-    fullName: 'Phạm Minh C',
+    displayName: 'Phạm Minh C',
     username: 'phamminhc',
     avatarUrl: 'https://ui-avatars.com/api/?name=Ph%E1%BA%A1m+Minh+C&background=047857&color=fff',
     mutualFriends: 5,
@@ -209,7 +209,7 @@ export const MOCK_PROFILE_FRIENDS: ProfileFriend[] = [
   },
   {
     id: 'mock-friend-004',
-    fullName: 'Ngô Lan D',
+    displayName: 'Ngô Lan D',
     username: 'ngoland',
     avatarUrl: 'https://ui-avatars.com/api/?name=Ng%C3%B4+Lan+D&background=be123c&color=fff',
     mutualFriends: 18,
@@ -217,7 +217,7 @@ export const MOCK_PROFILE_FRIENDS: ProfileFriend[] = [
   },
   {
     id: 'mock-friend-005',
-    fullName: 'Bùi Quang E',
+    displayName: 'Bùi Quang E',
     username: 'buiquange',
     avatarUrl: 'https://ui-avatars.com/api/?name=B%C3%B9i+Quang+E&background=ea580c&color=fff',
     mutualFriends: 23,

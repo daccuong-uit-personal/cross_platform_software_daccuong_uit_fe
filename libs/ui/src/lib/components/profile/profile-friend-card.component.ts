@@ -13,15 +13,15 @@ import { ProfileFriend } from '@fe/domain/profile';
       
       <div class="friend-card-top">
         <div class="friend-avatar">
-          <img [src]="friend.avatarUrl" [alt]="friend.fullName" />
+          <img [src]="friend.avatarUrl" [alt]="friend.displayName" />
         </div>
         <div class="friend-name-info">
-          <h3>{{ friend.fullName }}</h3>
+          <h3>{{ friend.displayName }}</h3>
           <p class="profile-card-meta">@{{ friend.username }}</p>
         </div>
       </div>
 
-      <div class="friend-card-middle">
+      <div class="friend-card-middle" *ngIf="friend.mutualFriends">
         <p class="friend-subtitle">{{ friend.mutualFriends }} bạn chung</p>
       </div>
 
@@ -41,6 +41,7 @@ import { ProfileFriend } from '@fe/domain/profile';
       display: flex;
       flex-direction: column;
       gap: var(--spacing-3);
+      max-width: 360px;
     }
 
     .friend-card-top {

@@ -1,11 +1,12 @@
 import { Component, signal, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SidebarMenuComponent, SidebarMenuItem } from '@fe/ui';
+import { RelativeTimePipe } from '@fe/core';
 
 @Component({
     selector: 'app-profile-about',
     standalone: true,
-    imports: [CommonModule, SidebarMenuComponent],
+    imports: [CommonModule, SidebarMenuComponent, RelativeTimePipe],
     templateUrl: './about.component.html',
     styleUrl: './about.component.css'
 })

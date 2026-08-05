@@ -197,6 +197,7 @@ export class SocialPostService {
       content: payload.content,
       type: mediaUrls.length > 1 ? 'gallery' : mediaUrls.length === 1 ? 'image' : 'text',
       mediaUrls,
+      hashtags: payload.hashtags,
       visibility: payload.privacy ?? 'public',
       location: payload.location,
     });
