@@ -64,6 +64,24 @@ export class HomeFacade {
   }
 
   createPost(payload: CreatePostPayload) {
+    if (payload.originalPostId) {
+      this._posts.update(posts => posts.map(p => {
+        if (p.id === payload.originalPostId) {
+          return { ...p, sharesCount: (p.sharesCount || 0) + 1 } as Post;
+        }
+        if (p.originalPost && p.originalPost.id === payload.originalPostId) {
+          return { 
+            ...p, 
+            originalPost: { 
+              ...p.originalPost, 
+              sharesCount: (p.originalPost.sharesCount || 0) + 1 
+            } as Post
+          } as Post;
+        }
+        return p;
+      }));
+    }
+
     this.postService.createPost(payload).pipe(take(1)).subscribe({
       next: (newPost) => {
         // Optimistic: prepend new post to list

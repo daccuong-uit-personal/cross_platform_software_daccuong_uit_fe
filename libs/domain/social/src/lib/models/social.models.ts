@@ -23,6 +23,7 @@ export interface User {
 export interface Post {
   id: string;
   author: User;
+  type?: string;
   content: string;
   images: string[];
   video?: string;
@@ -40,6 +41,7 @@ export interface Post {
   isPinned: boolean;
   allowComments: boolean;
   location?: string;
+  originalPost?: Post;
 }
 
 export type PostPrivacy = 'public' | 'private' | 'friends';
@@ -135,6 +137,7 @@ export interface CreatePostPayload {
   privacy: PostPrivacy;
   allowComments?: boolean;
   location?: string;
+  originalPostId?: string;
 }
 
 export interface UpdatePostPayload {

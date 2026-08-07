@@ -24,6 +24,7 @@ export interface MockUser {
 export interface MockPost {
   id: string;
   author: MockUser;
+  type?: string;
   content: string;
   images: string[];
   video?: string;
@@ -266,7 +267,7 @@ export const MOCK_POSTS: MockPost[] = [
     updatedAt: new Date(Date.now() - 8 * 60 * 60 * 1000),
     likesCount: 324,
     commentsCount: 45,
-    sharesCount: 56,
+    sharesCount: 12,
     isLiked: false,
     isBookmarked: false,
     hashtags: ['performance', 'optimization', 'tutorial'],
@@ -288,7 +289,7 @@ export const MOCK_POSTS: MockPost[] = [
     updatedAt: new Date(Date.now() - 10 * 60 * 60 * 1000),
     likesCount: 890,
     commentsCount: 156,
-    sharesCount: 234,
+    sharesCount: 45,
     isLiked: true,
     isBookmarked: false,
     hashtags: ['socialmedia', 'community', '2026'],

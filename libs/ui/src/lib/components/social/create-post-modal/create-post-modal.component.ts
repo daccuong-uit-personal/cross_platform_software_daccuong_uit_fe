@@ -5,13 +5,13 @@ import {
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { UiButton } from '../../../button/button';
-import { CreatePostPayload, PostPrivacy } from '@fe/domain/social';
+import { CreatePostPayload, PostPrivacy, Post } from '@fe/domain/social';
 import { AuthService } from '@fe/core';
-
+import { PostCardComponent } from '../post-card/post-card.component';
 
 @Component({
   standalone: true,
-  imports: [CommonModule, FormsModule, UiButton],
+  imports: [CommonModule, FormsModule, UiButton, PostCardComponent],
   selector: 'lib-create-post-modal',
   templateUrl: './create-post-modal.component.html',
   styleUrls: ['./create-post-modal.component.css'],
@@ -23,6 +23,7 @@ export class CreatePostModalComponent implements OnInit {
   @Input() authorName = 'Bạn';
   @Input() authorUsername = '';
   @Input() authorAvatar = '';
+  @Input() sharedPost?: Post;
 
   @Output() close = new EventEmitter<void>();
   @Output() submitPost = new EventEmitter<CreatePostPayload>();
@@ -36,7 +37,7 @@ export class CreatePostModalComponent implements OnInit {
 
   canSubmit = computed(() =>
     !this.isSubmitting() &&
-    (this.content().trim().length > 0 || this.mediaFiles().length > 0)
+    (this.content().trim().length > 0 || this.mediaFiles().length > 0 || !!this.sharedPost)
   );
 
   privacyOptions: { value: PostPrivacy; label: string; icon: string }[] = [
@@ -143,6 +144,7 @@ export class CreatePostModalComponent implements OnInit {
       mentions: [],
       privacy: this.privacy(),
       allowComments: true,
+      originalPostId: this.sharedPost?.id,
     };
 
     this.isSubmitting.set(true);
@@ -157,5 +159,15 @@ export class CreatePostModalComponent implements OnInit {
     this.hashtagsInput.set('');
     this.privacy.set('public');
     this.isSubmitting.set(false);
+  }
+
+  onCopyLink() {
+    if (this.sharedPost) {
+      const url = `${window.location.origin}/post/${this.sharedPost.id}`;
+      navigator.clipboard.writeText(url).then(() => {
+        // Show a toast here if we had one
+      });
+      this.onClose();
+    }
   }
 }

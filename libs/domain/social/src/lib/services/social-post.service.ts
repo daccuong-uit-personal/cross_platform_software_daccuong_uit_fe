@@ -63,6 +63,7 @@ export class SocialPostService {
         isBlocked: fallbackAuthor.isBlocked ?? false,
         isMuted: fallbackAuthor.isMuted ?? false,
       },
+      type: raw.type ?? undefined,
       content: raw.content ?? '',
       images: Array.isArray(raw.mediaUrls) ? raw.mediaUrls.filter(Boolean) : [],
       video: undefined,
@@ -80,6 +81,7 @@ export class SocialPostService {
       isPinned: Boolean(raw.isPinned ?? false),
       allowComments: raw.allowComments !== false,
       location: raw.location,
+      originalPost: (raw.originalPost && !raw.originalPost.isDeleted) ? this.mapPostForUi(raw.originalPost, options) : undefined,
     };
   }
 
@@ -200,6 +202,7 @@ export class SocialPostService {
       hashtags: payload.hashtags,
       visibility: payload.privacy ?? 'public',
       location: payload.location,
+      originalPostId: payload.originalPostId,
     });
 
     if (uploadTasks.length > 0) {

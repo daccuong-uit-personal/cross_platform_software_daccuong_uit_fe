@@ -2,7 +2,7 @@
  * @fileoverview Post Card Component
  */
 
-import { Component, Input, Output, EventEmitter, signal, computed } from '@angular/core';
+import { Component, Input, Output, EventEmitter, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Post } from '@fe/domain/social';
 import { RelativeTimePipe } from '@fe/core';
@@ -12,7 +12,7 @@ const CONTENT_LIMIT = 280; // chars before truncating
 @Component({
   selector: 'app-post-card',
   standalone: true,
-  imports: [CommonModule, RelativeTimePipe],
+  imports: [CommonModule, PostCardComponent, RelativeTimePipe],
   template: `
     <article class="post-card" *ngIf="post">
       <div class="post-card-header">
@@ -42,8 +42,15 @@ const CONTENT_LIMIT = 280; // chars before truncating
         <span class="tag mention" *ngFor="let mention of post.mentions">@{{ mention }}</span>
       </div>
 
-      <div class="post-media"
-        *ngIf="post.images && post.images.length"
+      <ng-container *ngIf="post.originalPost; else mediaTemplate">
+        <div class="nested-post-wrapper">
+          <app-post-card [post]="post.originalPost" [isCompactMode]="true" class="nested-post-card"></app-post-card>
+        </div>
+      </ng-container>
+
+      <ng-template #mediaTemplate>
+        <div class="post-media"
+          *ngIf="post.images && post.images.length"
         [class.media-1]="post.images.length === 1"
         [class.media-2]="post.images.length === 2"
         [class.media-3]="post.images.length === 3"
@@ -58,6 +65,7 @@ const CONTENT_LIMIT = 280; // chars before truncating
           </div>
         </div>
       </div>
+      </ng-template>
 
       <div class="post-divider"></div>
 
@@ -78,7 +86,7 @@ const CONTENT_LIMIT = 280; // chars before truncating
             </svg>
           </span>
         </button>
-        <button class="action-btn action-share" type="button" (click)="onShare()" aria-label="Chia sẻ">
+        <button class="action-btn action-share" type="button" (click)="onShareClick()" aria-label="Chia sẻ">
           <span class="action-count">{{ post.sharesCount }}</span>
           <span class="icon">
             <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -237,6 +245,12 @@ const CONTENT_LIMIT = 280; // chars before truncating
         font-size: 28px;
         font-weight: 700;
       }
+      .nested-post-wrapper {
+        margin-top: calc(8px * var(--padding-scale, 1));
+        border: 1px solid var(--color-border-subtle, rgba(148, 163, 184, 0.24));
+        border-radius: 8px;
+        overflow: hidden;
+      }
       .post-actions {
         display: flex;
         justify-content: flex-start;
@@ -293,6 +307,42 @@ const CONTENT_LIMIT = 280; // chars before truncating
       .post-actions .action-comment:hover,
       .post-actions .action-share:hover {
         background: rgba(15, 23, 42, 0.06);
+      }
+      
+      .action-btn-wrapper {
+        position: relative;
+      }
+      .share-dropdown {
+        position: absolute;
+        bottom: 100%;
+        left: 0;
+        margin-bottom: 4px;
+        background: var(--color-surface-base, #ffffff);
+        border: 1px solid var(--color-border-subtle, rgba(148, 163, 184, 0.24));
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        padding: 4px;
+        display: flex;
+        flex-direction: column;
+        z-index: 10;
+        min-width: 150px;
+      }
+      .share-dropdown-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        font-size: var(--font-size-body);
+        color: var(--color-text-base, #0f172a);
+        text-align: left;
+        border-radius: 4px;
+        transition: background 0.2s ease;
+      }
+      .share-dropdown-item:hover {
+        background: rgba(29, 155, 240, 0.08);
       }
 
       /* Stats Bar */
@@ -379,7 +429,7 @@ export class PostCardComponent {
     this.comment.emit();
   }
 
-  onShare(): void {
+  onShareClick(): void {
     this.share.emit();
   }
 

@@ -27,6 +27,7 @@ export class FeedComponent implements OnInit {
   isCommentPanelOpen = signal(false);
   selectedCommentTarget = signal<CommentThreadTarget | null>(null);
   selectedComments = signal<Comment[]>([]);
+  postToShare = signal<Post | undefined>(undefined);
   currentUser = computed(() => this.authService.user());
 
   filteredPosts = computed(() => {
@@ -93,11 +94,20 @@ export class FeedComponent implements OnInit {
 
   onCloseCreatePost(): void {
     this.isCreatePostModalOpen.set(false);
+    this.postToShare.set(undefined);
   }
 
   onSubmitPost(event: any): void {
     this.homeFacade.createPost(event);
     this.isCreatePostModalOpen.set(false);
+    this.postToShare.set(undefined);
+  }
+
+  onOpenShareModal(post: Post): void {
+    // If this post is itself a repost, share the original post instead
+    const postToShare = post.originalPost ?? post;
+    this.postToShare.set(postToShare);
+    this.isCreatePostModalOpen.set(true);
   }
 
   onToggleLike(postId: string): void {

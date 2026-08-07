@@ -57,7 +57,7 @@
     <!-- Posts -->
     <ng-container *ngIf="!isLoading()">
       <app-post-card *ngFor="let post of filteredPosts(); trackBy: trackByPostId" [post]="post"
-        (toggleLike)="onToggleLike(post.id)" (comment)="onOpenComments(post)">
+        (toggleLike)="onToggleLike(post.id)" (comment)="onOpenComments(post)" (share)="onOpenShareModal(post)">
       </app-post-card>
     </ng-container>
 
@@ -74,6 +74,6 @@
 </div>
 
 <!-- Create Post Modal -->
-<lib-create-post-modal [isOpen]="isCreatePostModalOpen()" (close)="onCloseCreatePost()"
+<lib-create-post-modal [isOpen]="isCreatePostModalOpen()" [sharedPost]="postToShare()" (close)="onCloseCreatePost()"
   (submitPost)="onSubmitPost($event)">
 </lib-create-post-modal>
