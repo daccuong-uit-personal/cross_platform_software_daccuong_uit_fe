@@ -36,10 +36,19 @@
             Check in
           </lib-button>
         </div>
-        <lib-button variant="primary" (click)="onCreatePost()">Đăng</lib-button>
+        <lib-button variant="primary" (click)="onCreatePost()">
+          <img
+            src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cline x1='22' y1='2' x2='11' y2='13'/%3E%3Cpolygon points='22 2 15 22 11 13 2 9 22 2'/%3E%3C/svg%3E"
+            alt="Đăng" style="width: 18px; height: 18px; display: block; margin-right: 6px;" />
+          Đăng
+        </lib-button>
       </div>
     </div>
   </div>
+
+  <!-- Friend Reels Strip -->
+  <lib-feed-reels-strip (addReel)="onOpenCreateReel()" id="feed-reels-strip">
+  </lib-feed-reels-strip>
 
   <!-- Posts List -->
   <div class="feed-posts">
@@ -77,3 +86,8 @@
 <lib-create-post-modal [isOpen]="isCreatePostModalOpen()" [sharedPost]="postToShare()" (close)="onCloseCreatePost()"
   (submitPost)="onSubmitPost($event)">
 </lib-create-post-modal>
+
+<!-- Create Reel Modal -->
+<lib-create-reel-modal [isOpen]="isCreateReelModalOpen()" (close)="onCloseCreateReel()"
+  (submitReel)="onSubmitReel($event)">
+</lib-create-reel-modal>

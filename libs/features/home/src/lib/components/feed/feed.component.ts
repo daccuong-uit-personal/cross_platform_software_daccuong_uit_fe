@@ -1,14 +1,14 @@
 import { Component, OnInit, computed, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { PostCardComponent, UiButton, CreatePostModalComponent, SkeletonCardComponent, CommentThreadPanelComponent, CommentThreadTarget } from '@fe/ui';
+import { PostCardComponent, UiButton, CreatePostModalComponent, SkeletonCardComponent, CommentThreadPanelComponent, CommentThreadTarget, FeedReelsStripComponent, CreateReelModalComponent } from '@fe/ui';
 import { HomeFacade } from '../../data-access/home.facade';
 import { AuthService } from '@fe/core';
-import { Comment, CreateCommentPayload, Post, SocialCommentService } from '@fe/domain/social';
+import { Comment, CreateCommentPayload, Post, SocialCommentService, SocialReelFacade, CreateReelPayload } from '@fe/domain/social';
 import { insertCommentIntoTree, mergeCommentsWithServer, replaceOptimisticComment } from '@fe/domain/social';
 
 @Component({
   standalone: true,
-  imports: [CommonModule, PostCardComponent, UiButton, CreatePostModalComponent, SkeletonCardComponent, CommentThreadPanelComponent],
+  imports: [CommonModule, PostCardComponent, UiButton, CreatePostModalComponent, SkeletonCardComponent, CommentThreadPanelComponent, FeedReelsStripComponent, CreateReelModalComponent],
   selector: 'fe-feed',
   templateUrl: './feed.component.html',
   styleUrls: ['./feed.component.css'],
@@ -17,6 +17,7 @@ export class FeedComponent implements OnInit {
   private homeFacade = inject(HomeFacade);
   private authService = inject(AuthService);
   private socialCommentService = inject(SocialCommentService);
+  private reelFacade = inject(SocialReelFacade);
 
   posts = this.homeFacade.posts;
   isLoading = this.homeFacade.isLoading;
@@ -24,6 +25,7 @@ export class FeedComponent implements OnInit {
   activeTab = signal<'posts' | 'videos' | 'shop' | 'stories'>('posts');
   searchQuery = signal('');
   isCreatePostModalOpen = signal(false);
+  isCreateReelModalOpen = signal(false);
   isCommentPanelOpen = signal(false);
   selectedCommentTarget = signal<CommentThreadTarget | null>(null);
   selectedComments = signal<Comment[]>([]);
@@ -95,6 +97,19 @@ export class FeedComponent implements OnInit {
   onCloseCreatePost(): void {
     this.isCreatePostModalOpen.set(false);
     this.postToShare.set(undefined);
+  }
+
+  onOpenCreateReel(): void {
+    this.isCreateReelModalOpen.set(true);
+  }
+
+  onCloseCreateReel(): void {
+    this.isCreateReelModalOpen.set(false);
+  }
+
+  onSubmitReel(payload: CreateReelPayload): void {
+    this.reelFacade.createReel(payload).subscribe();
+    this.isCreateReelModalOpen.set(false);
   }
 
   onSubmitPost(event: any): void {

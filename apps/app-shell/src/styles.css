@@ -122,9 +122,9 @@
   /* Left nav — icons only */
   --page-main-width: calc(var(--spacing-scale-base) * 170);
   /* Main feed width */
-  --page-rightbar-width: calc(var(--spacing-scale-base) * 80);
-  /* Right sidebar */
-  --page-rightbar-width-full: calc(var(--spacing-scale-base) * 80);
+  --page-rightbar-width: calc(var(--spacing-scale-base) * 100);
+  /* The width of the right sidebar on very large screens (if different) */
+  --page-rightbar-width-full: calc(var(--spacing-scale-base) * 100);
   /* Right sidebar — full */
   --page-content-max-width: calc(var(--spacing-scale-base) * 335);
   /* Page max width */

@@ -21,7 +21,7 @@
   display: flex;
   flex-direction: column;
   gap: calc(12px * var(--padding-scale, 1));
-  padding: calc(16px * var(--padding-scale, 1)) calc(20px * var(--padding-scale, 1)) calc(12px * var(--padding-scale, 1));
+  padding: 0;
   background: var(--color-surface-base, #ffffff);
   border: none;
   border-radius: 0;
@@ -91,7 +91,7 @@
   border: none;
   border-radius: 0;
   background: transparent;
-  gap: calc(16px * var(--padding-scale, 1));
+  gap: calc(8px * var(--padding-scale, 1));
 }
 
 .compose-top {
@@ -99,13 +99,13 @@
   align-items: center;
   width: 100%;
   max-width: calc(780px * var(--padding-scale, 1));
-  padding: calc(12px * var(--padding-scale, 1)) 0 calc(14px * var(--padding-scale, 1)) calc(18px * var(--padding-scale, 1));
+  padding: calc(8px * var(--padding-scale, 1)) calc(8px * var(--padding-scale, 1)) 0 calc(8px * var(--padding-scale, 1));
 }
 
 .compose-input {
   position: relative;
   width: 100%;
-  padding: calc(14px * var(--padding-scale, 1)) calc(16px * var(--padding-scale, 1)) calc(14px * var(--padding-scale, 1)) calc(62px * var(--padding-scale, 1));
+  padding: 0;
   border: none;
   background: transparent;
   color: var(--color-text-muted, rgba(107, 114, 128, 0.72));
@@ -144,7 +144,7 @@
   justify-content: space-between;
   align-items: center;
   gap: calc(16px * var(--padding-scale, 1));
-  padding: calc(10px * var(--padding-scale, 1)) calc(20px * var(--padding-scale, 1)) calc(10px * var(--padding-scale, 1));
+  padding: 0 calc(8px * var(--padding-scale, 1)) calc(8px * var(--padding-scale, 1)) calc(8px * var(--padding-scale, 1));
 }
 
 .compose-actions lib-button,
@@ -570,4 +570,3 @@
     grid-template-columns: 1fr;
   }
 }
-

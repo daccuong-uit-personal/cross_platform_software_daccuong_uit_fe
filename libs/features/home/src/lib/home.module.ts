@@ -28,14 +28,7 @@ import { RightSidebarComponent } from '@fe/ui';
         children: [
           { path: '', component: FeedComponent },
           { path: 'discover', component: DiscoverComponent },
-          {
-            path: 'reels',
-            component: FeaturePlaceholderComponent,
-            data: {
-              title: 'Reels',
-              description: 'Khám phá và tận hưởng các video ngắn giải trí.',
-            },
-          },
+          { path: 'reels', redirectTo: '/reels', pathMatch: 'full' },
           {
             path: 'notifications',
             component: FeaturePlaceholderComponent,

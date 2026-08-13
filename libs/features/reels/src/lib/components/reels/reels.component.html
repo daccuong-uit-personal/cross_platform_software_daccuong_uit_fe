@@ -1,0 +1,152 @@
+<div class="reels-page">
+
+  <!-- ═══ VIDEO AREA (center column) ═══ -->
+  <div class="reels-center">
+
+    <!-- Video + side icons wrapper (centered together) -->
+    <div class="reels-content-wrapper">
+
+      <!-- Video card -->
+      <div class="reel-video-card" (click)="reelsService.toggleLike()">
+
+        <!-- Mock video background -->
+        <div class="reel-video-bg" [style.background]="reelsService.currentReel().thumbnailColor">
+          <!-- Play icon overlay -->
+          <div class="video-play-overlay">
+            <svg viewBox="0 0 24 24" fill="none">
+              <circle cx="12" cy="12" r="11" fill="rgba(0,0,0,0.35)" />
+              <path d="M10 8.5l6 3.5-6 3.5V8.5Z" fill="white" />
+            </svg>
+          </div>
+
+          <!-- Heart burst on double-tap -->
+          <div class="like-burst" [class.active]="reelsService.currentReel().liked">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path
+                d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+            </svg>
+          </div>
+        </div>
+
+        <!-- Author info overlay (bottom of video) -->
+        <div class="reel-overlay-info">
+          <div class="reel-author">
+            <div class="reel-avatar">
+              <img [src]="reelsService.currentReel().avatar" alt="Avatar">
+            </div>
+            <div class="reel-author-details">
+              <span class="reel-author-name">{{ reelsService.currentReel().author }}</span>
+              <button class="reel-follow-btn"
+                [class.following]="reelsService.isFollowingAuthor(reelsService.currentReel().id)"
+                (click)="$event.stopPropagation(); reelsService.toggleFollow(reelsService.currentReel().id)">
+                {{ reelsService.isFollowingAuthor(reelsService.currentReel().id) ? 'Đang theo dõi' : 'Theo dõi' }}
+              </button>
+            </div>
+          </div>
+          <p class="reel-description">{{ reelsService.currentReel().description }}</p>
+          <p class="reel-music">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+              <path d="M9 18V5l12-2v13" />
+              <circle cx="6" cy="18" r="3" />
+              <circle cx="18" cy="16" r="3" />
+            </svg>
+            {{ reelsService.currentReel().music }}
+          </p>
+        </div>
+      </div>
+
+      <!-- ═══ ACTION ICONS COLUMN ═══ -->
+      <div class="reels-actions">
+
+        <!-- Like -->
+        <button class="action-btn" [class.active]="reelsService.currentReel().liked" (click)="reelsService.toggleLike()"
+          id="reel-like-btn" aria-label="Thích">
+          <div class="action-icon-wrap">
+            <svg viewBox="0 0 24 24" [attr.fill]="reelsService.currentReel().liked ? 'currentColor' : 'none'"
+              stroke="currentColor" stroke-width="2">
+              <path
+                d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+            </svg>
+          </div>
+          <span class="action-count">{{ formatCount(reelsService.currentReel().likes) }}</span>
+        </button>
+
+        <!-- Comment -->
+        <button class="action-btn" [class.active]="reelsService.showComments()" (click)="reelsService.toggleComments()"
+          id="reel-comment-btn" aria-label="Bình luận">
+          <div class="action-icon-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+            </svg>
+          </div>
+          <span class="action-count">{{ formatCount(reelsService.currentReel().comments) }}</span>
+        </button>
+
+        <!-- Share -->
+        <button class="action-btn" id="reel-share-btn" aria-label="Chia sẻ">
+          <div class="action-icon-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
+              <polyline points="16 6 12 2 8 6" />
+              <line x1="12" y1="2" x2="12" y2="15" />
+            </svg>
+          </div>
+          <span class="action-count">{{ formatCount(reelsService.currentReel().shares) }}</span>
+        </button>
+
+        <!-- Save / Bookmark -->
+        <button class="action-btn" [class.active]="reelsService.currentReel().saved" (click)="reelsService.toggleSave()"
+          id="reel-save-btn" aria-label="Lưu">
+          <div class="action-icon-wrap">
+            <svg viewBox="0 0 24 24" [attr.fill]="reelsService.currentReel().saved ? 'currentColor' : 'none'"
+              stroke="currentColor" stroke-width="2">
+              <path d="M6 3h12a2 2 0 0 1 2 2v16l-8-5-8 5V5a2 2 0 0 1 2-2Z" />
+            </svg>
+          </div>
+          <span class="action-count">{{ formatCount(reelsService.currentReel().saves) }}</span>
+        </button>
+
+        <!-- More options -->
+        <button class="action-btn" id="reel-more-btn" aria-label="Thêm">
+          <div class="action-icon-wrap">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <circle cx="12" cy="5" r="1.5" />
+              <circle cx="12" cy="12" r="1.5" />
+              <circle cx="12" cy="19" r="1.5" />
+            </svg>
+          </div>
+        </button>
+
+        <!-- Divider -->
+        <div class="actions-divider"></div>
+
+        <!-- Prev / Next navigation -->
+        <button class="action-btn nav-btn" [class.disabled]="reelsService.currentIndex() === 0"
+          (click)="reelsService.goToPrev()" id="reel-prev-btn" aria-label="Reel trước">
+          <div class="action-icon-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+              <polyline points="18 15 12 9 6 15" />
+            </svg>
+          </div>
+        </button>
+
+        <button class="action-btn nav-btn"
+          [class.disabled]="reelsService.currentIndex() === reelsService.reels().length - 1"
+          (click)="reelsService.goToNext()" id="reel-next-btn" aria-label="Reel tiếp">
+          <div class="action-icon-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
+          </div>
+        </button>
+
+      </div>
+      <!-- end .reels-actions -->
+
+    </div>
+    <!-- end .reels-content-wrapper -->
+
+  </div>
+  <!-- end .reels-center -->
+
+</div>

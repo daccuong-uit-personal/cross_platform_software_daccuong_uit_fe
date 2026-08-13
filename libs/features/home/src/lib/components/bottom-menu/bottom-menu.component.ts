@@ -23,7 +23,7 @@ export class BottomMenuComponent {
       id: 'reels',
       label: 'Reels',
       svgIcon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"></rect><path d="M9 7v10l7-5L9 7Z"></path></svg>',
-      link: '/home/reels',
+      link: '/reels',
     },
     {
       id: 'discover',

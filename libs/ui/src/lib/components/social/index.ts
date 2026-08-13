@@ -6,3 +6,5 @@ export * from './comment-section/comment-section.component';
 export * from './comment-thread-panel/comment-thread-panel.component';
 export * from './comment-thread-panel/comment-thread-item.component';
 export * from './create-post-modal/create-post-modal.component';
+export * from './feed-reels-strip/feed-reels-strip.component';
+export * from './create-reel-modal/create-reel-modal.component';
