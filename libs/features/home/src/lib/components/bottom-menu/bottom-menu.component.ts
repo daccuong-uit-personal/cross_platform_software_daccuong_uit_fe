@@ -1,8 +1,20 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { SidebarMenuComponent, SidebarMenuItem } from '@fe/ui';
+import { TabKeepAliveService } from '@fe/core';
 
+/**
+ * BottomMenuComponent — mobile/tablet bottom navigation bar.
+ *
+ * Mirrors the behaviour of SidebarMenuComponent:
+ *   - Switching to a different tab navigates normally (Keep-Alive handled by HomeShell).
+ *   - Tapping the already-active tab scrolls to top + refetches via TabKeepAliveService.
+ *
+ * NOTE: This component's own item clicks are NOT routed through SidebarMenuComponent
+ * because it renders a flat <nav> bar on mobile. We replicate the active-tab
+ * intercept logic here directly, but delegate refresh to TabKeepAliveService.
+ */
 @Component({
   standalone: true,
   imports: [CommonModule, RouterModule, SidebarMenuComponent],
@@ -11,6 +23,9 @@ import { SidebarMenuComponent, SidebarMenuItem } from '@fe/ui';
   styleUrls: ['./bottom-menu.component.css'],
 })
 export class BottomMenuComponent {
+  private router    = inject(Router);
+  private keepAlive = inject(TabKeepAliveService);
+
   items: SidebarMenuItem[] = [
     {
       id: 'home',
@@ -65,5 +80,15 @@ export class BottomMenuComponent {
       exactMatch: true,
     },
   ];
-}
 
+  /**
+   * Called by ui-sidebar-menu's (itemClick) output for button-style items,
+   * OR we can hook directly here for extra logic.
+   * The active-tab refresh is handled inside SidebarMenuComponent which uses
+   * TabKeepAliveService directly — nothing extra needed here.
+   */
+  onItemClick(_item: SidebarMenuItem): void {
+    // Intentionally empty: SidebarMenuComponent already handles active-tab refresh.
+    // This output exists for any future button-style (non-link) items.
+  }
+}

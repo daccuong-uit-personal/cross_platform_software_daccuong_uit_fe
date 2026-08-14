@@ -5,6 +5,7 @@ import { catchError, of, switchMap } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { urlConfig } from '../config/url-config';
 import { showGlobalLoading } from '../interceptors/loading.interceptor';
+import { AppRouteReuseStrategy } from './route-reuse.strategy';
 
 export interface User {
   id: string;
@@ -25,6 +26,7 @@ export interface AuthResponse {
 })
 export class AuthService {
   private api = inject(ApiService);
+  private reuseStrategy = inject(AppRouteReuseStrategy);
   private readonly USER_KEY = 'user';
   private _user = signal<User | null>(null);
   
@@ -69,6 +71,8 @@ export class AuthService {
     localStorage.removeItem('token');
     localStorage.removeItem('refreshToken');
     localStorage.removeItem(this.USER_KEY);
+    // Evict all cached route handles so the next user gets fresh component trees
+    this.reuseStrategy.evictAll();
   }
 
   refresh() {

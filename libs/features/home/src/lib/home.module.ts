@@ -10,6 +10,24 @@ import { ActivityComponent } from './components/activity/activity.component';
 import { FeaturePlaceholderComponent } from './components/feature-placeholder/feature-placeholder.component';
 import { RightSidebarComponent } from '@fe/ui';
 
+/**
+ * HomeModule
+ *
+ * Route configuration for the /home subtree.
+ *
+ * Keep-Alive architecture: HomeShellComponent no longer relies on child
+ * router-outlet to render sub-pages. Instead it renders all Keep-Alive
+ * tab components directly and shows/hides them via [hidden].
+ *
+ * The child routes below are kept so that:
+ *   1. The browser URL changes correctly when navigating between tabs
+ *      (NavigationEnd fires → HomeShellComponent.activeTab updates).
+ *   2. Deep-link URLs (/home/discover, /home/chat …) continue to work
+ *      on first load / page refresh.
+ *
+ * All child routes redirect to HomeShellComponent (the empty-path root)
+ * because it handles its own content switching internally.
+ */
 @NgModule({
   imports: [
     CommonModule,
@@ -26,65 +44,19 @@ import { RightSidebarComponent } from '@fe/ui';
         path: '',
         component: HomeShellComponent,
         children: [
-          { path: '', component: FeedComponent },
-          { path: 'discover', component: DiscoverComponent },
-          { path: 'reels', redirectTo: '/reels', pathMatch: 'full' },
-          {
-            path: 'notifications',
-            component: FeaturePlaceholderComponent,
-            data: {
-              title: 'Thông báo',
-              description: 'Xem tất cả cảnh báo và hoạt động của bạn.',
-            },
-          },
-          {
-            path: 'following',
-            component: FeaturePlaceholderComponent,
-            data: {
-              title: 'Theo dõi',
-              description: 'Danh sách người bạn đang theo dõi và gợi ý mới.',
-            },
-          },
-          {
-            path: 'chat',
-            component: FeaturePlaceholderComponent,
-            data: {
-              title: 'Chat',
-              description: 'Tin nhắn và cuộc trò chuyện trực tiếp.',
-            },
-          },
-          {
-            path: 'reals-ai',
-            component: FeaturePlaceholderComponent,
-            data: {
-              title: 'Reals AI',
-              description: 'Trí tuệ nhân tạo hỗ trợ sáng tạo nội dung.',
-            },
-          },
-          {
-            path: 'bookmarks',
-            component: FeaturePlaceholderComponent,
-            data: {
-              title: 'Dấu trang',
-              description: 'Bài viết đã lưu để đọc lại sau.',
-            },
-          },
-          {
-            path: 'premium',
-            component: FeaturePlaceholderComponent,
-            data: {
-              title: 'Premium',
-              description: 'Nâng cấp gói để có trải nghiệm cao cấp.',
-            },
-          },
-          {
-            path: 'more',
-            component: FeaturePlaceholderComponent,
-            data: {
-              title: 'Thêm',
-              description: 'Các tùy chọn và cài đặt bổ sung.',
-            },
-          },
+          // All child paths resolve to HomeShellComponent.
+          // The component uses NavigationEnd to sync its activeTab signal,
+          // so the URL changes while the shell stays alive.
+          { path: ''            , children: [] },   // /home
+          { path: 'discover'   , children: [] },   // /home/discover
+          { path: 'notifications', children: [] },  // /home/notifications
+          { path: 'following'  , children: [] },   // /home/following
+          { path: 'chat'       , children: [] },   // /home/chat
+          { path: 'reals-ai'   , children: [] },   // /home/reals-ai
+          { path: 'bookmarks'  , children: [] },   // /home/bookmarks
+          { path: 'premium'    , children: [] },   // /home/premium
+          { path: 'more'       , children: [] },   // /home/more
+          { path: 'reels'      , redirectTo: '/reels', pathMatch: 'full' },
         ],
       },
     ]),

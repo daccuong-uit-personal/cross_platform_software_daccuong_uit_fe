@@ -13,6 +13,8 @@ export * from './lib/services/error.service';
 export * from './lib/services/loading.service';
 export * from './lib/services/cache.service';
 export * from './lib/services/theme.service';
+export * from './lib/services/tab-keep-alive.service';
+export * from './lib/services/route-reuse.strategy';
 
 // Design System
 export * from './lib/design-system/design-tokens';

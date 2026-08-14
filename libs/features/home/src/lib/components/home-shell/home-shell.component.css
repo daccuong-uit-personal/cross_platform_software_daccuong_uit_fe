@@ -1,3 +1,19 @@
 :host {
   display: block;
 }
+
+/**
+ * Keep-Alive visibility control.
+ *
+ * Angular's [hidden] attribute sets `hidden` on the host element, but
+ * if a component declares `:host { display: block }` or similar, the
+ * browser attribute alone is not enough (display wins over hidden).
+ *
+ * This rule ensures [hidden] on any direct child of the shell's slot
+ * genuinely removes it from layout while keeping it in the DOM.
+ */
+fe-feed[hidden],
+fe-discover[hidden],
+fe-feature-placeholder[hidden] {
+  display: none !important;
+}

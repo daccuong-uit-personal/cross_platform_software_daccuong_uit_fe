@@ -19,8 +19,8 @@ export class SocialReelFacade {
   currentReel = computed(() => this.reels()[this.currentIndex()]);
 
   constructor() {
-    this.loadReels();
-    this.loadFriendReels();
+    // Explicit API calls have been moved to component lifecycle hooks
+    // to prevent fetching unnecessary data on app load.
   }
 
   loadReels() {

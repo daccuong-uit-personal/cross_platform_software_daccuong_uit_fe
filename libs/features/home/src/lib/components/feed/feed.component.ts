@@ -1,8 +1,9 @@
-import { Component, OnInit, computed, signal, inject } from '@angular/core';
+import { Component, OnInit, computed, signal, inject, ElementRef, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { PostCardComponent, UiButton, CreatePostModalComponent, SkeletonCardComponent, CommentThreadPanelComponent, CommentThreadTarget, FeedReelsStripComponent, CreateReelModalComponent } from '@fe/ui';
 import { HomeFacade } from '../../data-access/home.facade';
-import { AuthService } from '@fe/core';
+import { AuthService, TabKeepAliveService } from '@fe/core';
 import { Comment, CreateCommentPayload, Post, SocialCommentService, SocialReelFacade, CreateReelPayload } from '@fe/domain/social';
 import { insertCommentIntoTree, mergeCommentsWithServer, replaceOptimisticComment } from '@fe/domain/social';
 
@@ -18,6 +19,9 @@ export class FeedComponent implements OnInit {
   private authService = inject(AuthService);
   private socialCommentService = inject(SocialCommentService);
   private reelFacade = inject(SocialReelFacade);
+  private keepAlive = inject(TabKeepAliveService);
+  private elementRef = inject(ElementRef);
+  private destroyRef = inject(DestroyRef);
 
   posts = this.homeFacade.posts;
   isLoading = this.homeFacade.isLoading;
@@ -79,7 +83,35 @@ export class FeedComponent implements OnInit {
 
   ngOnInit(): void {
     this.homeFacade.loadFeed();
+    this.reelFacade.loadFriendReels();
     this.authService.checkAuth();
+
+    // When the user re-clicks the already-active Home tab:
+    // scroll the feed container to the top and refetch posts.
+    this.keepAlive
+      .refreshFor('/home')
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.scrollToTop();
+        this.homeFacade.loadFeed();
+        this.reelFacade.loadFriendReels();
+      });
+  }
+
+  /** Scroll the feed's host element back to the top. */
+  private scrollToTop(): void {
+    // Walk up the DOM to find the nearest scrollable ancestor
+    // (the <main> element in app-shell.component.html)
+    let el: HTMLElement | null = this.elementRef.nativeElement as HTMLElement;
+    while (el) {
+      if (el.scrollTop > 0) {
+        el.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+      }
+      el = el.parentElement;
+    }
+    // Fallback: scroll the window
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   selectTab(tabId: 'posts' | 'videos' | 'shop' | 'stories') {

@@ -4,10 +4,14 @@ import {
   ElementRef,
   ViewChild,
   AfterViewInit,
-  inject
+  OnInit,
+  inject,
+  DestroyRef
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SocialReelFacade } from '@fe/domain/social';
+import { TabKeepAliveService } from '@fe/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   standalone: true,
@@ -16,10 +20,26 @@ import { SocialReelFacade } from '@fe/domain/social';
   templateUrl: './reels.component.html',
   styleUrls: ['./reels.component.css'],
 })
-export class ReelsComponent implements AfterViewInit {
+export class ReelsComponent implements AfterViewInit, OnInit {
   @ViewChild('reelsContainer') reelsContainer!: ElementRef<HTMLDivElement>;
 
   reelsService = inject(SocialReelFacade);
+  private keepAlive = inject(TabKeepAliveService);
+  private destroyRef = inject(DestroyRef);
+
+  ngOnInit() {
+    // Fetch reels when the component is initialized
+    this.reelsService.loadReels();
+
+    // Re-fetch when clicking the Reels tab while it's already active
+    this.keepAlive.refreshFor('/reels')
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        // Reset index and load fresh reels
+        this.reelsService.currentIndex.set(0);
+        this.reelsService.loadReels();
+      });
+  }
 
   ngAfterViewInit() {
     if (!this.reelsContainer) return;
