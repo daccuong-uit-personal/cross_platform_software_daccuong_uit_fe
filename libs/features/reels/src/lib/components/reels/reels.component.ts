@@ -62,6 +62,11 @@ export class ReelsComponent implements AfterViewInit, OnInit {
 
   @HostListener('window:wheel', ['$event'])
   onWheel(e: WheelEvent) {
+    const target = e.target as HTMLElement;
+    if (target.closest('fe-reels-right-sidebar') || target.closest('.sidebar-right') || target.closest('.reels-comments-panel')) {
+      return;
+    }
+
     if (this.isScrolling) return;
     
     // Determine direction

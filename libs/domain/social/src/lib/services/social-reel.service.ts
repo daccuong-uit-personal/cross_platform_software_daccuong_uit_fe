@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, switchMap, map } from 'rxjs';
 import { appConfig, ApiService } from '@fe/core';
 import { CreateReelPayload } from '../models/social-reel.models';
+import { Comment, CreateCommentPayload } from '../models';
 
 @Injectable({ providedIn: 'root' })
 export class SocialReelService {
@@ -45,8 +46,46 @@ export class SocialReelService {
       );
   }
 
+  /** @deprecated Use getReelComments() in SocialReelFacade with Comment[] mapping instead */
   getReelComments(reelId: string): Observable<any> {
     return this.api.get<any>(`/reels/${reelId}/comments`);
+  }
+
+  /**
+   * Get reel comments mapped to standard Comment model.
+   * Shares endpoint with post comments (/reels/{id}/comments) but maps
+   * to the same Comment interface for consistency with CommentThreadPanel.
+   */
+  getReelCommentsAsComments(reelId: string): Observable<Comment[]> {
+    return this.api.get<any>(`/reels/${reelId}/comments`).pipe(
+      map((res: any) => {
+        const rawComments = Array.isArray(res?.data) ? res.data : [];
+        return rawComments.map((c: any) => this.mapToComment(c, reelId));
+      })
+    );
+  }
+
+  /**
+   * Submit a comment or reply on a reel with full payload support
+   * (mentionedUserIds, mentionRanges, replyToCommentId).
+   */
+  submitReelComment(reelId: string, payload: CreateCommentPayload): Observable<Comment> {
+    const body: any = {
+      content: payload.content,
+    };
+    if (payload.replyToCommentId) {
+      body.parentId = payload.replyToCommentId;
+    }
+    if (payload.mentionedUserIds?.length) {
+      body.mentionedUserIds = payload.mentionedUserIds;
+    }
+    if (payload.mentionRanges?.length) {
+      body.mentionRanges = payload.mentionRanges;
+    }
+
+    return this.api.post<any>(`/reels/${reelId}/comments`, body).pipe(
+      map((res: any) => this.mapToComment(res?.data ?? res, reelId))
+    );
   }
 
   likeReel(reelId: string): Observable<any> {
@@ -65,7 +104,48 @@ export class SocialReelService {
     return this.api.delete<any>(`/comments/${commentId}/like`);
   }
 
+  /** @deprecated Use submitReelComment() for full payload support */
   submitComment(reelId: string, content: string): Observable<any> {
     return this.api.post<any>(`/reels/${reelId}/comments`, { content }).pipe(map(res => res.data));
+  }
+
+  private mapToComment(raw: any, fallbackPostId: string): Comment {
+    const author = raw?.author ?? {};
+    return {
+      id: raw?.id ?? '',
+      author: {
+        id: author.id ?? author.userId ?? '',
+        username: author.username ?? '',
+        fullName: author.displayName ?? author.fullName ?? author.username ?? '',
+        avatar: author.avatarUrl ?? author.avatar ?? '',
+        bio: author.bio ?? '',
+        followers: 0,
+        following: 0,
+        postsCount: 0,
+        isFollowing: false,
+        isFollowedBy: false,
+        isBlocked: false,
+        isMuted: false,
+      },
+      postId: raw?.postId ?? fallbackPostId,
+      content: raw?.content ?? '',
+      createdAt: raw?.createdAt ? new Date(raw.createdAt) : new Date(),
+      updatedAt: raw?.updatedAt ? new Date(raw.updatedAt) : new Date(),
+      likesCount: Number(raw?.likeCount ?? raw?.likesCount ?? 0),
+      isLiked: Boolean(raw?.isLikedByCurrentUser ?? raw?.isLiked ?? false),
+      replies: Array.isArray(raw?.replies)
+        ? raw.replies.map((r: any) => this.mapToComment(r, fallbackPostId))
+        : [],
+      mentionedUsers: Array.isArray(raw?.mentionedUsers) ? raw.mentionedUsers : [],
+      mentionRanges: Array.isArray(raw?.mentionRanges)
+        ? raw.mentionRanges.map((mr: any) => ({
+            userId: mr.userId ?? mr.user_id ?? '',
+            start: Number(mr.start ?? 0),
+            end: Number(mr.end ?? 0),
+          }))
+        : [],
+      replyCount: Number(raw?.replyCount ?? raw?.reply_count ?? 0),
+      parentId: raw?.parentId ?? null,
+    };
   }
 }

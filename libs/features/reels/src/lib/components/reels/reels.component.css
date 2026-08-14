@@ -349,7 +349,6 @@
 }
 
 .action-btn:hover {
-  background: var(--color-surface-subtle);
   transform: scale(1.08);
 }
 

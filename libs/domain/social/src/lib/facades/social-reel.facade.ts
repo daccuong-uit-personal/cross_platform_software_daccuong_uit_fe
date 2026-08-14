@@ -1,12 +1,16 @@
 import { Injectable, signal, computed, inject } from '@angular/core';
 import { SocialReelService } from '../services/social-reel.service';
+import { SocialCommentService } from '../services/social-comment.service';
 import { ReelItem, ReelComment, CreateReelPayload } from '../models/social-reel.models';
+import { Comment, CreateCommentPayload } from '../models';
 import { catchError, tap, take } from 'rxjs/operators';
 import { of } from 'rxjs';
+import { insertCommentIntoTree, replaceOptimisticComment } from '../utils/comment-tree';
 
 @Injectable({ providedIn: 'root' })
 export class SocialReelFacade {
   private reelService = inject(SocialReelService);
+  private commentService = inject(SocialCommentService);
 
   reels = signal<ReelItem[]>([]);
   friendReels = signal<ReelItem[]>([]);
@@ -15,6 +19,10 @@ export class SocialReelFacade {
   showComments = signal(false);
   newComment = signal('');
   isFollowing = signal<Record<string, boolean>>({});
+
+  /** Standard Comment[] for the full-featured comment panel in the sidebar */
+  reelComments = signal<Comment[]>([]);
+  isReelCommentsLoading = signal(false);
 
   currentReel = computed(() => this.reels()[this.currentIndex()]);
 
@@ -90,6 +98,10 @@ export class SocialReelFacade {
     return this.reelService.createReel(payload);
   }
 
+  /**
+   * Load comments for a reel using the flat ReelComment model.
+   * @deprecated Use loadReelCommentsV2() for full-featured comment panel.
+   */
   loadCommentsForReel(reelId: string) {
     this.reelService.getReelComments(reelId).pipe(take(1)).subscribe({
       next: (response) => {
@@ -111,6 +123,120 @@ export class SocialReelFacade {
         console.error('Error loading comments', err);
       }
     });
+  }
+
+  /**
+   * Load comments for a reel into the standard Comment[] signal.
+   * Used by the full-featured comment panel in the sidebar.
+   */
+  loadReelCommentsV2(reelId: string) {
+    this.isReelCommentsLoading.set(true);
+    this.reelService.getReelCommentsAsComments(reelId).pipe(take(1)).subscribe({
+      next: (comments) => {
+        this.reelComments.set(comments);
+        this.isReelCommentsLoading.set(false);
+      },
+      error: (err) => {
+        console.error('Error loading reel comments', err);
+        this.reelComments.set([]);
+        this.isReelCommentsLoading.set(false);
+      }
+    });
+  }
+
+  /**
+   * Submit a comment (or reply) on the current reel with full payload support.
+   * Performs optimistic insert and replaces with server response.
+   */
+  submitReelCommentFull(
+    reelId: string,
+    payload: CreateCommentPayload,
+    optimisticComment: Comment
+  ) {
+    // Optimistic insert at top or into reply tree
+    if (payload.replyToCommentId) {
+      this.reelComments.update((list) =>
+        insertCommentIntoTree(list, optimisticComment, payload.replyToCommentId!)
+      );
+    } else {
+      this.reelComments.update((list) => [optimisticComment, ...list]);
+    }
+
+    this.reelService.submitReelComment(reelId, payload).pipe(take(1)).subscribe({
+      next: (serverComment) => {
+        // Replace optimistic comment with the server version
+        this.reelComments.update((list) =>
+          replaceOptimisticComment(list, optimisticComment.id, serverComment)
+        );
+        // Update comment count on the reel
+        this.reels.update((list) =>
+          list.map((r) =>
+            r.id === reelId ? { ...r, comments: r.comments + 1 } : r
+          )
+        );
+      },
+      error: (err) => {
+        console.error('Error submitting reel comment', err);
+        // Roll back optimistic insert
+        this.reelComments.update((list) =>
+          list.filter((c) => c.id !== optimisticComment.id)
+        );
+      }
+    });
+  }
+
+  /**
+   * Toggle like on a comment using the shared SocialCommentService.
+   * Performs optimistic update with rollback on error.
+   */
+  toggleReelCommentLike(commentId: string) {
+    const comment = this.findCommentInReelComments(commentId);
+    if (!comment) return;
+
+    const wasLiked = Boolean(comment.isLiked);
+    const optimisticCount = Math.max(0, comment.likesCount + (wasLiked ? -1 : 1));
+
+    // Optimistic update
+    this.reelComments.update((list) =>
+      this.updateCommentInTree(list, commentId, { isLiked: !wasLiked, likesCount: optimisticCount })
+    );
+
+    this.commentService.toggleCommentLike(commentId, wasLiked).pipe(take(1)).subscribe({
+      next: (result) => {
+        this.reelComments.update((list) =>
+          this.updateCommentInTree(list, commentId, {
+            isLiked: Boolean(result.isLiked),
+            likesCount: Math.max(0, Number(result.likesCount ?? optimisticCount)),
+          })
+        );
+      },
+      error: () => {
+        // Roll back
+        this.reelComments.update((list) =>
+          this.updateCommentInTree(list, commentId, { isLiked: wasLiked, likesCount: comment.likesCount })
+        );
+      }
+    });
+  }
+
+  /**
+   * Delegate getReplies to SocialCommentService (same endpoint /comments/{id}/replies).
+   */
+  getReelCommentReplies(commentId: string) {
+    return this.commentService.getReplies(commentId);
+  }
+
+  /**
+   * Load replies for a comment and update the signal.
+   */
+  loadReelCommentReplies(commentId: string) {
+    return this.commentService.getReplies(commentId).pipe(
+      tap((replies) => {
+        this.reelComments.update((list) =>
+          this.updateCommentInTree(list, commentId, { replies })
+        );
+      })
+    );
   }
 
   toggleLike() {
@@ -162,8 +288,8 @@ export class SocialReelFacade {
   toggleComments() {
     this.showComments.update((v) => !v);
     const reel = this.currentReel();
-    if (this.showComments() && reel && reel.commentList.length === 0) {
-      this.loadCommentsForReel(reel.id);
+    if (this.showComments() && reel) {
+      this.loadReelCommentsV2(reel.id);
     }
   }
 
@@ -179,6 +305,7 @@ export class SocialReelFacade {
     return this.isFollowing()[reelId] ?? false;
   }
 
+  /** @deprecated Use toggleReelCommentLike() which uses SocialCommentService. */
   toggleCommentLike(commentId: string) {
     const reel = this.currentReel();
     if (!reel) return;
@@ -231,6 +358,7 @@ export class SocialReelFacade {
     });
   }
 
+  /** @deprecated Use submitReelCommentFull() for full payload support. */
   submitComment() {
     const text = this.newComment().trim();
     if (!text) return;
@@ -273,17 +401,26 @@ export class SocialReelFacade {
   goToPrev() {
     if (this.currentIndex() > 0) {
       this.currentIndex.update((i) => i - 1);
+      this.reelComments.set([]);
+      
+      if (this.showComments()) {
+        const prevReel = this.currentReel();
+        if (prevReel) {
+          this.loadReelCommentsV2(prevReel.id);
+        }
+      }
     }
   }
 
   goToNext() {
     if (this.currentIndex() < this.reels().length - 1) {
       this.currentIndex.update((i) => i + 1);
+      this.reelComments.set([]);
 
       if (this.showComments()) {
         const nextReel = this.currentReel();
-        if (nextReel && nextReel.commentList.length === 0) {
-          this.loadCommentsForReel(nextReel.id);
+        if (nextReel) {
+          this.loadReelCommentsV2(nextReel.id);
         }
       }
     }
@@ -291,11 +428,40 @@ export class SocialReelFacade {
 
   goToReel(index: number) {
     this.currentIndex.set(index);
+    this.reelComments.set([]);
     if (this.showComments()) {
       const reel = this.currentReel();
-      if (reel && reel.commentList.length === 0) {
-        this.loadCommentsForReel(reel.id);
+      if (reel) {
+        this.loadReelCommentsV2(reel.id);
       }
     }
+  }
+
+  // ─── Helpers ────────────────────────────────────────────────────────────────
+
+  private findCommentInReelComments(commentId: string, list?: Comment[]): Comment | undefined {
+    const source = list ?? this.reelComments();
+    for (const c of source) {
+      if (c.id === commentId) return c;
+      const found = this.findCommentInReelComments(commentId, c.replies ?? []);
+      if (found) return found;
+    }
+    return undefined;
+  }
+
+  private updateCommentInTree(
+    list: Comment[],
+    commentId: string,
+    patch: Partial<Comment>
+  ): Comment[] {
+    return list.map((c) => {
+      if (c.id === commentId) {
+        return { ...c, ...patch };
+      }
+      if (c.replies?.length) {
+        return { ...c, replies: this.updateCommentInTree(c.replies, commentId, patch) };
+      }
+      return c;
+    });
   }
 }
