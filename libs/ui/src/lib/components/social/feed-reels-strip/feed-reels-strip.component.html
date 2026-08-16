@@ -23,8 +23,8 @@
         (keydown.space)="$event.preventDefault(); onOpenReel(reel)">
 
         <div class="reel-thumb" [class.has-thumbnail]="!!reel.thumbnailUrl"
-          [style.background-image]="reel.thumbnailUrl ? 'url(' + reel.thumbnailUrl + ')' : ''"
-          [style.background]="!reel.thumbnailUrl ? reel.thumbnailColor : ''">
+          [style.background-image]="getThumbnailStyle(reel.thumbnailUrl)"
+          [style.background-color]="!reel.thumbnailUrl ? reel.thumbnailColor : 'transparent'">
 
           <!-- Avatar ở góc trên -->
           <div class="reel-avatar-ring">

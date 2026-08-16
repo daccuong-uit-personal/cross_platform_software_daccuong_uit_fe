@@ -12,11 +12,12 @@ import { CommonModule } from '@angular/common';
 import { SocialReelFacade } from '@fe/domain/social';
 import { TabKeepAliveService } from '@fe/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ReelItemComponent } from '../reel-item/reel-item.component';
 
 @Component({
   standalone: true,
   selector: 'fe-reels',
-  imports: [CommonModule],
+  imports: [CommonModule, ReelItemComponent],
   templateUrl: './reels.component.html',
   styleUrls: ['./reels.component.css'],
 })
@@ -28,14 +29,11 @@ export class ReelsComponent implements AfterViewInit, OnInit {
   private destroyRef = inject(DestroyRef);
 
   ngOnInit() {
-    // Fetch reels when the component is initialized
     this.reelsService.loadReels();
 
-    // Re-fetch when clicking the Reels tab while it's already active
     this.keepAlive.refreshFor('/reels')
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
-        // Reset index and load fresh reels
         this.reelsService.currentIndex.set(0);
         this.reelsService.loadReels();
       });
@@ -68,8 +66,7 @@ export class ReelsComponent implements AfterViewInit, OnInit {
     }
 
     if (this.isScrolling) return;
-    
-    // Determine direction
+
     if (e.deltaY > 50) {
       this.reelsService.goToNext();
       this.lockScroll();
@@ -83,6 +80,10 @@ export class ReelsComponent implements AfterViewInit, OnInit {
     this.isScrolling = true;
     setTimeout(() => {
       this.isScrolling = false;
-    }, 600); // Prevent multiple scrolls within 600ms
+    }, 600);
+  }
+
+  trackReel(_: number, item: any): string {
+    return item.id;
   }
 }

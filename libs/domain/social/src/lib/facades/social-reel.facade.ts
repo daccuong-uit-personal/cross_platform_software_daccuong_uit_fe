@@ -402,7 +402,7 @@ export class SocialReelFacade {
     if (this.currentIndex() > 0) {
       this.currentIndex.update((i) => i - 1);
       this.reelComments.set([]);
-      
+
       if (this.showComments()) {
         const prevReel = this.currentReel();
         if (prevReel) {

@@ -25,8 +25,8 @@ import { SkeletonComponent } from './skeleton.component';
 
       <!-- Content lines -->
       <div class="skeleton-card__content">
-        @for (i of contentLines; track i) {
-          <lib-skeleton variant="text" [width]="i === contentLines.length - 1 ? 80 : 100" />
+        @for (i of contentLines; track $index) {
+          <lib-skeleton variant="text" [width]="$index === contentLines.length - 1 ? 80 : 100" />
         }
       </div>
 
@@ -82,7 +82,7 @@ export class SkeletonCardComponent {
   @Input() showFooter = true;
   @Input() lines = 3;
 
-  get contentLines() {
-    return Array.from({ length: this.lines });
+  get contentLines(): number[] {
+    return Array.from({ length: this.lines }, (_, index) => index);
   }
 }

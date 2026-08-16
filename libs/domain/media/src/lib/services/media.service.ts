@@ -55,4 +55,32 @@ export class MediaService {
   getDownloadUrl(mediaId: string) {
     return `${appConfig.apiUrl}/media/${mediaId}/download`;
   }
+
+  getPresignedUpload(payload: { originalName: string; mimeType: string; fileSize: number; userId?: string }): Observable<{ mediaId: string; uploadUrl: string }> {
+    return this.api.post<{ data: { mediaId: string; uploadUrl: string } }>(`${urlConfig.media.list}/presigned-upload`, payload).pipe(
+      map(res => res.data.data) // Assuming standard response wrapper
+    );
+  }
+
+  completeUpload(mediaId: string): Observable<any> {
+    return this.api.post<{ data: any }>(`${urlConfig.media.list}/${mediaId}/complete`, {}).pipe(
+      map(res => res.data.data)
+    );
+  }
+
+  getMediaStatus(mediaId: string): Observable<{ status: string }> {
+    return this.api.get<{ data: { status: string } }>(`${urlConfig.media.list}/${mediaId}/status`).pipe(
+      map(res => res.data.data)
+    );
+  }
+
+  uploadRawFileToMinio(url: string, file: File, contentType: string): Promise<Response> {
+    return fetch(url, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': contentType,
+      },
+      body: file
+    });
+  }
 }

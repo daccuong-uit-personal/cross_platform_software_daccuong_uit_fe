@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, switchMap, map } from 'rxjs';
+import { Observable, switchMap, map, from, timer, filter, take } from 'rxjs';
 import { appConfig, ApiService } from '@fe/core';
 import { CreateReelPayload } from '../models/social-reel.models';
 import { Comment, CreateCommentPayload } from '../models';
@@ -20,30 +20,61 @@ export class SocialReelService {
   }
 
   createReel(payload: CreateReelPayload): Observable<any> {
-    const formData = new FormData();
-    formData.append('file', payload.videoFile);
-
-    return this.http
-      .post<{ data: { id: string; fileName: string; originalName: string } }>(
-        `${this.apiUrl}/media/upload`,
-        formData
-      )
-      .pipe(
-        map((res) => `${this.apiUrl}/media/${res.data.id}/file`),
-        switchMap((videoUrl) => {
-          const dto: any = {
-            content: payload.description,
-            videoUrl: videoUrl,
-          };
-          if (payload.music) {
-            dto.musicId = payload.music;
-          }
-          if (payload.privacy) {
-            dto.visibility = payload.privacy;
-          }
-          return this.api.post<any>('/reels', dto).pipe(map(res => res.data));
-        })
-      );
+    const { videoFile, description, music, privacy } = payload;
+    
+    // 1. Lấy Presigned URL
+    return this.api.post<{ data: { mediaId: string; uploadUrl: string } }>(
+      '/media/presigned-upload', 
+      {
+        originalName: videoFile.name,
+        mimeType: videoFile.type,
+        fileSize: videoFile.size
+      }
+    ).pipe(
+      switchMap((res: any) => {
+        const { mediaId, uploadUrl } = res.data ?? res;
+        // 2. Upload file trực tiếp lên MinIO bằng fetch để tránh bị interceptor gắn auth header
+        return from(fetch(uploadUrl, {
+          method: 'PUT',
+          headers: { 'Content-Type': videoFile.type },
+          body: videoFile
+        })).pipe(
+          switchMap((uploadRes) => {
+            if (!uploadRes.ok) {
+              throw new Error('Upload file lên MinIO thất bại');
+            }
+            // 3. Complete Upload báo cho media-service
+            return this.api.post<{ data: any }>(`/media/${mediaId}/complete`, {});
+          }),
+          // 4. Polling trạng thái media cho đến khi ready
+          switchMap(() => {
+            return timer(0, 3000).pipe(
+              switchMap(() => this.api.get<{ data: { status: string } }>(`/media/${mediaId}/status`)),
+              filter((statusRes: any) => {
+                const status = statusRes.data?.status ?? statusRes.status;
+                return status === 'ready' || status === 'failed';
+              }),
+              take(1),
+              switchMap((statusRes: any) => {
+                const status = statusRes.data?.status ?? statusRes.status;
+                if (status === 'failed') {
+                  throw new Error('Xử lý media thất bại');
+                }
+                // 5. Tạo Reel
+                const dto: any = {
+                  content: description,
+                  mediaId: mediaId,
+                };
+                if (music) dto.musicId = music;
+                if (privacy) dto.visibility = privacy;
+                
+                return this.api.post<any>('/reels', dto).pipe(map(r => r.data ?? r));
+              })
+            );
+          })
+        );
+      })
+    );
   }
 
   /** @deprecated Use getReelComments() in SocialReelFacade with Comment[] mapping instead */

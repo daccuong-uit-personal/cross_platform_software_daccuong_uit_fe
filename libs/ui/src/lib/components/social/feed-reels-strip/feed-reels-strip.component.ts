@@ -2,6 +2,7 @@ import { Component, Output, EventEmitter, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { SocialReelFacade, ReelItem } from '@fe/domain/social';
+import { DomSanitizer, SafeStyle } from '@angular/platform-browser';
 
 @Component({
   standalone: true,
@@ -12,6 +13,12 @@ import { SocialReelFacade, ReelItem } from '@fe/domain/social';
 })
 export class FeedReelsStripComponent {
   private reelFacade = inject(SocialReelFacade);
+  private sanitizer = inject(DomSanitizer);
+
+  getThumbnailStyle(url: string | undefined): SafeStyle | string {
+    if (!url) return 'none';
+    return this.sanitizer.bypassSecurityTrustStyle(`url('${url}')`);
+  }
 
   /** Friend reels signal exposed from facade */
   friendReels = this.reelFacade.friendReels;
@@ -30,7 +37,7 @@ export class FeedReelsStripComponent {
     this.openReel.emit(reel);
   }
 
-  trackById(_index: number, item: ReelItem): string {
-    return item.id;
+  trackById(index: number, item: ReelItem): string | number {
+    return item?.id || index;
   }
 }
