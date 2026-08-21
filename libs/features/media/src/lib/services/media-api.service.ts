@@ -5,7 +5,7 @@ import { FileItem, ListFilesParams, ListFilesResponse } from '../models/media.mo
 
 @Injectable({ providedIn: 'root' })
 export class MediaApiService {
-  private base = '/api/media';
+  private base = '/api/v1/media';
 
   constructor(private http: HttpClient) {}
 

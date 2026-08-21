@@ -1,6 +1,11 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
+  // Do not attach headers for AWS S3/MinIO presigned URLs
+  if (req.url.includes('X-Amz-Signature') || req.url.includes('X-Amz-Algorithm')) {
+    return next(req);
+  }
+
   // We can read directly from localStorage or inject AuthService (be careful of circular DI, though HttpInterceptorFn avoids it better)
   const token = localStorage.getItem('token');
   

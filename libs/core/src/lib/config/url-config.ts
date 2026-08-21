@@ -13,8 +13,9 @@ export const urlConfig = {
     me: '/profiles/me',
   },
   media: {
-    upload: '/media/upload',
-    uploadBase64: '/media/upload-base64',
+    /** @deprecated Use presignedUpload flow instead */
+    upload: '/media/presigned-upload',
+    presignedUpload: '/media/presigned-upload',
     list: '/media',
   },
 };

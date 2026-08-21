@@ -46,6 +46,7 @@ export class SocialReelFacade {
           saves: 0,
           liked: r.isLikedByCurrentUser,
           saved: r.isBookmarkedByCurrentUser,
+          fallbackUrl: r.fallbackUrl,
           videoUrl: r.videoUrl,
           thumbnailUrl: r.thumbnailUrl || r.coverUrl,
           userId: r.author?.id,

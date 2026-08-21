@@ -118,10 +118,10 @@ export class SocialPostService {
 
     return posts.map((item) => item.id === postId
       ? {
-          ...item,
-          isLiked: nextIsLiked,
-          likesCount: nextLikesCount,
-        }
+        ...item,
+        isLiked: nextIsLiked,
+        likesCount: nextLikesCount,
+      }
       : item);
   }
 
@@ -134,10 +134,10 @@ export class SocialPostService {
 
     return posts.map((item) => item.id === postId
       ? {
-          ...item,
-          isLiked: previousState.wasLiked,
-          likesCount: previousState.likesCount,
-        }
+        ...item,
+        isLiked: previousState.wasLiked,
+        likesCount: previousState.likesCount,
+      }
       : item);
   }
 
@@ -181,24 +181,42 @@ export class SocialPostService {
 
     if (payload.images && payload.images.length > 0) {
       for (const file of payload.images) {
-        const formData = new FormData();
-        formData.append('file', file);
         const upload$ = this.http
-          .post<{ data: { id: string; fileName: string; originalName: string } }>(
-            `${this.apiUrl}/media/upload`,
-            formData
+          .post<{ mediaId: string; uploadUrl: string }>(
+            `${this.apiUrl}/media/presigned-upload`,
+            {
+              originalName: file.name,
+              mimeType: file.type,
+              fileSize: file.size,
+            }
           )
           .pipe(
-            map(res => `${this.apiUrl}/media/${res.data.id}/file`)
+            switchMap((presigned) => {
+              // Extract just the data if it's wrapped in { data: ... }
+              const data = (presigned as any).data || presigned;
+              return this.http
+                .put(data.uploadUrl, file)
+                .pipe(
+                  switchMap(() =>
+                    this.http.post<{ data?: { id: string }; id?: string }>(
+                      `${this.apiUrl}/media/${data.mediaId}/complete`,
+                      {}
+                    )
+                  ),
+                  map((res) => {
+                    return res?.data?.id || res?.id || data.mediaId;
+                  })
+                );
+            })
           );
         uploadTasks.push(upload$);
       }
     }
 
-    const buildDto = (mediaUrls: string[] = []) => ({
+    const buildDto = (mediaIds: string[] = []) => ({
       content: payload.content,
-      type: mediaUrls.length > 1 ? 'gallery' : mediaUrls.length === 1 ? 'image' : 'text',
-      mediaUrls,
+      type: mediaIds.length > 1 ? 'gallery' : mediaIds.length === 1 ? 'image' : 'text',
+      mediaIds,
       hashtags: payload.hashtags,
       visibility: payload.privacy ?? 'public',
       location: payload.location,
@@ -207,8 +225,8 @@ export class SocialPostService {
 
     if (uploadTasks.length > 0) {
       return forkJoin(uploadTasks).pipe(
-        switchMap(mediaUrls =>
-          this.api.post<any>('/posts', buildDto(mediaUrls))
+        switchMap(mediaIds =>
+          this.api.post<any>('/posts', buildDto(mediaIds))
         ),
         map(res => this.mapPostForUi(res.data))
       );

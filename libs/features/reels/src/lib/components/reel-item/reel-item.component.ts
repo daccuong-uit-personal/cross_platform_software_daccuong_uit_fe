@@ -15,6 +15,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SocialReelFacade } from '@fe/domain/social';
+import Hls from 'hls.js';
 
 @Component({
   standalone: true,
@@ -43,19 +44,17 @@ export class ReelItemComponent implements AfterViewInit, OnChanges, OnDestroy {
   private hideControlsTimer: any;
   /** URL đã set cho video, tránh set lại cùng URL */
   private currentSrc: string = '';
+  /** HLS.js instance */
+  private hls: Hls | null = null;
 
   ngAfterViewInit(): void {
     const video = this.videoPlayerRef?.nativeElement;
     if (!video) return;
 
-    // Đặt src một lần duy nhất qua code, không để Angular binding đụng vào
     if (this.reel?.videoUrl && this.reel.videoUrl !== this.currentSrc) {
-      this.currentSrc = this.reel.videoUrl;
-      video.src = this.reel.videoUrl;
-      video.load();
+      this.loadVideoSrc(video, this.reel.videoUrl);
     }
 
-    // Tự phát ngay nếu đây là video current lúc đầu
     if (this.isCurrent) {
       video.play().catch(() => { /* Autoplay policy */ });
       this.paused = false;
@@ -63,17 +62,14 @@ export class ReelItemComponent implements AfterViewInit, OnChanges, OnDestroy {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    // Nếu videoUrl của reel thay đổi (sang video khác), cập nhật src
     if (changes['reel']) {
       const newUrl: string = changes['reel'].currentValue?.videoUrl ?? '';
       if (newUrl && newUrl !== this.currentSrc) {
         const video = this.videoPlayerRef?.nativeElement;
         if (video) {
-          this.currentSrc = newUrl;
-          video.src = newUrl;
-          video.load();
+          this.loadVideoSrc(video, newUrl);
           if (this.isCurrent) {
-            video.play().catch(() => {});
+            video.play().catch(() => { });
             this.paused = false;
           }
         }
@@ -83,18 +79,15 @@ export class ReelItemComponent implements AfterViewInit, OnChanges, OnDestroy {
     if (changes['isCurrent']) {
       const video = this.videoPlayerRef?.nativeElement;
       if (this.isCurrent) {
-        // Video được scroll đến → tự phát
         if (video && video.paused) {
           video.play().catch(() => { /* Autoplay policy */ });
           this.paused = false;
         }
       } else {
-        // Video bị scroll ra khỏi view → pause
         if (video && !video.paused) {
           video.pause();
           this.paused = true;
         }
-        // Ẩn controls của video không active
         this.showControls = false;
         this.clearHideTimer();
       }
@@ -103,9 +96,80 @@ export class ReelItemComponent implements AfterViewInit, OnChanges, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.destroyHls();
     this.clearHideTimer();
     if (this.clickTimeout) {
       clearTimeout(this.clickTimeout);
+    }
+  }
+
+  /**
+   * Load a video URL — uses HLS.js for .m3u8 streams, native src for others.
+   */
+  private loadVideoSrc(video: HTMLVideoElement, url: string): void {
+    this.currentSrc = url;
+
+    const isHls = url.includes('.m3u8');
+
+    if (isHls) {
+      if (Hls.isSupported()) {
+        this.destroyHls();
+        this.hls = new Hls({
+          enableWorker: true,
+          lowLatencyMode: false,
+          // Buffer settings optimized for short-form video
+          maxBufferLength: 30,
+          maxMaxBufferLength: 60,
+        });
+        this.hls.loadSource(url);
+        this.hls.attachMedia(video);
+        this.hls.on(Hls.Events.MANIFEST_PARSED, () => {
+          if (this.isCurrent) {
+            video.play().catch(() => { });
+          }
+        });
+        this.hls.on(Hls.Events.ERROR, (_event, data) => {
+          if (data.fatal || data.type === Hls.ErrorTypes.NETWORK_ERROR) {
+            console.error('[HLS] Error:', data.type, data.details);
+            console.log(this.reel);
+            if (this.reel?.fallbackUrl) {
+              console.log('[HLS] Falling back to regular video', this.reel.fallbackUrl);
+              this.destroyHls();
+              video.src = this.reel.fallbackUrl;
+              video.load();
+              if (this.isCurrent) {
+                video.play().catch(() => { });
+              }
+            }
+          }
+        });
+      } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+        // Safari native HLS support
+        video.src = url;
+        video.onerror = () => {
+          if (this.reel?.fallbackUrl) {
+            console.log('[HLS] Falling back to regular video', this.reel.fallbackUrl);
+            video.src = this.reel.fallbackUrl;
+            video.load();
+            if (this.isCurrent) {
+              video.play().catch(() => { });
+            }
+          }
+        };
+        video.load();
+      }
+    } else {
+      // Regular mp4/webm
+      this.destroyHls();
+      video.src = url;
+      video.load();
+    }
+  }
+
+  private destroyHls(): void {
+    if (this.hls) {
+      this.hls.destroy();
+      this.hls = null;
     }
   }
 
@@ -138,14 +202,12 @@ export class ReelItemComponent implements AfterViewInit, OnChanges, OnDestroy {
     if (videoElement && videoElement.duration) {
       videoElement.currentTime = Math.max(0, Math.min(videoElement.currentTime + amount, videoElement.duration));
     }
-    // Reset timer khi người dùng tương tác
     this.startHideTimer();
   }
 
   togglePlayPauseFromControl(videoElement: HTMLVideoElement, event: Event) {
     event.stopPropagation();
     this.togglePlayPause(videoElement);
-    // Reset timer khi người dùng tương tác
     this.startHideTimer();
   }
 
