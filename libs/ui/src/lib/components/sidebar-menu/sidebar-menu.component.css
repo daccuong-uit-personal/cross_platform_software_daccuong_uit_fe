@@ -102,8 +102,8 @@
   flex-shrink: 0;
 }
 
-/* Responsive: collapse to icons only (< 1100px) — desktop sidebar */
-@media (max-width: 1099.98px) {
+/* Responsive: collapse to icons only (< 1440px) — desktop sidebar */
+@media (max-width: 1439.98px) {
   .sidebar-menu {
     align-items: center;
     padding: 8px 4px;

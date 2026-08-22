@@ -4,20 +4,21 @@
   <div class="reels-center">
 
     <!-- Viewport for sliding animation -->
-    <div class="reels-viewport" style="height: 90vh; overflow: hidden; position: relative; width: max-content;">
+    <div class="reels-viewport" style="height: 90vh; overflow: hidden; position: relative; width: 100%; max-width: max-content; display: flex; justify-content: center;">
       <div class="reels-slider" [style.transform]="'translateY(calc(-' + reelsService.currentIndex() + ' * 90vh))'"
-        style="transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1); display: flex; flex-direction: column; height: 100%;">
+        style="transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1); display: flex; flex-direction: column; height: 100%; max-width: 100%;">
 
         <!-- Video + side icons wrapper (centered together) -->
         <div class="reels-content-wrapper" *ngFor="let reel of reelsService.reels(); let i = index; trackBy: trackReel"
-          style="height: 90vh; flex-shrink: 0;">
+          style="height: 90vh; flex-shrink: 0; max-width: 100%;">
 
 
           <!-- Video card Component -->
           <fe-reel-item 
             [reel]="reel" 
             [isCurrent]="i === reelsService.currentIndex()"
-            (onLike)="reelsService.currentIndex() === i && reelsService.toggleLike()">
+            (onLike)="reelsService.currentIndex() === i && reelsService.toggleLike()"
+            style="flex: 1 1 auto; min-width: 0; display: flex; justify-content: center;">
           </fe-reel-item>
 
           <!-- ═══ ACTION ICONS COLUMN ═══ -->
@@ -120,6 +121,11 @@
       <!-- end .reels-slider -->
     </div>
     <!-- end .reels-viewport -->
+
+    <!-- Mobile Comments Panel (Bottom Sheet) -->
+    <ng-container *ngIf="reelsService.showComments()">
+      <fe-reels-comments class="mobile-comments bottom-sheet"></fe-reels-comments>
+    </ng-container>
 
   </div>
   <!-- end .reels-center -->

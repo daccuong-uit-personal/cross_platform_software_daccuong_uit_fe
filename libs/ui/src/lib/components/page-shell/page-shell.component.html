@@ -17,6 +17,15 @@
         <span class="page-brand-title">Reals</span>
       </a>
 
+      <!-- Collapsed Menu Hamburger -->
+      <div class="sidebar-hamburger">
+        <button class="hamburger-btn" (click)="toggleMobileMenu($event)" [class.open]="mobileMenuOpen()" aria-label="Menu">
+          <span class="hamburger-bar"></span>
+          <span class="hamburger-bar"></span>
+          <span class="hamburger-bar"></span>
+        </button>
+      </div>
+
       <hr class="page-nav-separator" />
 
       <!-- Navigation menu -->
@@ -46,6 +55,12 @@
 
   <!-- ═══ MOBILE TOPBAR ═══ -->
   <div class="mobile-topbar">
+    <button class="hamburger-btn" (click)="toggleMobileMenu($event)" [class.open]="mobileMenuOpen()" aria-label="Menu">
+      <span class="hamburger-bar"></span>
+      <span class="hamburger-bar"></span>
+      <span class="hamburger-bar"></span>
+    </button>
+
     <a [routerLink]="brandLink" class="page-brand mobile-brand">
       <div class="page-brand-icon">
         <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -57,12 +72,6 @@
       </div>
       <span class="page-brand-title">Reals</span>
     </a>
-
-    <button class="hamburger-btn" (click)="toggleMobileMenu($event)" [class.open]="mobileMenuOpen()" aria-label="Menu">
-      <span class="hamburger-bar"></span>
-      <span class="hamburger-bar"></span>
-      <span class="hamburger-bar"></span>
-    </button>
   </div>
 
   <!-- ═══ MOBILE DRAWER OVERLAY ═══ -->

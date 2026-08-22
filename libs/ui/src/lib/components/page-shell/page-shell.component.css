@@ -217,6 +217,11 @@
   text-overflow: ellipsis;
 }
 
+/* ─── Sidebar Hamburger (hidden on desktop) ─────────────────── */
+.sidebar-hamburger {
+  display: none;
+}
+
 /* ─── Mobile Topbar (hidden on desktop) ─────────────────────── */
 .mobile-topbar {
   display: none;
@@ -269,7 +274,6 @@
 
 /* ─── Mobile Drawer Overlay ──────────────────────────────────── */
 .mobile-overlay {
-  display: none;
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.45);
@@ -285,7 +289,6 @@
 
 /* ─── Mobile Drawer ──────────────────────────────────────────── */
 .mobile-drawer {
-  display: none;
   position: fixed;
   top: 0;
   left: 0;
@@ -335,11 +338,12 @@
   display: flex;
   justify-content: center;
   background: transparent;
-  flex: 0 0 var(--page-main-width);
+  flex: 1 1 var(--page-main-width);
+  min-width: calc(var(--page-main-width) * 0.7);
 }
 
 .page-main-content {
-  width: var(--page-main-width);
+  width: 100%;
   max-width: var(--page-main-width);
   margin: 0;
   border-left: 1px solid var(--color-border-default);
@@ -347,7 +351,6 @@
   min-height: 100vh;
   padding: 0 0 var(--spacing-6) 0;
   box-sizing: border-box;
-  flex-shrink: 0;
 }
 
 /* ─── Right Sidebar ─────────────────────────────────────────── */
@@ -377,34 +380,22 @@
    RESPONSIVE BREAKPOINTS
    ═══════════════════════════════════════════════════════════════ */
 
-/* 1. < 1440px: Hide right sidebar. Keep left menu full. */
+/* 1. < 1440px: Collapse left sidebar (icon mode) and replace logo with hamburger. Keep right sidebar visible. */
 @media (max-width: 1439.98px) {
-  .page-rightbar {
-    display: none;
-  }
-
-  .page-main-content {
-    border-right: none;
-  }
-}
-
-/* 2. < 1100px: Collapse left sidebar to icons + short brand name. */
-@media (max-width: 1099.98px) {
   .page-sidebar {
     width: var(--page-sidebar-collapsed);
     min-width: var(--page-sidebar-collapsed);
   }
 
   .page-brand {
-    justify-content: center;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 4px;
+    display: none;
   }
 
-  .page-brand-title {
-    font-size: var(--font-size-caption);
-    font-weight: 800;
+  .sidebar-hamburger {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 12px 0;
   }
 
   .page-settings-link {
@@ -421,7 +412,19 @@
   }
 }
 
-/* 3. < 860px: Hide left sidebar entirely, show mobile topbar + hamburger drawer. */
+/* 2. < 1100px: Hide right sidebar. */
+@media (max-width: 1099.98px) {
+  .page-rightbar {
+    display: none;
+  }
+
+  .page-main-content {
+    border-right: none;
+    max-width: 100%;
+  }
+}
+
+/* 3. < 860px: Full mobile layout (Hide collapsed sidebar, show topbar). */
 @media (max-width: 859.98px) {
   /* Override :host min-width to lock viewport at the feed width */
   :host {
@@ -435,16 +438,15 @@
     flex-direction: column;
   }
 
-  /* Hide the desktop sidebar completely */
   .page-sidebar {
     display: none;
   }
 
-  /* Show mobile topbar */
   .mobile-topbar {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
+    gap: 12px;
     padding: 8px 16px;
     height: 56px;
     position: sticky;
@@ -453,7 +455,7 @@
     background: color-mix(in srgb, var(--color-surface-base) 90%, transparent);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--color-border-subtle);
+    border-bottom: none;
     flex-shrink: 0;
   }
 
@@ -462,7 +464,6 @@
     padding: 4px 8px;
   }
 
-  /* Show overlay and drawer */
   .mobile-overlay {
     display: block;
   }

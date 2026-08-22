@@ -177,4 +177,4 @@
     width: 18px;
     height: 18px;
   }
-}
+}@media (min-width: 1100px) { .mobile-comments { display: none; } }

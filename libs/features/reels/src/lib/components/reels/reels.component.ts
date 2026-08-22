@@ -13,11 +13,12 @@ import { SocialReelFacade } from '@fe/domain/social';
 import { TabKeepAliveService } from '@fe/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReelItemComponent } from '../reel-item/reel-item.component';
+import { ReelsCommentsComponent } from '../reels-comments/reels-comments.component';
 
 @Component({
   standalone: true,
   selector: 'fe-reels',
-  imports: [CommonModule, ReelItemComponent],
+  imports: [CommonModule, ReelItemComponent, ReelsCommentsComponent],
   templateUrl: './reels.component.html',
   styleUrls: ['./reels.component.css'],
 })
