@@ -67,9 +67,9 @@ const CONTENT_LIMIT = 280; // chars before truncating
       </div>
       </ng-template>
 
-      <div class="post-divider"></div>
+      <div class="post-divider" *ngIf="!isCompactMode"></div>
 
-      <div class="post-actions">
+      <div class="post-actions" *ngIf="!isCompactMode">
         <button class="action-btn action-like" [class.liked]="post.isLiked" type="button" (click)="onToggleLike()" aria-label="Yêu thích">
           <span class="action-count">{{ post.likesCount }}</span>
           <span class="icon" [class.liked]="post.isLiked">

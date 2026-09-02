@@ -17,9 +17,52 @@
   <!-- ═══ MAIN CONTENT (Keep-Alive tabs) ═══ -->
   <div slot="main">
 
+    <!-- ── 4-Module Sticky Custom Tab Navigation ───────────── -->
+    @if (isFeedModuleTab(activeTab())) {
+      <nav class="home-main-tabs" role="tablist" aria-label="Feed navigation">
+        <div class="home-tabs-grid">
+          @for (tab of feedTabs; track tab.id) {
+            <button
+              type="button"
+              role="tab"
+              class="home-tab-btn"
+              [class.active]="activeTab() === tab.id"
+              [attr.aria-selected]="activeTab() === tab.id"
+              (click)="selectFeedTab(tab)"
+            >
+              <span class="home-tab-label">{{ tab.label }}</span>
+            </button>
+          }
+        </div>
+        <div class="home-tabs-indicator-track" aria-hidden="true">
+          <div
+            class="home-tabs-indicator"
+            [style.transform]="'translateX(' + (activeFeedTabIndex() * 100) + '%)'"
+          >
+            <span class="home-tabs-indicator-bar"></span>
+          </div>
+        </div>
+      </nav>
+    }
+
     <!-- ── Feed (home) ─────────────────────────────────────────── -->
     @if (isTabActivated('home')) {
       <fe-feed [hidden]="!isTabVisible('home')"></fe-feed>
+    }
+
+    <!-- ── Videos (/home/videos) ─────────────────────────── -->
+    @if (isTabActivated('videos')) {
+      <fe-video [hidden]="!isTabVisible('videos')"></fe-video>
+    }
+
+    <!-- ── Shop (/home/shop) ─────────────────────────── -->
+    @if (isTabActivated('shop')) {
+      <fe-shop [hidden]="!isTabVisible('shop')"></fe-shop>
+    }
+
+    <!-- ── Stories (/home/stories) ─────────────────────────── -->
+    @if (isTabActivated('stories')) {
+      <fe-stories [hidden]="!isTabVisible('stories')"></fe-stories>
     }
 
     <!-- ── Discover (/home/discover) ──────────────────────────── -->

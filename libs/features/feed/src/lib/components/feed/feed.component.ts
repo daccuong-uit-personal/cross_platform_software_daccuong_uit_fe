@@ -2,7 +2,8 @@ import { Component, OnInit, computed, signal, inject, ElementRef, DestroyRef } f
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { PostCardComponent, UiButton, CreatePostModalComponent, SkeletonCardComponent, CommentThreadPanelComponent, CommentThreadTarget, FeedReelsStripComponent, CreateReelModalComponent } from '@fe/ui';
-import { HomeFacade } from '../../data-access/home.facade';
+import { Router } from '@angular/router';
+import { FeedFacade } from '../../data-access/feed.facade';
 import { AuthService, TabKeepAliveService } from '@fe/core';
 import { Comment, CreateCommentPayload, Post, SocialCommentService, SocialReelFacade, CreateReelPayload } from '@fe/domain/social';
 import { insertCommentIntoTree, mergeCommentsWithServer, replaceOptimisticComment } from '@fe/domain/social';
@@ -15,17 +16,18 @@ import { insertCommentIntoTree, mergeCommentsWithServer, replaceOptimisticCommen
   styleUrls: ['./feed.component.css'],
 })
 export class FeedComponent implements OnInit {
-  private homeFacade = inject(HomeFacade);
+  private feedFacade = inject(FeedFacade);
   private authService = inject(AuthService);
   private socialCommentService = inject(SocialCommentService);
   private reelFacade = inject(SocialReelFacade);
   private keepAlive = inject(TabKeepAliveService);
   private elementRef = inject(ElementRef);
   private destroyRef = inject(DestroyRef);
+  private router = inject(Router);
 
-  posts = this.homeFacade.posts;
-  isLoading = this.homeFacade.isLoading;
-  error = this.homeFacade.error;
+  posts = this.feedFacade.posts;
+  isLoading = this.feedFacade.isLoading;
+  error = this.feedFacade.error;
   activeTab = signal<'posts' | 'videos' | 'shop' | 'stories'>('posts');
   searchQuery = signal('');
   isCreatePostModalOpen = signal(false);
@@ -53,36 +55,17 @@ export class FeedComponent implements OnInit {
   });
 
   displayedPostsCount = computed(() => this.filteredPosts().length);
-  feedTitle = computed(() => {
-    switch (this.activeTab()) {
-      case 'videos':
-        return 'Video';
-      case 'shop':
-        return 'Shop';
-      case 'stories':
-        return 'Truyện';
-      default:
-        return 'Bài đăng';
-    }
-  });
   feedMeta = computed(() =>
     this.searchQuery().trim()
       ? `Kết quả tìm kiếm cho "${this.searchQuery()}"`
       : ''
   );
 
-  tabs = [
-    { id: 'posts', label: 'Bài đăng' },
-    { id: 'videos', label: 'Video' },
-    { id: 'shop', label: 'Shop' },
-    { id: 'stories', label: 'Truyện' },
-  ] as const;
-
   // Show 3 skeleton cards while loading
   skeletonItems = [1, 2, 3];
 
   ngOnInit(): void {
-    this.homeFacade.loadFeed();
+    this.feedFacade.loadFeed();
     this.reelFacade.loadFriendReels();
     this.authService.checkAuth();
 
@@ -93,7 +76,7 @@ export class FeedComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         this.scrollToTop();
-        this.homeFacade.loadFeed();
+        this.feedFacade.loadFeed();
         this.reelFacade.loadFriendReels();
       });
   }
@@ -112,10 +95,6 @@ export class FeedComponent implements OnInit {
     }
     // Fallback: scroll the window
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-
-  selectTab(tabId: 'posts' | 'videos' | 'shop' | 'stories') {
-    this.activeTab.set(tabId);
   }
 
   onSearch(query: string) {
@@ -145,7 +124,7 @@ export class FeedComponent implements OnInit {
   }
 
   onSubmitPost(event: any): void {
-    this.homeFacade.createPost(event);
+    this.feedFacade.createPost(event);
     this.isCreatePostModalOpen.set(false);
     this.postToShare.set(undefined);
   }
@@ -158,7 +137,7 @@ export class FeedComponent implements OnInit {
   }
 
   onToggleLike(postId: string): void {
-    this.homeFacade.toggleLike(postId);
+    this.feedFacade.toggleLike(postId);
   }
 
   onOpenComments(post: Post): void {
@@ -250,10 +229,12 @@ export class FeedComponent implements OnInit {
   }
 
   retryLoad(): void {
-    this.homeFacade.loadFeed();
+    this.feedFacade.loadFeed();
   }
 
   trackByPostId(_index: number, post: any): string {
     return post.id;
   }
 }
+
+

@@ -5,7 +5,7 @@ import { take } from 'rxjs/operators';
 @Injectable({
   providedIn: 'root'
 })
-export class HomeFacade {
+export class FeedFacade {
   private readonly postService = inject(SocialPostService);
 
   private readonly _posts = signal<Post[]>([]);

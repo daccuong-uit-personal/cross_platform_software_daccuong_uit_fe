@@ -1,4 +1,4 @@
-import { Component, inject, signal, OnInit, OnDestroy, ElementRef } from '@angular/core';
+import { Component, inject, signal, computed, OnInit, OnDestroy, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router, NavigationEnd } from '@angular/router';
 import { filter, Subscription } from 'rxjs';
@@ -6,10 +6,19 @@ import { filter, Subscription } from 'rxjs';
 import { PageShellComponent, SidebarMenuItem, GLOBAL_MENU_ITEMS } from '@fe/ui';
 import { TabKeepAliveService } from '@fe/core';
 
-import { FeedComponent } from '../feed/feed.component';
+import { FeedComponent } from '@fe/features/feed';
+import { VideoComponent } from '@fe/features/video';
+import { ShopComponent } from '@fe/features/shop';
+import { StoriesComponent } from '@fe/features/stories';
 import { DiscoverComponent } from '../discover/discover.component';
 import { FeaturePlaceholderComponent } from '../feature-placeholder/feature-placeholder.component';
 import { RightSidebarComponent } from '../right-sidebar/right-sidebar.component';
+
+export interface FeedTabItem {
+  id: 'home' | 'videos' | 'shop' | 'stories';
+  label: string;
+  route: string;
+}
 
 /** Maps a URL to a simple tab-id string for the template. */
 function routeToTabId(url: string): string {
@@ -26,6 +35,9 @@ function routeToTabId(url: string): string {
     RouterModule,
     PageShellComponent,
     FeedComponent,
+    VideoComponent,
+    ShopComponent,
+    StoriesComponent,
     DiscoverComponent,
     FeaturePlaceholderComponent,
     RightSidebarComponent,
@@ -40,11 +52,27 @@ export class HomeShellComponent implements OnInit, OnDestroy {
 
   menuItems: SidebarMenuItem[] = GLOBAL_MENU_ITEMS;
 
+  feedTabs: FeedTabItem[] = [
+    { id: 'home', label: 'Bài đăng', route: '/home' },
+    { id: 'videos', label: 'Video', route: '/home/videos' },
+    { id: 'shop', label: 'Shop', route: '/home/shop' },
+    { id: 'stories', label: 'Truyện', route: '/home/stories' },
+  ];
+
   /**
    * Which tab is currently visible.
    * Driven by NavigationEnd events so it stays in sync with the browser URL.
    */
   activeTab = signal<string>('home');
+
+  /**
+   * Index of the active feed tab (0 to 3) for sliding indicator calculation.
+   */
+  activeFeedTabIndex = computed(() => {
+    const tab = this.activeTab();
+    const idx = this.feedTabs.findIndex((t) => t.id === tab);
+    return idx >= 0 ? idx : 0;
+  });
 
   /**
    * Lazy-activation map: once a tab has been visited it stays rendered.
@@ -126,4 +154,19 @@ export class HomeShellComponent implements OnInit, OnDestroy {
   isTabActivated(tabId: string): boolean {
     return this.activatedTabs().has(tabId);
   }
+
+  /** Whether the current active tab is one of the 4 feed modules. */
+  isFeedModuleTab(tabId: string): boolean {
+    return ['home', 'videos', 'shop', 'stories'].includes(tabId);
+  }
+
+  /** Handle tab selection from the top 4-module navigation bar. */
+  selectFeedTab(tab: FeedTabItem): void {
+    if (this.activeTab() === tab.id) {
+      this.keepAlive.triggerRefresh(tab.route);
+    } else {
+      this.router.navigate([tab.route]);
+    }
+  }
 }
+

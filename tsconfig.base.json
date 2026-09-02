@@ -27,7 +27,11 @@
       "@fe/domain/social": ["./libs/domain/social/src/index.ts"],
       "@fe/features/settings": ["./libs/features/settings/src/index.ts"],
       "@fe/features/friends": ["./libs/features/friends/src/index.ts"],
-      "@fe/features/reels": ["./libs/features/reels/src/index.ts"]
+      "@fe/features/reels": ["./libs/features/reels/src/index.ts"],
+      "@fe/features/feed": ["./libs/features/feed/src/index.ts"],
+      "@fe/features/video": ["./libs/features/video/src/index.ts"],
+      "@fe/features/shop": ["./libs/features/shop/src/index.ts"],
+      "@fe/features/stories": ["./libs/features/stories/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

@@ -2,7 +2,10 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { HomeShellComponent } from './components/home-shell/home-shell.component';
-import { FeedComponent } from './components/feed/feed.component';
+import { FeedComponent } from '@fe/features/feed';
+import { VideoComponent } from '@fe/features/video';
+import { ShopComponent } from '@fe/features/shop';
+import { StoriesComponent } from '@fe/features/stories';
 import { BottomMenuComponent } from './components/bottom-menu/bottom-menu.component';
 import { DiscoverComponent } from './components/discover/discover.component';
 import { CreateComponent } from './components/create/create.component';
@@ -33,6 +36,9 @@ import { RightSidebarComponent } from '@fe/ui';
     CommonModule,
     HomeShellComponent,
     FeedComponent,
+    VideoComponent,
+    ShopComponent,
+    StoriesComponent,
     BottomMenuComponent,
     DiscoverComponent,
     CreateComponent,
@@ -48,7 +54,10 @@ import { RightSidebarComponent } from '@fe/ui';
           // The component uses NavigationEnd to sync its activeTab signal,
           // so the URL changes while the shell stays alive.
           { path: ''            , children: [] },   // /home
-          { path: 'discover'   , children: [] },   // /home/discover
+          { path: 'videos'      , children: [] },   // /home/videos
+          { path: 'shop'        , children: [] },   // /home/shop
+          { path: 'stories'     , children: [] },   // /home/stories
+          { path: 'discover'    , children: [] },   // /home/discover
           { path: 'notifications', children: [] },  // /home/notifications
           { path: 'following'  , children: [] },   // /home/following
           { path: 'chat'       , children: [] },   // /home/chat
